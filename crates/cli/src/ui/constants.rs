@@ -60,6 +60,34 @@ pub const SPINNER_FRAMES: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", 
 // COLOR CODES
 // ============================================================================
 
+/// Truent brand green (#34D399), shared with the web `--acc-text` token so the
+/// banner and the site read as the same colour.
+const BRAND_R: u8 = 0x34;
+const BRAND_G: u8 = 0xD3;
+const BRAND_B: u8 = 0x99;
+
+/// Whether the terminal advertises 24-bit colour.
+///
+/// `colored` silently degrades `truecolor` to the nearest of the 16 ANSI
+/// colours, and for the brand green that nearest match is *cyan* — the blue
+/// family the palette deliberately moved away from. So the fallback is chosen
+/// here instead: brand hex where it renders faithfully, ANSI green everywhere
+/// else. Either way the mark is green.
+fn supports_truecolor() -> bool {
+    std::env::var("COLORTERM")
+        .map(|v| v.contains("truecolor") || v.contains("24bit"))
+        .unwrap_or(false)
+}
+
+/// Apply the brand green, falling back to ANSI green on 16-colour terminals.
+fn brand(s: &str) -> colored::ColoredString {
+    if supports_truecolor() {
+        s.truecolor(BRAND_R, BRAND_G, BRAND_B)
+    } else {
+        s.green()
+    }
+}
+
 /// Apply critical severity styling (bright red bold).
 pub fn color_critical(s: &str) -> String {
     s.bright_red().bold().to_string()
@@ -122,10 +150,10 @@ pub fn color_dim(s: &str) -> String {
     s.dimmed().to_string()
 }
 
-/// Apply accent styling (bright blue).
+/// Apply accent styling (Truent green).
 #[allow(dead_code)]
 pub fn color_accent(s: &str) -> String {
-    s.bright_blue().to_string()
+    brand(s).to_string()
 }
 
 /// Apply recommendation styling (italic cyan).
@@ -133,7 +161,7 @@ pub fn color_recommendation(s: &str) -> String {
     s.italic().cyan().to_string()
 }
 
-/// Apply header styling (bright blue bold).
+/// Apply header styling (Truent green, bold).
 pub fn color_header(s: &str) -> String {
-    s.bright_blue().bold().to_string()
+    brand(s).bold().to_string()
 }

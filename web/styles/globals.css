@@ -18,7 +18,8 @@
     /* ── Editorial surface system ──
        A flat darkness ladder (bg → surface → panel) separated by hairline
        borders rather than shadows, so panels read as inked areas on one
-       sheet instead of floating cards. Accent stays Truent indigo. */
+       sheet instead of floating cards. Accent is Truent green: emerald-500
+       for fills, emerald-400 for foreground/text. */
     --bg: #08090c;
     --surface-2: #101218;
     --panel: #171a22;
@@ -26,8 +27,8 @@
     --hair-strong: #313542;
     --text: #f2f3f7;
     --sec: #9b9fae;
-    --acc: #818cf8;
-    --acc-text: #a8afff;
+    --acc: #10b981;
+    --acc-text: #34d399;
     --on-acc: #08090c;
 
     /* Material Design 3 Base Colors */
@@ -43,12 +44,12 @@
     --on-surface-variant: #c7c6cd;
     --outline: #909097;
     --outline-variant: #46464c;
-    --primary: #c2c6db;
-    --primary-container: #0a0f1e;
-    --secondary: #bdc2ff;
-    --secondary-container: #2f3aa3;
-    --on-secondary: #131e8c;
-    --on-secondary-container: #a8afff;
+    --primary: #c6dbd2;
+    --primary-container: #04140e;
+    --secondary: #a7f3d0;
+    --secondary-container: #065f46;
+    --on-secondary: #003d2b;
+    --on-secondary-container: #34d399;
     --error: #ffb4ab;
     --error-container: #93000a;
     --background: #131314;
@@ -68,8 +69,11 @@
     --low: #4ADE80;
     --low-bg: rgba(74, 222, 128, 0.12);
     --low-border: rgba(74, 222, 128, 0.4);
-    --indigo: #818CF8;
-    --indigo-container: #2f3aa3;
+    /* Brand accent. The token name is historical — it predates the move from
+       indigo to green and is still referenced as `bg-indigo` / `border-indigo`
+       in ~120 places, so the value is retuned here rather than renamed. */
+    --indigo: #10B981;
+    --indigo-container: #065f46;
   }
 
   body {

@@ -61,8 +61,8 @@ export function ParticleHero({
   headline,
   subline,
   actions,
-  accent = '#818CF8',
-  base = '#9aa0b4',
+  accent = '#34D399',
+  base = '#9ab4a9',
 }: ParticleHeroProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
   const stageRef = useRef<HTMLDivElement | null>(null)
