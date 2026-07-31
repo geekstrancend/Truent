@@ -6,13 +6,13 @@
 //! - Bytecode disassembly for compiled code analysis
 //! - Pattern-based vulnerability detection
 
+use std::collections::BTreeSet;
+use std::path::Path;
+use tracing::{debug, info, warn};
 use truent_core::model::{FunctionModel, ProgramModel};
 use truent_core::traits::ChainAnalyzer;
 use truent_core::Finding;
 use truent_core::{AnalysisContext, Result};
-use std::collections::BTreeSet;
-use std::path::Path;
-use tracing::{debug, info, warn};
 
 use crate::ast::{AstContract, SolidityParser, Visibility};
 use crate::bytecode::{IssueType, Severity};

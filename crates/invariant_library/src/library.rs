@@ -1,9 +1,9 @@
 //! Invariant library management.
 
-use truent_core::model::{Expression, Invariant};
-use truent_dsl_parser::parse_invariant;
 use std::collections::BTreeMap;
 use tracing::warn;
+use truent_core::model::{Expression, Invariant};
+use truent_dsl_parser::parse_invariant;
 
 /// Compile a constraint string (e.g. "call_order_respected AND no_recursive_calls")
 /// into a real `Expression` tree via the DSL parser, the same way

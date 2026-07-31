@@ -1,12 +1,12 @@
 //! Soroban analyzer implementation.
 
 use crate::soroban_parser::parse_contract_functions;
-use truent_core::model::{FunctionModel, ProgramModel, StateVar};
-use truent_core::traits::ChainAnalyzer;
-use truent_core::Result;
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::info;
+use truent_core::model::{FunctionModel, ProgramModel, StateVar};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::Result;
 
 /// Analyzer for Soroban (Stellar) Rust contracts.
 ///

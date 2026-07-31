@@ -1,11 +1,11 @@
 //! Move analyzer implementation.
 
-use truent_core::model::{FunctionModel, ProgramModel};
-use truent_core::traits::ChainAnalyzer;
-use truent_core::{AnalysisContext, Result};
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::info;
+use truent_core::model::{FunctionModel, ProgramModel};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::{AnalysisContext, Result};
 
 /// Analyzer for Move programs (Aptos/Sui).
 ///

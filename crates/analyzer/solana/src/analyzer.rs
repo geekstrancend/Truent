@@ -1,12 +1,12 @@
 //! Solana analyzer implementation.
 
 use quote::quote;
-use truent_core::model::{FunctionModel, ProgramModel, StateVar};
-use truent_core::traits::ChainAnalyzer;
-use truent_core::{AnalysisContext, Result};
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::{debug, info};
+use truent_core::model::{FunctionModel, ProgramModel, StateVar};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::{AnalysisContext, Result};
 
 /// Analyzer for Solana Rust programs.
 ///

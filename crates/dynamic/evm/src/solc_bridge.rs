@@ -14,8 +14,8 @@
 //! comment for the end-to-end test that would close this out.
 
 use crate::types::CompiledContract;
-use truent_dynamic_core::{FunctionSpec, ParamKind};
 use sha3::{Digest, Keccak256};
+use truent_dynamic_core::{FunctionSpec, ParamKind};
 
 /// Computes the 4-byte Solidity function selector: the first 4 bytes of
 /// `keccak256("name(type1,type2,...)")`.

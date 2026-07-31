@@ -9,10 +9,10 @@
 use crate::anchor_model::{AccountSecurity, AnchorAccountStruct, AnchorConstraint};
 use crate::anchor_parser::parse_anchor_accounts;
 use regex::Regex;
+use std::collections::BTreeMap;
 use truent_ir::{
     AuthCheckKind, AuthorizationCheck, MutationKind, PrivilegedMutation, SemanticModel,
 };
-use std::collections::BTreeMap;
 
 /// Instruction handler name substrings that indicate a privileged mutation,
 /// paired with the mutation category they represent.

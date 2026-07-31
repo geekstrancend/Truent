@@ -1,10 +1,10 @@
 //! Library loader for TOML-based invariants.
 
+use std::path::Path;
+use tracing::info;
 use truent_core::model::Invariant;
 use truent_core::Result;
 use truent_dsl_parser::parse_invariant;
-use std::path::Path;
-use tracing::info;
 
 /// Loads invariants from TOML files.
 pub struct LibraryLoader;

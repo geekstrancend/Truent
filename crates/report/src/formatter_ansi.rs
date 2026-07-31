@@ -2,9 +2,9 @@
 //!
 //! Formats findings for terminal (with colors), JSON (NDJSON), and SARIF 2.1.0.
 
-use truent_core::{Finding, Severity};
 use serde_json::{json, Value};
 use std::fmt::Write;
+use truent_core::{Finding, Severity};
 
 /// ANSI color codes for terminal output
 const ANSI_RESET: &str = "\x1b[0m";

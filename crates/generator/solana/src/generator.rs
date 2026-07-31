@@ -1,9 +1,9 @@
 //! Solana generator implementation.
 
+use tracing::info;
 use truent_core::model::{GenerationOutput, Invariant, ProgramModel};
 use truent_core::traits::CodeGenerator;
 use truent_core::Result;
-use tracing::info;
 
 /// Code generator for Solana Rust programs.
 pub struct SolanaGenerator;

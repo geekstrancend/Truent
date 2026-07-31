@@ -1,9 +1,9 @@
+use std::collections::HashMap;
 /// Comprehensive Security Report Generator
 ///
 /// Generates multi-format security analysis reports with severity aggregation,
 /// remediation guidance, and industry-standard formatting.
 use truent_core::{Finding, Severity};
-use std::collections::HashMap;
 
 /// Report format enumeration
 #[derive(Debug, Clone, Copy)]
