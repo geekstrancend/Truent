@@ -1,13 +1,13 @@
-# sentri-utils
+# truent-utils
 
-Shared utilities used across the Sentri workspace: logging setup, `solc`
+Shared utilities used across the Truent workspace: logging setup, `solc`
 invocation, release/versioning helpers.
 
 ## Usage
 
 ```toml
 [dependencies]
-sentri-utils = "0.3.0"
+truent-utils = "0.3.0"
 ```
 
 ## Key Modules
@@ -20,7 +20,7 @@ sentri-utils = "0.3.0"
 ## Example
 
 ```rust
-use sentri_utils::{setup_tracing, SolcManager};
+use truent_utils::{setup_tracing, SolcManager};
 
 setup_tracing();
 

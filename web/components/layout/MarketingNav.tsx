@@ -39,7 +39,7 @@ export function MarketingNav({ className }: MarketingNavProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ShieldCheck size={20} className="text-acc-text" />
-            <span className="font-mono font-[600] text-text text-base tracking-tight">Sentri</span>
+            <span className="font-mono font-[600] text-text text-base tracking-tight">Truent</span>
           </Link>
 
           {/* Desktop nav links */}

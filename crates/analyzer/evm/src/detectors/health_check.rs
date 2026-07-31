@@ -6,7 +6,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Patterns that indicate a function modifies critical financial state
@@ -119,7 +119,7 @@ pub fn detect_missing_health_check(source: &str, file_path: &str) -> Vec<Finding
             findings.push(
                 Finding::new(
                     "evm_missing_post_state_health_check".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     func_line_num + 1,
                     0,
@@ -258,7 +258,7 @@ mod tests {
 
         let findings = detect_missing_health_check(code, "test.sol");
         assert!(!findings.is_empty(), "Should detect missing health check");
-        assert_eq!(findings[0].severity, sentri_core::Severity::Critical);
+        assert_eq!(findings[0].severity, truent_core::Severity::Critical);
         assert!(findings[0].invariant_id.contains("health_check"));
     }
 

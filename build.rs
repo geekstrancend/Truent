@@ -1,4 +1,4 @@
-// Build script for Sentri: Compiles .sinv invariant DSL files into Rust
+// Build script for Truent: Compiles .sinv invariant DSL files into Rust
 //
 // This script:
 // 1. Discovers all .sinv files in invariants/ directory

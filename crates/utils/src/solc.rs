@@ -42,7 +42,7 @@ impl SolcManager {
     /// Search order:
     /// 1. SOLC_PATH environment variable
     /// 2. solc on system PATH
-    /// 3. ~/.sentri/solc/solc (cached download)
+    /// 3. ~/.truent/solc/solc (cached download)
     /// 4. Download latest stable from binaries.soliditylang.org
     pub fn new() -> Result<Self> {
         // Try SOLC_PATH environment variable
@@ -135,7 +135,7 @@ impl SolcManager {
     fn cache_path() -> PathBuf {
         let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string());
         PathBuf::from(home)
-            .join(".sentri")
+            .join(".truent")
             .join("solc")
             .join("solc")
     }

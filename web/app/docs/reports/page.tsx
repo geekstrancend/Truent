@@ -18,7 +18,7 @@ export default function ReportsPage() {
             Audit Report Guide
           </h1>
           <p className="text-body-lg text-sec max-w-2xl">
-            Learn how to read, interpret, and share Sentri security audit reports with your team.
+            Learn how to read, interpret, and share Truent security audit reports with your team.
           </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function ReportsPage() {
             Report Structure
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Sentri audit reports are organized into three main sections:
+            Truent audit reports are organized into three main sections:
           </p>
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -142,7 +142,7 @@ export default function ReportsPage() {
             Exporting Reports
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Sentri generates reports in three formats to suit different workflows:
+            Truent generates reports in three formats to suit different workflows:
           </p>
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">

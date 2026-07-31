@@ -12,7 +12,7 @@ import { ethers } from 'ethers'
 // time either way. Without this, an unknown email short-circuits before the
 // (comparatively slow) bcrypt.compare call, letting an attacker distinguish
 // "wrong password" from "no such account" by response time (email enumeration).
-const DUMMY_PASSWORD_HASH = bcrypt.hashSync('sentri-timing-safety-dummy', 10)
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync('truent-timing-safety-dummy', 10)
 
 /**
  * Verify wallet signature for Web3 authentication

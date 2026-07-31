@@ -1,6 +1,6 @@
 //! AST extensions and utilities for IR.
 
-use sentri_core::model::{Expression, FunctionModel, StateVar};
+use truent_core::model::{Expression, FunctionModel, StateVar};
 use std::collections::BTreeMap;
 
 /// A directed dependency graph for tracking state mutation dependencies.

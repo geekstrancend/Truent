@@ -1,6 +1,6 @@
 //! Chain-agnostic semantic-model extraction for Solana/Anchor programs.
 //!
-//! Builds a [`sentri_ir::SemanticModel`] from Anchor source by reusing the
+//! Builds a [`truent_ir::SemanticModel`] from Anchor source by reusing the
 //! real `syn`-based account parser in [`crate::anchor_parser`] — not
 //! line-matching — so guards are derived from the actual Anchor account
 //! security posture ([`crate::anchor_model::AccountSecurity`]), the same
@@ -9,7 +9,7 @@
 use crate::anchor_model::{AccountSecurity, AnchorAccountStruct, AnchorConstraint};
 use crate::anchor_parser::parse_anchor_accounts;
 use regex::Regex;
-use sentri_ir::{
+use truent_ir::{
     AuthCheckKind, AuthorizationCheck, MutationKind, PrivilegedMutation, SemanticModel,
 };
 use std::collections::BTreeMap;
@@ -122,7 +122,7 @@ fn extract_guards(s: &AnchorAccountStruct) -> Vec<AuthorizationCheck> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sentri_ir::rules::find_unauthorized_privileged_mutations;
+    use truent_ir::rules::find_unauthorized_privileged_mutations;
 
     /// Real, minimal Anchor program: `withdraw` has no signer or ownership
     /// constraint anywhere in its accounts struct; `admin_withdraw` is

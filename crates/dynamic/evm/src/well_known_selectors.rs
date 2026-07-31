@@ -10,7 +10,7 @@
 //! strings through already-verified code is the safer choice.
 
 use crate::solc_bridge::selector_for;
-use sentri_dynamic_core::{FunctionSpec, ParamKind};
+use truent_dynamic_core::{FunctionSpec, ParamKind};
 
 /// The standard ERC20 read surface, used to probe whether unverified
 /// bytecode looks like a token contract at all.

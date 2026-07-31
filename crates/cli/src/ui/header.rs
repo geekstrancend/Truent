@@ -30,7 +30,7 @@ pub fn render_check_header(
     // Title line
     output.push_str(&format!(
         "{}  {}  {}  {}\n",
-        color_header("Sentri"),
+        color_header("Truent"),
         color_dim("·"),
         color_dim("Multi-chain Invariant Checker"),
         color_dim("·"),
@@ -88,12 +88,12 @@ mod tests {
     #[test]
     fn test_header_contains_expected_parts() {
         let header =
-            render_check_header("./contracts/Token.sol", "EVM", Some(".sentri.toml"), true);
+            render_check_header("./contracts/Token.sol", "EVM", Some(".truent.toml"), true);
 
-        assert!(header.contains("Sentri"));
+        assert!(header.contains("Truent"));
         assert!(header.contains("./contracts/Token.sol"));
         assert!(header.contains("EVM"));
-        assert!(header.contains(".sentri.toml"));
+        assert!(header.contains(".truent.toml"));
         assert!(header.contains("found"));
     }
 
@@ -101,7 +101,7 @@ mod tests {
     fn test_header_without_config() {
         let header = render_check_header("./src", "Solana", None, false);
 
-        assert!(header.contains("Sentri"));
+        assert!(header.contains("Truent"));
         assert!(header.contains("./src"));
         assert!(header.contains("Solana"));
     }

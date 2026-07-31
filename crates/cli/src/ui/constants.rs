@@ -1,4 +1,4 @@
-//! Design system constants for Sentri CLI.
+//! Design system constants for Truent CLI.
 //!
 //! Defines the color palette, icons, and typography hierarchy used throughout
 //! the CLI interface to maintain a consistent, professional appearance.

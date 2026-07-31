@@ -57,7 +57,7 @@ export default function NotFound() {
                 Back to Home
               </Button>
             </Link>
-            <a href="mailto:support@sentri.dev">
+            <a href="mailto:support@truent.dev">
               <Button variant="secondary" size="lg">Contact Support</Button>
             </a>
           </div>
@@ -68,7 +68,7 @@ export default function NotFound() {
               <div className="w-2 h-2 rounded-full bg-high" />
               <div className="w-2 h-2 rounded-full bg-low" />
             </div>
-            <p className="text-sec"><span className="text-low">$</span> sentri check --url /404</p>
+            <p className="text-sec"><span className="text-low">$</span> truent check --url /404</p>
             <p className="text-critical mt-1">[CRITICAL] Route not found in manifest</p>
             <p className="text-sec mt-1">[INFO] Suggestion: navigate to /dashboard</p>
             <p className="text-low mt-1">[DONE] Redirecting you to safety... <span className="animate-blink-cursor">▊</span></p>

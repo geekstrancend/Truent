@@ -1,5 +1,5 @@
 [package]
-name = "sentri-dynamic-solana"
+name = "truent-dynamic-solana"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: dynamic invariant fuzzing for Solana programs (account-model execution + invariant oracles)."
+description = "Truent: dynamic invariant fuzzing for Solana programs (account-model execution + invariant oracles)."
 
-keywords = ["sentri", "solana", "fuzzing", "invariant", "security"]
+keywords = ["truent", "solana", "fuzzing", "invariant", "security"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-dynamic-solana"
+documentation = "https://docs.rs/truent-dynamic-solana"
 
 # The real execution backend (feature `litesvm-backend`) is intentionally NOT
 # in 0.4.0. It links a Solana SVM via `litesvm 0.6`, whose transitive
@@ -29,7 +29,7 @@ documentation = "https://docs.rs/sentri-dynamic-solana"
 # in-memory mock exactly as the EVM crate proved its engine before wiring revm.
 
 [dependencies]
-sentri-dynamic-core.workspace = true
+truent-dynamic-core.workspace = true
 rand.workspace = true
 serde.workspace = true
 serde_json.workspace = true

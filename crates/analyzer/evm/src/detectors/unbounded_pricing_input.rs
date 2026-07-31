@@ -13,7 +13,7 @@
 //! formula (e.g. an exponential bonding curve) even without wrapping.
 
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 fn pricing_function_regex() -> Regex {
     Regex::new(r"(?i)function\s+(buy\w*|mint\w*|purchase\w*)\s*\(\s*(?:uint\d*\s+)?(\w+)").unwrap()

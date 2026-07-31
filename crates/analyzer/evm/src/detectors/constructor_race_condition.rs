@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref CONSTRUCTOR: Regex = Regex::new(r"(?i)constructor\s*\(").unwrap();
@@ -46,7 +46,7 @@ pub fn detect_constructor_race_condition(source: &str, file_path: &str) -> Vec<F
             findings.push(
                 Finding::new(
                     "evm_constructor_race_condition".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

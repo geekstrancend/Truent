@@ -1,5 +1,5 @@
 [package]
-name = "sentri-dsl-parser"
+name = "truent-dsl-parser"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: DSL parser for Sentri invariant definitions and security specification syntax."
+description = "Truent: DSL parser for Truent invariant definitions and security specification syntax."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-dsl-parser"
+documentation = "https://docs.rs/truent-dsl-parser"
 
 [dependencies]
 anyhow.workspace = true
@@ -21,6 +21,6 @@ serde.workspace = true
 serde_json.workspace = true
 pest.workspace = true
 pest_derive.workspace = true
-sentri-core.workspace = true
+truent-core.workspace = true
 
 [dev-dependencies]

@@ -1,4 +1,4 @@
-//! Error display component for Sentri CLI.
+//! Error display component for Truent CLI.
 
 use crate::ui::constants::{color_accent, color_dim, color_failure};
 
@@ -9,8 +9,8 @@ use crate::ui::constants::{color_accent, color_dim, color_failure};
 /// error: could not read file './contracts/Token.sol'
 ///        No such file or directory (os error 2)
 ///
-/// hint: Check that the path exists and Sentri has read permission.
-///       Run 'sentri doctor' to verify your installation.
+/// hint: Check that the path exists and Truent has read permission.
+///       Run 'truent doctor' to verify your installation.
 /// ```
 ///
 /// # Arguments

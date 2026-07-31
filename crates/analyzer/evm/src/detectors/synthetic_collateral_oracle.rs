@@ -28,7 +28,7 @@
 /// ```
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref SYNTHETIC_COLLATERAL_PATTERN: Regex =
@@ -82,7 +82,7 @@ pub fn detect_synthetic_collateral_oracle(source: &str, file_path: &str) -> Vec<
             findings.push(
                 Finding::new(
                     "evm_synthetic_collateral_oracle".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -113,7 +113,7 @@ pub fn detect_synthetic_collateral_oracle(source: &str, file_path: &str) -> Vec<
             findings.push(
                 Finding::new(
                     "evm_synthetic_collateral_oracle".to_string(),
-                    sentri_core::Severity::High,
+                    truent_core::Severity::High,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -189,7 +189,7 @@ mod tests {
         // Safe pattern with proper checks should not trigger
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         assert!(
             critical_findings.is_empty(),
@@ -211,7 +211,7 @@ mod tests {
         let findings = detect_synthetic_collateral_oracle(weak, "test.sol");
         let high_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::High)
+            .filter(|f| f.severity == truent_core::Severity::High)
             .collect();
         assert!(
             !high_findings.is_empty(),

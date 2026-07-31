@@ -22,7 +22,7 @@
 /// item rather than a confirmed bug.
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref LEFT_SHIFT: Regex = Regex::new(r"<<\s*\d").unwrap();

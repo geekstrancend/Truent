@@ -25,7 +25,7 @@ pub use soroban_parser::parse_contract_functions;
 /// This is the single entry point the CLI should use for Soroban analysis:
 /// contract functions are parsed once via `syn` and every detector reads
 /// off that shared fact set.
-pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Finding> {
+pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<truent_core::Finding> {
     let functions = match parse_contract_functions(source) {
         Ok(functions) => functions,
         // A source file `syn` can't parse contributes no findings rather
@@ -39,7 +39,7 @@ pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Find
     // Chain-agnostic shared-IR rule: flags privileged mutations with no
     // authorization guard, using the same rule EVM/Solana/Move share.
     if let Ok(model) = build_semantic_model(source, file_path) {
-        findings.extend(sentri_ir::rules::find_unauthorized_privileged_mutations(
+        findings.extend(truent_ir::rules::find_unauthorized_privileged_mutations(
             &model,
         ));
     }
@@ -85,7 +85,7 @@ impl VaultContract {
 
         assert!(ids.contains("sor_missing_require_auth"));
         assert!(ids.contains("sor_reinitialization"));
-        assert!(ids.contains(sentri_ir::rules::UNAUTHORIZED_PRIVILEGED_MUTATION));
+        assert!(ids.contains(truent_ir::rules::UNAUTHORIZED_PRIVILEGED_MUTATION));
     }
 
     #[test]

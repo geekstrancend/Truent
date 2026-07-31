@@ -1,4 +1,4 @@
-# sentri-solana-macro
+# truent-solana-macro
 
 Procedural attribute macro scaffolding for Solana invariant enforcement.
 
@@ -6,7 +6,7 @@ Procedural attribute macro scaffolding for Solana invariant enforcement.
 
 ```toml
 [dependencies]
-sentri-solana-macro = "0.3.0"
+truent-solana-macro = "0.3.0"
 ```
 
 ## Current State
@@ -24,7 +24,7 @@ not as a working invariant-enforcement macro.
 ## Example
 
 ```rust
-use sentri_solana_macro::invariant_enforced;
+use truent_solana_macro::invariant_enforced;
 
 #[invariant_enforced("balance >= 0", "supply == sum_of_balances")]
 pub fn transfer(from: &mut Account, to: &mut Account, amount: u64) -> ProgramResult {

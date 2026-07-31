@@ -1,5 +1,5 @@
 [package]
-name = "sentri-solana-macro"
+name = "truent-solana-macro"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Procedural macros for Sentri Solana code generation and security constraint injection."
+description = "Truent: Procedural macros for Truent Solana code generation and security constraint injection."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "macros"]
+keywords = ["truent", "solana", "security", "smart-contracts", "macros"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-solana-macro"
+documentation = "https://docs.rs/truent-solana-macro"
 
 [lib]
 proc-macro = true

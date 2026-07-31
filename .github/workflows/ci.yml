@@ -162,22 +162,22 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       
       - name: Build CLI
-        run: cargo build --release --bin sentri
+        run: cargo build --release --bin truent
       
       # v0.1: Test doctor command in CI (non-TTY environment)
       - name: Run doctor command
-        run: cargo run --bin sentri -- doctor
+        run: cargo run --bin truent -- doctor
         
       # v0.1: Verify JSON output is valid JSON (non-TTY safety check)
       - name: Verify JSON output is valid JSON
         run: |
-          cargo run --bin sentri -- check . --chain evm --format json --output /tmp/sentri-output.json || true
-          if [ -f /tmp/sentri-output.json ]; then
-            if python3 -c "import json,sys; json.load(open('/tmp/sentri-output.json'))"; then
+          cargo run --bin truent -- check . --chain evm --format json --output /tmp/truent-output.json || true
+          if [ -f /tmp/truent-output.json ]; then
+            if python3 -c "import json,sys; json.load(open('/tmp/truent-output.json'))"; then
               echo "✓ JSON output is valid and free of ANSI codes"
             else
               echo "✗ JSON output is malformed — likely ANSI codes in output"
-              cat /tmp/sentri-output.json
+              cat /tmp/truent-output.json
               exit 1
             fi
           else
@@ -198,11 +198,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            bin: ./target/release/sentri
+            bin: ./target/release/truent
           - os: macos-latest
-            bin: ./target/release/sentri
+            bin: ./target/release/truent
           - os: windows-latest
-            bin: ./target/release/sentri.exe
+            bin: ./target/release/truent.exe
     steps:
       - uses: actions/checkout@v4
       
@@ -211,7 +211,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       
       - name: Build release binary
-        run: cargo build --release --bin sentri
+        run: cargo build --release --bin truent
         
       - name: Verify --version
         run: ${{ matrix.bin }} --version
@@ -233,15 +233,15 @@ jobs:
         run: |
           mkdir -p /tmp/test-init
           ${{ matrix.bin }} init /tmp/test-init
-          test -f /tmp/test-init/.sentri.toml
+          test -f /tmp/test-init/.truent.toml
         shell: bash
         if: runner.os != 'Windows'
         
       - name: Verify init creates config (Windows)
         run: |
           New-Item -ItemType Directory -Force -Path $env:TEMP\test-init
-          .\target\release\sentri.exe init $env:TEMP\test-init
-          Test-Path "$env:TEMP\test-init\.sentri.toml"
+          .\target\release\truent.exe init $env:TEMP\test-init
+          Test-Path "$env:TEMP\test-init\.truent.toml"
         shell: pwsh
         if: runner.os == 'Windows'
         
@@ -307,14 +307,14 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            artifact_name: sentri
-            asset_name: sentri-linux-x86_64
+            artifact_name: truent
+            asset_name: truent-linux-x86_64
           - os: macos-latest
-            artifact_name: sentri
-            asset_name: sentri-macos-x86_64
+            artifact_name: truent
+            asset_name: truent-macos-x86_64
           - os: windows-latest
-            artifact_name: sentri.exe
-            asset_name: sentri-windows-x86_64.exe
+            artifact_name: truent.exe
+            asset_name: truent-windows-x86_64.exe
     steps:
       - uses: actions/checkout@v4
       
@@ -323,7 +323,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       
       - name: Build release
-        run: cargo build --release --bin sentri --verbose
+        run: cargo build --release --bin truent --verbose
       
       - name: Strip binary (Unix)
         if: runner.os != 'Windows'

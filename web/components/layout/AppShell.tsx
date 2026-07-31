@@ -51,7 +51,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
         <div className="p-4 border-b border-hair">
           <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <ShieldCheck size={18} className="text-acc-text" />
-            <span className="font-display text-base font-[600] text-text">Sentri</span>
+            <span className="font-display text-base font-[600] text-text">Truent</span>
           </Link>
           <div className="mt-3 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-low animate-pulse-dot" />
@@ -141,7 +141,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
         <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-hair bg-surface-2">
           <div className="flex items-center gap-2">
             <ShieldCheck size={18} className="text-acc-text" />
-            <span className="font-display text-sm font-[600] text-text">Sentri</span>
+            <span className="font-display text-sm font-[600] text-text">Truent</span>
           </div>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}

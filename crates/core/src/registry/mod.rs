@@ -1,7 +1,7 @@
-//! Exploit registry: Historical DeFi hacks mapped to Sentri invariants.
+//! Exploit registry: Historical DeFi hacks mapped to Truent invariants.
 //!
 //! This module contains 21 documented exploits from major DeFi protocols,
-//! each mapped to the Sentri invariants they violated.
+//! each mapped to the Truent invariants they violated.
 //! Data is embedded at compile time via include_bytes! and loaded lazily.
 
 use once_cell::sync::Lazy;

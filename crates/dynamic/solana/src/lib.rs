@@ -3,7 +3,7 @@
 
 //! Dynamic invariant fuzzing for Solana programs.
 //!
-//! The Solana counterpart to `sentri-dynamic-evm`. Solana's execution model
+//! The Solana counterpart to `truent-dynamic-evm`. Solana's execution model
 //! is account-based, not the EVM's flat-calldata single-caller shape, so this
 //! crate defines its own call model (`model`), invariant oracles
 //! (`invariant`), instruction generator (`generator`), and fuzz/shrink loop

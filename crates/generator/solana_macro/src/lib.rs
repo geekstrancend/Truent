@@ -118,7 +118,7 @@ fn generate_check_statements(checks: &[String], _state_vars: &[String]) -> Vec<s
 
     // Add tamper detection header (hash embeds macro version and check list)
     let check_hash = compute_check_hash(checks);
-    let _hash_comment = format!("// SENTRI_HASH: {}", check_hash);
+    let _hash_comment = format!("// TRUENT_HASH: {}", check_hash);
 
     stmts.push(syn::parse_quote! {
         // Invariant checks injected by #[invariant_enforced]
@@ -126,7 +126,7 @@ fn generate_check_statements(checks: &[String], _state_vars: &[String]) -> Vec<s
 
     // Generate a check for each invariant
     for (idx, check) in checks.iter().enumerate() {
-        let _check_name = format_ident!("sentri_check_{}", idx);
+        let _check_name = format_ident!("truent_check_{}", idx);
         let _check_expr_str = check.clone();
 
         // Create assertion-like statement

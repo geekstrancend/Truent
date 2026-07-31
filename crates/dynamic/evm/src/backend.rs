@@ -2,9 +2,9 @@
 //!
 //! Every call runs under the [`ReentrancyInspector`], so `last_call_trace`
 //! returns the real call/storage structure of the execution — that's what
-//! makes [`sentri_dynamic_core::ReentrancyInvariant`] fire on actual
+//! makes [`truent_dynamic_core::ReentrancyInvariant`] fire on actual
 //! compiled contracts, not just the synthetic-trace mock proof in
-//! `sentri-dynamic-core`.
+//! `truent-dynamic-core`.
 //!
 //! UNVERIFIED OFFLINE: this crate is written where `revm` can't be fetched,
 //! so the exact `revm = 14` API used here (the inspector wiring via
@@ -18,7 +18,7 @@ use revm::primitives::{
     AccountInfo, Address, Bytecode, Bytes, ExecutionResult, Output, TransactTo, U256,
 };
 use revm::{inspector_handle_register, Evm};
-use sentri_dynamic_core::{CallOutcome, EncodedCall, ExecutionBackend, TraceEvent};
+use truent_dynamic_core::{CallOutcome, EncodedCall, ExecutionBackend, TraceEvent};
 
 /// A deployed contract instance plus the in-memory state it lives in.
 /// `snapshot`/`revert_to` clone the whole DB rather than diffing it — state
@@ -30,7 +30,7 @@ pub struct RevmBackend {
     snapshots: Vec<InMemoryDB>,
     /// The execution trace of the most recent [`RevmBackend::call`],
     /// produced by the [`ReentrancyInspector`], for
-    /// [`sentri_dynamic_core::detect_reentrancy`].
+    /// [`truent_dynamic_core::detect_reentrancy`].
     last_trace: Vec<TraceEvent>,
 }
 
@@ -97,7 +97,7 @@ impl RevmBackend {
     /// `eth_getCode` — which returns runtime bytecode, not creation/init
     /// code — there is no constructor to run; the code is simply placed at
     /// the target address with an otherwise-empty account (see
-    /// `sentri_dynamic_evm::fuzz_deployed_contract`'s doc comment for what
+    /// `truent_dynamic_evm::fuzz_deployed_contract`'s doc comment for what
     /// that does and doesn't reproduce faithfully versus the real chain).
     pub fn from_runtime_bytecode(bytecode: Vec<u8>, contract_address: [u8; 20]) -> Self {
         let address = Address::from(contract_address);
@@ -263,7 +263,7 @@ impl ExecutionBackend for RevmBackend {
 }
 
 /// Builds a fresh, already-deployed [`RevmBackend`] for one fuzz attempt.
-/// `sentri_dynamic_core::fuzz` calls this many times (once per attempt,
+/// `truent_dynamic_core::fuzz` calls this many times (once per attempt,
 /// more during shrinking) — each call redeploys from the same creation
 /// bytecode so every attempt starts from an identical genesis state.
 pub fn backend_factory<'a>(

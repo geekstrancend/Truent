@@ -35,7 +35,7 @@ pub use solana_unchecked_token_account::detect_unchecked_token_account_type;
 ///
 /// This is the single entry point the CLI should use for Solana analysis: each
 /// detector operates directly on raw source text, no syn/AST parse is required.
-pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Finding> {
+pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<truent_core::Finding> {
     let mut findings = detectors::detect_all(source, file_path);
 
     findings.extend(detect_solana_durable_nonce_validation(source, file_path));
@@ -49,7 +49,7 @@ pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Find
     // Best-effort: a source file the Anchor-account parser can't handle
     // simply contributes nothing from this rule rather than failing the scan.
     if let Ok(model) = build_semantic_model(source, file_path) {
-        findings.extend(sentri_ir::rules::find_unauthorized_privileged_mutations(
+        findings.extend(truent_ir::rules::find_unauthorized_privileged_mutations(
             &model,
         ));
     }

@@ -3,7 +3,7 @@
 
 use pest_derive::Parser;
 
-/// The Sentri DSL grammar.
+/// The Truent DSL grammar.
 #[allow(non_camel_case_types)]
 #[derive(Parser)]
 #[grammar_inline = r#"
@@ -65,6 +65,6 @@ invariant_def = {
 
 file = { SOI ~ invariant_def+ ~ EOI }
 "#]
-pub struct SentriGrammar;
+pub struct TruentGrammar;
 
-pub use SentriGrammar as Grammar;
+pub use TruentGrammar as Grammar;

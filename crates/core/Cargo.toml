@@ -1,5 +1,5 @@
 [package]
-name = "sentri-core"
+name = "truent-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Core types and utilities for the Sentri multi-chain smart contract security analyzer."
+description = "Truent: Core types and utilities for the Truent multi-chain smart contract security analyzer."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-core"
+documentation = "https://docs.rs/truent-core"
 
 [dependencies]
 anyhow.workspace = true

@@ -1,5 +1,5 @@
 [package]
-name = "sentri-ir"
+name = "truent-ir"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,17 +7,17 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Intermediate representation for Sentri invariant specifications and security analysis."
+description = "Truent: Intermediate representation for Truent invariant specifications and security analysis."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-ir"
+documentation = "https://docs.rs/truent-ir"
 
 [dependencies]
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-sentri-core.workspace = true
+truent-core.workspace = true
 
 [dev-dependencies]

@@ -1,5 +1,5 @@
 [package]
-name = "sentri-analyzer-move"
+name = "truent-analyzer-move"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Move language analyzer with static analysis and invariant checking for Aptos and other Move-based networks."
+description = "Truent: Move language analyzer with static analysis and invariant checking for Aptos and other Move-based networks."
 
-keywords = ["sentri", "move", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "move", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-analyzer-move"
+documentation = "https://docs.rs/truent-analyzer-move"
 
 [dependencies]
 anyhow.workspace = true
@@ -20,9 +20,9 @@ thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
-sentri-ir.workspace = true
-sentri-utils.workspace = true
+truent-core.workspace = true
+truent-ir.workspace = true
+truent-utils.workspace = true
 regex.workspace = true
 lazy_static.workspace = true
 tree-sitter.workspace = true

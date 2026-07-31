@@ -1,6 +1,6 @@
 # Automated Publishing Guide
 
-This guide explains how to publish Sentri to **crates.io** (Rust packages) and **npm** (Node.js wrapper) using GitHub Actions.
+This guide explains how to publish Truent to **crates.io** (Rust packages) and **npm** (Node.js wrapper) using GitHub Actions.
 
 ## Quick Start
 
@@ -114,7 +114,7 @@ gh workflow run publish-npm.yml \
 
 ```toml
 [package]
-name = "sentri-cli"
+name = "truent-cli"
 version = "0.1.8"  # ← Update this
 ```
 
@@ -133,7 +133,7 @@ Files to update:
 - `crates/invariant_library/Cargo.toml`
 - All generator crates
 
-**sentri-npm/package.json**:
+**truent-npm/package.json**:
 
 ```json
 {
@@ -163,7 +163,7 @@ Files to update:
 ### Security
 - All binaries are deterministically built and reproducible
 
-[0.1.8]: https://github.com/geekstrancend/Sentri/releases/tag/v0.1.8
+[0.1.8]: https://github.com/geekstrancend/Truent/releases/tag/v0.1.8
 ```
 
 ### Step 3: Commit and Tag
@@ -202,7 +202,7 @@ The **publish-npm.yml** workflow:
 | Stage | Job | Purpose |
 | --- | --- | --- |
 | 1 | extract-version | Parse version from release tag |
-| 2 | wait-crates-io | Verify crates.io has sentri-cli |
+| 2 | wait-crates-io | Verify crates.io has truent-cli |
 | 3 | build-npm (6 jobs) | Build binaries for npm package |
 | 4 | package-npm | Create npm tarball with binaries |
 | 5 | test-npm (6 jobs) | Test on Linux/macOS/Windows |
@@ -237,10 +237,10 @@ The **publish-npm.yml** workflow:
 
 ```bash
 # Check Rust package
-cargo search sentri-cli
+cargo search truent-cli
 
 # Install from crates.io
-cargo install sentri-cli@0.1.8
+cargo install truent-cli@0.1.8
 ```
 
 ### Verify npm
@@ -253,8 +253,8 @@ npm view @dextonicx/cli@0.1.8
 npm install -g @dextonicx/cli@0.1.8
 
 # Test it works
-sentri --version
-sentri doctor
+truent --version
+truent doctor
 ```
 
 ### Verify GitHub Release
@@ -304,7 +304,7 @@ sentri doctor
 - Verify npm account is not locked
 - Try manual publish from CLI:
   ```bash
-  cd sentri-npm
+  cd truent-npm
   npm version 0.1.8 --no-git-tag-version
   npm publish --access public
   ```
@@ -318,13 +318,13 @@ sentri doctor
 cargo login YOUR_TOKEN
 
 # Publish in dependency order
-cargo publish -p sentri-core
-cargo publish -p sentri-utils
+cargo publish -p truent-core
+cargo publish -p truent-utils
 (... other crates in order ...)
-cargo publish -p sentri-cli
+cargo publish -p truent-cli
 
 # Verify
-cargo search sentri-cli
+cargo search truent-cli
 ```
 
 ### Publish npm manually
@@ -333,7 +333,7 @@ cargo search sentri-cli
 # Generate token at https://www.npmjs.com/settings/YOUR_USERNAME/tokens
 npm adduser  # or npm login
 
-cd sentri-npm
+cd truent-npm
 
 # Update version
 npm version 0.1.8 --no-git-tag-version

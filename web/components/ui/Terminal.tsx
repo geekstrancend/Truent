@@ -11,7 +11,7 @@ interface TerminalProps {
   }>
 }
 
-export function Terminal({ title = 'sentri-cli --scan ./contracts/Vault.sol', showBanner = false, output }: TerminalProps) {
+export function Terminal({ title = 'truent-cli --scan ./contracts/Vault.sol', showBanner = false, output }: TerminalProps) {
   const [visibleLines, setVisibleLines] = useState(0)
 
   useEffect(() => {

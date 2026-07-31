@@ -3,9 +3,9 @@
 
 //! revm-backed dynamic invariant fuzzing for EVM/Solidity contracts.
 //!
-//! Ties three things together: `sentri_utils::SolcManager` (compiles
+//! Ties three things together: `truent_utils::SolcManager` (compiles
 //! source, already existed), `solc_bridge` (turns its ABI/bytecode output
-//! into the chain-agnostic shapes `sentri-dynamic-core` understands), and
+//! into the chain-agnostic shapes `truent-dynamic-core` understands), and
 //! `backend::RevmBackend` (executes calls against real EVM bytecode via
 //! `revm`, gated behind the `revm-backend` feature — see that module's doc
 //! comment for why it's split out and what's unverified about it).
@@ -22,8 +22,8 @@ pub mod well_known_selectors;
 pub use types::CompiledContract;
 
 #[cfg(feature = "revm-backend")]
-use sentri_dynamic_core::{fuzz, FuzzConfig, Violation};
-use sentri_dynamic_core::{FunctionSpec, Invariant};
+use truent_dynamic_core::{fuzz, FuzzConfig, Violation};
+use truent_dynamic_core::{FunctionSpec, Invariant};
 
 /// Auto-detects standard invariants from a contract's function surface:
 /// currently, ERC20-shaped conservation (`totalSupply()` + `balanceOf(address)`
@@ -41,7 +41,7 @@ pub fn auto_detect_invariants(
     functions: &[FunctionSpec],
     actors: &[[u8; 20]],
 ) -> Vec<Box<dyn Invariant>> {
-    use sentri_dynamic_core::{
+    use truent_dynamic_core::{
         AccessControlInvariant, ConservationInvariant, MonotonicInvariant, ParamKind,
     };
 
@@ -118,7 +118,7 @@ pub fn auto_detect_invariants(
 /// failures.
 #[cfg(feature = "revm-backend")]
 pub fn fuzz_solidity_source(source: &str, config: FuzzConfig) -> anyhow::Result<Option<Violation>> {
-    let solc = sentri_utils::SolcManager::new()?;
+    let solc = truent_utils::SolcManager::new()?;
     let output = solc.get_ast_for_source(source, "fuzz_target.sol")?;
 
     let Some((_, contract_json)) = output.contracts.iter().find(|(_, v)| {
@@ -162,14 +162,14 @@ pub fn fuzz_solidity_source(source: &str, config: FuzzConfig) -> anyhow::Result<
 /// contract with zero source available.
 #[cfg(feature = "revm-backend")]
 pub fn probe_deployed_contract(bytecode: Vec<u8>, contract_address: [u8; 20]) -> Vec<FunctionSpec> {
-    use sentri_dynamic_core::EncodedCall;
+    use truent_dynamic_core::EncodedCall;
     use well_known_selectors::{
         erc20_mutator_functions, erc20_probe_functions, ownable_mutator_functions,
         ownable_probe_functions,
     };
 
     fn all_probes_succeed(
-        backend: &mut dyn sentri_dynamic_core::ExecutionBackend,
+        backend: &mut dyn truent_dynamic_core::ExecutionBackend,
         caller: [u8; 20],
         fns: &[FunctionSpec],
     ) -> bool {
@@ -246,7 +246,7 @@ pub fn fuzz_deployed_contract(
     }
 
     let actors = config.actors.clone();
-    let fresh_backend = move || -> Box<dyn sentri_dynamic_core::ExecutionBackend> {
+    let fresh_backend = move || -> Box<dyn truent_dynamic_core::ExecutionBackend> {
         let mut backend =
             backend::RevmBackend::from_runtime_bytecode(bytecode.clone(), contract_address);
         backend.fund_actors(&actors);
@@ -259,7 +259,7 @@ pub fn fuzz_deployed_contract(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sentri_dynamic_core::ParamKind;
+    use truent_dynamic_core::ParamKind;
 
     fn view_fn(name: &str, inputs: Vec<ParamKind>) -> FunctionSpec {
         FunctionSpec::new(name, [0u8; 4], inputs, false)
@@ -353,7 +353,7 @@ mod tests {
 /// (see this module's doc comment history for why that was previously the
 /// open question). Needs solc, auto-downloaded by `SolcManager` if not
 /// already present, and therefore network; skips rather than fails if
-/// that's unavailable, matching `sentri-analyzer-evm`'s existing
+/// that's unavailable, matching `truent-analyzer-evm`'s existing
 /// solc-unavailable fallback convention rather than introducing a new one.
 #[cfg(all(test, feature = "revm-backend"))]
 mod revm_integration_tests {
@@ -362,7 +362,7 @@ mod revm_integration_tests {
     /// Deliberately vulnerable: `airdrop` credits a recipient's balance
     /// without minting the corresponding supply, breaking
     /// `sum(balanceOf) == totalSupply()` — the same "value created out of
-    /// thin air" bug shape as `sentri_dynamic_core`'s MockBackend proof,
+    /// thin air" bug shape as `truent_dynamic_core`'s MockBackend proof,
     /// but here as real Solidity compiled to real bytecode.
     const VULNERABLE_TOKEN_SOURCE: &str = r#"
 // SPDX-License-Identifier: MIT
@@ -385,7 +385,7 @@ contract VulnerableToken {
 
     #[test]
     fn revm_backend_catches_a_real_conservation_bug_end_to_end() {
-        if sentri_utils::SolcManager::new().is_err() {
+        if truent_utils::SolcManager::new().is_err() {
             eprintln!("skipping revm_backend_catches_a_real_conservation_bug_end_to_end: solc unavailable in this environment");
             return;
         }
@@ -435,7 +435,7 @@ contract VulnerableOwnable {
 
     #[test]
     fn revm_backend_catches_a_real_missing_only_owner_bug_end_to_end() {
-        if sentri_utils::SolcManager::new().is_err() {
+        if truent_utils::SolcManager::new().is_err() {
             eprintln!("skipping revm_backend_catches_a_real_missing_only_owner_bug_end_to_end: solc unavailable in this environment");
             return;
         }
@@ -509,7 +509,7 @@ contract Attacker {
 
     /// Pulls one named contract's creation bytecode out of solc's
     /// combined-json output (which keys entries as `"path.sol:Name"`).
-    fn init_code_for(output: &sentri_utils::SolcOutput, name: &str) -> Vec<u8> {
+    fn init_code_for(output: &truent_utils::SolcOutput, name: &str) -> Vec<u8> {
         let suffix = format!(":{name}");
         let entry = output
             .contracts
@@ -526,9 +526,9 @@ contract Attacker {
     fn revm_backend_catches_real_reentrancy_end_to_end() {
         use crate::backend::RevmBackend;
         // ExecutionBackend brings the `last_call_trace` trait method into scope.
-        use sentri_dynamic_core::{detect_reentrancy, ExecutionBackend};
+        use truent_dynamic_core::{detect_reentrancy, ExecutionBackend};
 
-        let Ok(solc) = sentri_utils::SolcManager::new() else {
+        let Ok(solc) = truent_utils::SolcManager::new() else {
             eprintln!("skipping revm_backend_catches_real_reentrancy_end_to_end: solc unavailable in this environment");
             return;
         };

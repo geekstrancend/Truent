@@ -41,7 +41,7 @@
 /// ```
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref PROXY_PATTERN: Regex =
@@ -102,7 +102,7 @@ pub fn detect_proxy_storage_collision(source: &str, file_path: &str) -> Vec<Find
             findings.push(
                 Finding::new(
                     "evm_proxy_storage_collision".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -134,7 +134,7 @@ pub fn detect_proxy_storage_collision(source: &str, file_path: &str) -> Vec<Find
             findings.push(
                 Finding::new(
                     "evm_proxy_storage_collision".to_string(),
-                    sentri_core::Severity::High,
+                    truent_core::Severity::High,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -219,7 +219,7 @@ mod tests {
         let findings = detect_proxy_storage_collision(safe, "test.sol");
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         assert!(
             critical_findings.is_empty(),
@@ -295,7 +295,7 @@ mod tests {
         let findings = detect_proxy_storage_collision(annotated, "test.sol");
         let _high_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::High)
+            .filter(|f| f.severity == truent_core::Severity::High)
             .collect();
         // Should be satisfied with annotations
     }

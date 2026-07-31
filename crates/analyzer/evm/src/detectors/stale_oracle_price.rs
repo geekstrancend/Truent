@@ -14,7 +14,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref LATEST_ROUND_DATA: Regex = Regex::new(r"(?i)\.latestRoundData\s*\(\s*\)").unwrap();

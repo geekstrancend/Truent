@@ -1,4 +1,4 @@
-# sentri-analyzer-soroban
+# truent-analyzer-soroban
 
 Static analyzer for Soroban (Stellar) smart contracts: Rust source compiled
 against `soroban-sdk`, using `#[contract]`/`#[contractimpl]` and `Env`-scoped
@@ -8,12 +8,12 @@ storage.
 
 ```toml
 [dependencies]
-sentri-analyzer-soroban = "0.3.0"
-sentri-core = "0.3.0"
+truent-analyzer-soroban = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ```rust
-use sentri_analyzer_soroban::run_all_detectors;
+use truent_analyzer_soroban::run_all_detectors;
 
 let source = std::fs::read_to_string("contract.rs")?;
 let findings = run_all_detectors(&source, "contract.rs");
@@ -22,7 +22,7 @@ for finding in findings {
 }
 ```
 
-`SorobanAnalyzer` also implements `sentri_core::traits::ChainAnalyzer` for
+`SorobanAnalyzer` also implements `truent_core::traits::ChainAnalyzer` for
 building a `ProgramModel` (`analyzer::SorobanAnalyzer.analyze(path)`).
 
 ## How it works
@@ -35,7 +35,7 @@ writes `persistent`/`temporary` storage and extends TTL, and whether a
 cross-contract call precedes a later storage write. Every detector in
 `detectors.rs` reads off that shared fact set — no detector re-parses source
 text on its own. `semantic_model.rs` feeds the same facts into the shared
-chain-agnostic `sentri_ir::rules::find_unauthorized_privileged_mutations`
+chain-agnostic `truent_ir::rules::find_unauthorized_privileged_mutations`
 rule (`require_auth` is Soroban's equivalent of Solana's `Signer<'info>` or
 EVM's `onlyOwner`).
 
@@ -54,7 +54,7 @@ EVM's `onlyOwner`).
 | `sor_unhandled_panic` | Low | `.unwrap()`/`.expect(` calls, which abort the whole invocation |
 
 Plus the shared `unauthorized_privileged_mutation` (Critical) rule from
-`sentri_ir::rules`.
+`truent_ir::rules`.
 
 ## Known limitations
 
@@ -64,7 +64,7 @@ Plus the shared `unauthorized_privileged_mutation` (Critical) rule from
   `overflow-checks = true` is set in the contract's release profile — see
   `sor_unchecked_arithmetic`'s message for that recommendation instead).
 - Detection is source-text-pattern-based against re-stringified `syn` AST
-  fragments (the same technique `sentri-analyzer-solana` uses), not full
+  fragments (the same technique `truent-analyzer-solana` uses), not full
   data-flow analysis — e.g. `sor_unchecked_arithmetic` flags a function if
   it contains *any* raw arithmetic and *no* `checked_*` call anywhere in
   that function, not per-operation.

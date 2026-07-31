@@ -18,7 +18,7 @@ export function AsciiLogo({ className, glow = false }: AsciiLogoProps) {
   return (
     <pre
       className={finalClassName}
-      aria-label="Sentri"
+      aria-label="Truent"
       role="img"
     >
       {LOGO}

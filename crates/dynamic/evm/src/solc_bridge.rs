@@ -1,5 +1,5 @@
 //! Bridges `solc`'s `--combined-json abi,bin` output (already produced by
-//! `sentri_utils::SolcManager`, previously only used for its AST) into the
+//! `truent_utils::SolcManager`, previously only used for its AST) into the
 //! chain-agnostic [`FunctionSpec`]/[`CompiledContract`] shapes the dynamic
 //! fuzzer needs.
 //!
@@ -14,7 +14,7 @@
 //! comment for the end-to-end test that would close this out.
 
 use crate::types::CompiledContract;
-use sentri_dynamic_core::{FunctionSpec, ParamKind};
+use truent_dynamic_core::{FunctionSpec, ParamKind};
 use sha3::{Digest, Keccak256};
 
 /// Computes the 4-byte Solidity function selector: the first 4 bytes of
@@ -35,7 +35,7 @@ fn param_kind_for(solidity_type: &str) -> Option<ParamKind> {
         t if t.starts_with("uint") => Some(ParamKind::Uint256),
         // Signed integers, dynamic bytes/string/arrays, tuples, and
         // fixed-size arrays aren't supported by the static-word encoder in
-        // sentri-dynamic-core yet; functions using them are skipped rather
+        // truent-dynamic-core yet; functions using them are skipped rather
         // than mis-encoded.
         _ => None,
     }

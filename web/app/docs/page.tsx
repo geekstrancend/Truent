@@ -29,7 +29,7 @@ const QUICK_START_CARDS = [
   {
     icon: <GitBranch size={20} className="text-acc-text" />,
     title: 'CI/CD Integration',
-    description: 'Connect Sentri to GitHub Actions or GitLab CI in one step.',
+    description: 'Connect Truent to GitHub Actions or GitLab CI in one step.',
     href: '/docs/ci-cd',
     cta: 'Set up pipeline',
   },
@@ -44,7 +44,7 @@ const QUICK_START_CARDS = [
   {
     icon: <Zap size={20} className="text-acc-text" />,
     title: 'REST API',
-    description: 'Integrate Sentri headlessly into your own tooling and workflows.',
+    description: 'Integrate Truent headlessly into your own tooling and workflows.',
     href: '/docs/api',
     cta: 'API reference',
   },
@@ -53,15 +53,15 @@ const QUICK_START_CARDS = [
 const FEATURED_SNIPPETS = [
   {
     label: 'Install',
-    code: 'cargo install sentri-cli',
+    code: 'cargo install truent-cli',
   },
   {
     label: 'Scan',
-    code: 'sentri check ./contracts/ --chain evm',
+    code: 'truent check ./contracts/ --chain evm',
   },
   {
     label: 'CI',
-    code: 'uses: sentri-dev/sentri-action@v1',
+    code: 'uses: truent-dev/truent-action@v1',
   },
 ]
 
@@ -75,7 +75,7 @@ export default function DocsPage() {
             <span className="text-label-sm text-acc-text">DOCUMENTATION</span>
           </div>
           <h1 className="font-display text-5xl font-[700] text-text mb-4 leading-[1.1]">
-            Sentri Documentation
+            Truent Documentation
           </h1>
           <p className="text-body-lg text-sec max-w-2xl leading-7">
             Everything you need to audit, secure, and ship smart contracts with confidence. From first scan to CI/CD integration.
@@ -133,8 +133,8 @@ export default function DocsPage() {
           <h3 className="font-display text-lg font-[600] text-text mb-4">Pro Tips</h3>
           <ul className="space-y-3">
             {[
-              <>Add a <code className="bg-panel border border-hair px-1.5 py-0.5 rounded font-mono text-xs text-acc-text">SENTRI.md</code> in your repo root to give context to the AI Co-Auditor</>,
-              'Integrate Sentri into CI/CD to scan on every pull request before merge',
+              <>Add a <code className="bg-panel border border-hair px-1.5 py-0.5 rounded font-mono text-xs text-acc-text">TRUENT.md</code> in your repo root to give context to the AI Co-Auditor</>,
+              'Integrate Truent into CI/CD to scan on every pull request before merge',
               'Use custom invariant libraries to define protocol-specific security rules',
               'Share reports directly with your audit team via GitHub and GitLab integrations',
             ].map((tip, i) => (

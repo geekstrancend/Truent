@@ -1,14 +1,14 @@
-# sentri-analyzer-evm
+# truent-analyzer-evm
 
-EVM (Solidity) analyzer for the Sentri framework.
+EVM (Solidity) analyzer for the Truent framework.
 
 ## Usage
 
 ```toml
 [dependencies]
-sentri-analyzer-evm = "0.3.0"
-sentri-core = "0.3.0"
-sentri-ir = "0.3.0"
+truent-analyzer-evm = "0.3.0"
+truent-core = "0.3.0"
+truent-ir = "0.3.0"
 ```
 
 ## Key Components
@@ -21,7 +21,7 @@ sentri-ir = "0.3.0"
 ## Example
 
 ```rust
-use sentri_analyzer_evm::detectors::run_all_detectors;
+use truent_analyzer_evm::detectors::run_all_detectors;
 
 let source = std::fs::read_to_string("Vault.sol")?;
 let findings = run_all_detectors(&source, "Vault.sol");

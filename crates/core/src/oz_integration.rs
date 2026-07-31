@@ -1,7 +1,7 @@
 /// OpenZeppelin Integration Module
 ///
-/// Integrates Sentri findings with OpenZeppelin Contracts library patterns and audit standards.
-/// Provides mapping between Sentri detectors and known OZ vulnerabilities, enabling
+/// Integrates Truent findings with OpenZeppelin Contracts library patterns and audit standards.
+/// Provides mapping between Truent detectors and known OZ vulnerabilities, enabling
 /// cross-reference with OZ audit recommendations and security standards.
 use crate::Finding;
 use std::collections::HashMap;
@@ -46,7 +46,7 @@ pub struct OZRecommendation {
     pub reference: String,
 }
 
-/// Mapping between Sentri detectors and OZ vulnerability types
+/// Mapping between Truent detectors and OZ vulnerability types
 pub struct OZMappingRegistry {
     detector_to_oz: HashMap<String, OZVulnerabilityType>,
     oz_to_recommendations: HashMap<OZVulnerabilityType, Vec<OZRecommendation>>,
@@ -211,7 +211,7 @@ impl OZMappingRegistry {
 /// Finding enriched with OZ context
 #[derive(Debug, Clone)]
 pub struct EnrichedFinding {
-    /// Original Sentri finding
+    /// Original Truent finding
     pub original_finding: Finding,
     /// Mapped OZ vulnerability type
     pub oz_type: Option<OZVulnerabilityType>,

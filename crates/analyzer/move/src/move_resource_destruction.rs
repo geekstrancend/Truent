@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref RESOURCE_STRUCT: Regex =
@@ -60,7 +60,7 @@ pub fn detect_move_resource_destruction(source: &str, file_path: &str) -> Vec<Fi
             findings.push(
                 Finding::new(
                     "move_resource_destruction".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

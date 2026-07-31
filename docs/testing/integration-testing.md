@@ -21,7 +21,7 @@ tests/integration/
 
 ### 1. **Project Structure Tests**
 
-Validate that Sentri works with complete projects:
+Validate that Truent works with complete projects:
 
 ```rust
 #[test]
@@ -41,14 +41,14 @@ name = "test-project"
 version = "0.1.0"
 chains = ["solana", "evm"]
 "#;
-    fs::write(base.join("sentri.toml"), config)?;
+    fs::write(base.join("truent.toml"), config)?;
 
     // Verify structure
     assert!(base.join("invariants").exists());
 }
 ```
 
-### 2. **DSL Sentriiant Tests**
+### 2. **DSL Invariant Tests**
 
 Test real-world invariant examples:
 
@@ -250,16 +250,16 @@ description: "Token minting maintains supply invariant"
 chain: EVM
 contract: Token
 
-// Sentriiant 1: Conservation
+// Invariant 1: Conservation
 global:
     sum(balances[*]) == totalSupply
 
-// Sentriiant 2: Mint bounds
+// Invariant 2: Mint bounds
 forall mint_op in state.recent_mints:
     mint_op.amount <= MAX_MINT_PER_TX &&
     mint_op.minter_role_check == true
 
-// Sentriiant 3: Overflow prevention
+// Invariant 3: Overflow prevention
 global:
     totalSupply <= MAX_UINT256
 "#.to_string()

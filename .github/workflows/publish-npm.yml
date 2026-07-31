@@ -69,13 +69,13 @@ jobs:
           MAX_RETRIES=30
           RETRY_DELAY=10
           
-          echo "Verifying sentri-cli v$VERSION on crates.io..."
+          echo "Verifying truent-cli v$VERSION on crates.io..."
           
           for i in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $i/$MAX_RETRIES..."
             
-            if cargo search sentri-cli --limit 1 | grep -q "sentri-cli = \"$VERSION\""; then
-              echo "✓ sentri-cli v$VERSION found on crates.io"
+            if cargo search truent-cli --limit 1 | grep -q "truent-cli = \"$VERSION\""; then
+              echo "✓ truent-cli v$VERSION found on crates.io"
               exit 0
             fi
             
@@ -85,7 +85,7 @@ jobs:
             fi
           done
           
-          echo "::error::sentri-cli v$VERSION never appeared on crates.io after ${MAX_RETRIES} attempts."
+          echo "::error::truent-cli v$VERSION never appeared on crates.io after ${MAX_RETRIES} attempts."
           echo "The npm wrapper resolves the published crate, so publishing it now would ship"
           echo "a package pointing at a version that does not exist. Failing instead."
           exit 1
@@ -143,9 +143,9 @@ jobs:
         id: binary
         run: |
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            echo "name=sentri.exe" >> $GITHUB_OUTPUT
+            echo "name=truent.exe" >> $GITHUB_OUTPUT
           else
-            echo "name=sentri" >> $GITHUB_OUTPUT
+            echo "name=truent" >> $GITHUB_OUTPUT
           fi
 
       - name: Upload binary artifact
@@ -181,63 +181,63 @@ jobs:
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
           
-          cd sentri-npm
+          cd truent-npm
           
           # Update package.json version
           npm version "$VERSION" --no-git-tag-version
           
-          echo "✓ Updated sentri-npm to v$VERSION"
+          echo "✓ Updated truent-npm to v$VERSION"
           cat package.json | grep '"version"'
 
       - name: Organize binaries for npm
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
-          mkdir -p sentri-npm/bin/releases
+          mkdir -p truent-npm/bin/releases
           
           # Organize binaries by platform
-          mkdir -p sentri-npm/bin/releases/{linux-x64,linux-arm64,darwin-x64,darwin-arm64,win32-x64}
+          mkdir -p truent-npm/bin/releases/{linux-x64,linux-arm64,darwin-x64,darwin-arm64,win32-x64}
           
           # Linux x86_64 (glibc)
-          if [ -f binaries/binary-x86_64-unknown-linux-gnu/sentri ]; then
-            cp binaries/binary-x86_64-unknown-linux-gnu/sentri sentri-npm/bin/releases/linux-x64/sentri
-            chmod +x sentri-npm/bin/releases/linux-x64/sentri
+          if [ -f binaries/binary-x86_64-unknown-linux-gnu/truent ]; then
+            cp binaries/binary-x86_64-unknown-linux-gnu/truent truent-npm/bin/releases/linux-x64/truent
+            chmod +x truent-npm/bin/releases/linux-x64/truent
           fi
           
           # Linux x86_64 (musl)
-          if [ -f binaries/binary-x86_64-unknown-linux-musl/sentri ]; then
-            cp binaries/binary-x86_64-unknown-linux-musl/sentri sentri-npm/bin/releases/linux-x64/sentri-musl
-            chmod +x sentri-npm/bin/releases/linux-x64/sentri-musl
+          if [ -f binaries/binary-x86_64-unknown-linux-musl/truent ]; then
+            cp binaries/binary-x86_64-unknown-linux-musl/truent truent-npm/bin/releases/linux-x64/truent-musl
+            chmod +x truent-npm/bin/releases/linux-x64/truent-musl
           fi
           
           # Linux aarch64
-          if [ -f binaries/binary-aarch64-unknown-linux-gnu/sentri ]; then
-            cp binaries/binary-aarch64-unknown-linux-gnu/sentri sentri-npm/bin/releases/linux-arm64/sentri
-            chmod +x sentri-npm/bin/releases/linux-arm64/sentri
+          if [ -f binaries/binary-aarch64-unknown-linux-gnu/truent ]; then
+            cp binaries/binary-aarch64-unknown-linux-gnu/truent truent-npm/bin/releases/linux-arm64/truent
+            chmod +x truent-npm/bin/releases/linux-arm64/truent
           fi
           
           # macOS x86_64
-          if [ -f binaries/binary-x86_64-apple-darwin/sentri ]; then
-            cp binaries/binary-x86_64-apple-darwin/sentri sentri-npm/bin/releases/darwin-x64/sentri
-            chmod +x sentri-npm/bin/releases/darwin-x64/sentri
+          if [ -f binaries/binary-x86_64-apple-darwin/truent ]; then
+            cp binaries/binary-x86_64-apple-darwin/truent truent-npm/bin/releases/darwin-x64/truent
+            chmod +x truent-npm/bin/releases/darwin-x64/truent
           fi
           
           # macOS aarch64
-          if [ -f binaries/binary-aarch64-apple-darwin/sentri ]; then
-            cp binaries/binary-aarch64-apple-darwin/sentri sentri-npm/bin/releases/darwin-arm64/sentri
-            chmod +x sentri-npm/bin/releases/darwin-arm64/sentri
+          if [ -f binaries/binary-aarch64-apple-darwin/truent ]; then
+            cp binaries/binary-aarch64-apple-darwin/truent truent-npm/bin/releases/darwin-arm64/truent
+            chmod +x truent-npm/bin/releases/darwin-arm64/truent
           fi
           
           # Windows x86_64
-          if [ -f binaries/binary-x86_64-pc-windows-msvc/sentri.exe ]; then
-            cp binaries/binary-x86_64-pc-windows-msvc/sentri.exe sentri-npm/bin/releases/win32-x64/sentri.exe
+          if [ -f binaries/binary-x86_64-pc-windows-msvc/truent.exe ]; then
+            cp binaries/binary-x86_64-pc-windows-msvc/truent.exe truent-npm/bin/releases/win32-x64/truent.exe
           fi
           
           echo "✓ Organized binaries:"
-          find sentri-npm/bin/releases -type f -exec ls -lh {} \;
+          find truent-npm/bin/releases -type f -exec ls -lh {} \;
 
       - name: Verify npm structure
         run: |
-          cd sentri-npm
+          cd truent-npm
           
           echo "Package structure:"
           ls -la
@@ -252,20 +252,20 @@ jobs:
 
       - name: Create npm tarball
         run: |
-          cd sentri-npm
+          cd truent-npm
           npm pack
           
-          TARBALL=$(ls sentri-*.tgz 2>/dev/null | head -1)
+          TARBALL=$(ls truent-*.tgz 2>/dev/null | head -1)
           if [ -n "$TARBALL" ]; then
-            mv "$TARBALL" ../sentri-npm-${{ needs.extract-version.outputs.version }}.tgz
-            echo "✓ Created: sentri-npm-${{ needs.extract-version.outputs.version }}.tgz"
+            mv "$TARBALL" ../truent-npm-${{ needs.extract-version.outputs.version }}.tgz
+            echo "✓ Created: truent-npm-${{ needs.extract-version.outputs.version }}.tgz"
           fi
 
       - name: Upload npm package artifact
         uses: actions/upload-artifact@v4
         with:
           name: npm-package
-          path: sentri-npm-${{ needs.extract-version.outputs.version }}.tgz
+          path: truent-npm-${{ needs.extract-version.outputs.version }}.tgz
           retention-days: 1
 
   # Test npm package
@@ -291,13 +291,13 @@ jobs:
 
       - name: Install from tarball
         run: |
-          npm install sentri-npm-${{ needs.extract-version.outputs.version }}.tgz -g
+          npm install truent-npm-${{ needs.extract-version.outputs.version }}.tgz -g
 
-      - name: Test sentri command
+      - name: Test truent command
         run: |
-          sentri --version
-          sentri --help
-          sentri doctor
+          truent --version
+          truent --help
+          truent doctor
 
   # Publish to npm
   publish-npm:
@@ -326,7 +326,7 @@ jobs:
       - name: Extract and verify package
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
-          TARBALL="sentri-npm-${VERSION}.tgz"
+          TARBALL="truent-npm-${VERSION}.tgz"
           
           if [ ! -f "$TARBALL" ]; then
             echo "ERROR: npm package not found: $TARBALL"
@@ -342,7 +342,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
-          TARBALL="sentri-npm-${VERSION}.tgz"
+          TARBALL="truent-npm-${VERSION}.tgz"
           
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "::error::NPM_TOKEN is not configured — cannot publish to npm."
@@ -401,7 +401,7 @@ jobs:
           script: |
             const version = "${{ needs.extract-version.outputs.version }}";
             const npmLink = `https://www.npmjs.com/package/@dextonicx/cli/v/${version}`;
-            const caratesLink = `https://crates.io/crates/sentri-cli/${version}`;
+            const caratesLink = `https://crates.io/crates/truent-cli/${version}`;
             
             const release = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
@@ -409,7 +409,7 @@ jobs:
               tag: "${{ needs.extract-version.outputs.tag }}",
             });
             
-            const body = release.data.body + `\n\n## Package Links\n\n- **npm**: [@dextonicx/cli@${version}](${npmLink})\n- **crates.io**: [sentri-cli v${version}](${caratesLink})\n`;
+            const body = release.data.body + `\n\n## Package Links\n\n- **npm**: [@dextonicx/cli@${version}](${npmLink})\n- **crates.io**: [truent-cli v${version}](${caratesLink})\n`;
             
             await github.rest.repos.updateRelease({
               owner: context.repo.owner,
@@ -429,18 +429,18 @@ jobs:
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
           echo "=========================================="
-          echo "✓ SENTRI v${VERSION}"
+          echo "✓ TRUENT v${VERSION}"
           echo "  NPM PUBLICATION COMPLETED"
           echo "=========================================="
           echo ""
           echo "Package Published:"
           echo "  npm: @dextonicx/cli@${VERSION}"
-          echo "  crates.io: sentri-cli v${VERSION}"
+          echo "  crates.io: truent-cli v${VERSION}"
           echo ""
           echo "Installation:"
           echo "  npm install -g @dextonicx/cli"
-          echo "  cargo install sentri-cli"
+          echo "  cargo install truent-cli"
           echo ""
           echo "Links:"
           echo "  https://www.npmjs.com/package/@dextonicx/cli/v/${VERSION}"
-          echo "  https://crates.io/crates/sentri-cli/${VERSION}"
+          echo "  https://crates.io/crates/truent-cli/${VERSION}"

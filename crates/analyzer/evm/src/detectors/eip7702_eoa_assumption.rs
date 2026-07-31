@@ -17,7 +17,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref TX_ORIGIN_USAGE: Regex = Regex::new(r"(?i)tx\.origin").unwrap();

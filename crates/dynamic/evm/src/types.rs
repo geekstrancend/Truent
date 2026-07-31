@@ -3,7 +3,7 @@
 //! dependency-free on purpose so the solc/ABI parsing logic can be built
 //! and tested in environments without `revm` available.
 
-use sentri_dynamic_core::FunctionSpec;
+use truent_dynamic_core::FunctionSpec;
 
 /// Everything needed to run the dynamic fuzzer against a single Solidity
 /// contract: its creation bytecode and the callable surface derived from

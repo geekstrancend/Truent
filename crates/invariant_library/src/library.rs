@@ -1,7 +1,7 @@
 //! Invariant library management.
 
-use sentri_core::model::{Expression, Invariant};
-use sentri_dsl_parser::parse_invariant;
+use truent_core::model::{Expression, Invariant};
+use truent_dsl_parser::parse_invariant;
 use std::collections::BTreeMap;
 use tracing::warn;
 

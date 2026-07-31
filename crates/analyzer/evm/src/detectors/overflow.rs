@@ -7,7 +7,7 @@
 use crate::ast_types::*;
 use crate::ast_walker::AstVisitor;
 use crate::bytecode::Severity;
-/// Placeholder for violation type until proper integration with sentri_core
+/// Placeholder for violation type until proper integration with truent_core
 #[derive(Debug, Clone)]
 struct Violation;
 /// Detects integer overflow vulnerabilities

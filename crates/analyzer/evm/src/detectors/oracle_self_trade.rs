@@ -6,7 +6,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Regex to match external function definitions
@@ -79,7 +79,7 @@ pub fn detect_oracle_self_trade(source: &str, file_path: &str) -> Vec<Finding> {
                 findings.push(
                     Finding::new(
                         "evm_oracle_self_trade".to_string(),
-                        sentri_core::Severity::Critical,
+                        truent_core::Severity::Critical,
                         file_path.to_string(),
                         func_line_num + 1,
                         0,

@@ -27,7 +27,7 @@
 /// ```
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref TRANSFER_PATTERN: Regex =
@@ -114,7 +114,7 @@ pub fn detect_reentrancy_via_whitelisted(source: &str, file_path: &str) -> Vec<F
             findings.push(
                 Finding::new(
                     "evm_reentrancy_via_whitelisted".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -136,7 +136,7 @@ pub fn detect_reentrancy_via_whitelisted(source: &str, file_path: &str) -> Vec<F
             findings.push(
                 Finding::new(
                     "evm_reentrancy_via_whitelisted".to_string(),
-                    sentri_core::Severity::High,
+                    truent_core::Severity::High,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -197,7 +197,7 @@ mod tests {
         let findings = detect_reentrancy_via_whitelisted(safe, "test.sol");
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         assert!(
             critical_findings.is_empty(),
@@ -218,7 +218,7 @@ mod tests {
         let findings = detect_reentrancy_via_whitelisted(weak, "test.sol");
         let high_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::High)
+            .filter(|f| f.severity == truent_core::Severity::High)
             .collect();
         assert!(
             !high_findings.is_empty(),
@@ -272,7 +272,7 @@ mod tests {
         let findings = detect_reentrancy_via_whitelisted(safe, "test.sol");
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         assert!(
             critical_findings.is_empty(),

@@ -120,7 +120,7 @@ proptest! {
 }
 ```
 
-### 5. **Sentriiant Property**
+### 5. **Invariant Property**
 > Certain properties must always be true
 
 ```rust

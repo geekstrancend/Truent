@@ -1,4 +1,4 @@
-//! Lexer for the Sentri DSL (uses pest internally).
+//! Lexer for the Truent DSL (uses pest internally).
 
 /// Token type placeholder; pest handles tokenization.
 /// This module is included for future extensibility.

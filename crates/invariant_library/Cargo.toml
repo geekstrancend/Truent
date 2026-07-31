@@ -1,5 +1,5 @@
 [package]
-name = "sentri-library"
+name = "truent-library"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Standard library of security invariants for the Sentri multi-chain security analyzer."
+description = "Truent: Standard library of security invariants for the Truent multi-chain security analyzer."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-library"
+documentation = "https://docs.rs/truent-library"
 
 [dependencies]
 anyhow.workspace = true
@@ -21,7 +21,7 @@ serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
-sentri-dsl-parser.workspace = true
+truent-core.workspace = true
+truent-dsl-parser.workspace = true
 
 [dev-dependencies]

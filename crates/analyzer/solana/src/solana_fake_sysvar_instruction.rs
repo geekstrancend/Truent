@@ -16,7 +16,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref UNCHECKED_LOAD: Regex = Regex::new(r"(?i)\bload_instruction_at\s*\(").unwrap();

@@ -14,14 +14,14 @@ export function MarketingFooter() {
           <div className="col-span-2 md:col-span-2 pr-8">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <ShieldCheck size={20} className="text-acc-text" />
-              <span className="font-mono font-[600] text-text text-base">Sentri</span>
+              <span className="font-mono font-[600] text-text text-base">Truent</span>
             </Link>
             <p className="text-sec text-body-md mb-6 leading-6">
               The invariant-driven smart contract security platform. Don&apos;t get Hacked.
             </p>
             <div className="flex items-center gap-3">
               <a
-                href="https://github.com/geekstrancend/Sentri"
+                href="https://github.com/geekstrancend/Truent"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-panel border border-hair text-sec hover:text-text hover:border-indigo transition-colors"
@@ -30,7 +30,7 @@ export function MarketingFooter() {
                 <Github size={16} />
               </a>
               <a
-                href="https://twitter.com/sentrisec"
+                href="https://twitter.com/truentsec"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-panel border border-hair text-sec hover:text-text hover:border-indigo transition-colors"
@@ -69,7 +69,7 @@ export function MarketingFooter() {
                 { label: 'Getting Started', href: '/docs/getting-started' },
                 { label: 'CLI Reference', href: '/docs/cli' },
                 { label: 'CI/CD Guide', href: '/docs/ci-cd' },
-                { label: 'GitHub', href: 'https://github.com/geekstrancend/Sentri', external: true },
+                { label: 'GitHub', href: 'https://github.com/geekstrancend/Truent', external: true },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -94,7 +94,7 @@ export function MarketingFooter() {
                 { label: 'Contact Sales', href: '/contact' },
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
-                { label: 'Security Disclosure', href: 'https://github.com/geekstrancend/Sentri/security/policy', external: true },
+                { label: 'Security Disclosure', href: 'https://github.com/geekstrancend/Truent/security/policy', external: true },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -118,12 +118,12 @@ export function MarketingFooter() {
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sec text-xs">
-            © {currentYear} Sentri Security, Inc. All rights reserved.
+            © {currentYear} Truent Security, Inc. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-sec">
             <Link href="/privacy" className="hover:text-text transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-text transition-colors">Terms</Link>
-            <a href="mailto:contact@sentri.dev" className="hover:text-text transition-colors">contact@sentri.dev</a>
+            <a href="mailto:contact@truent.dev" className="hover:text-text transition-colors">contact@truent.dev</a>
           </div>
         </div>
       </div>

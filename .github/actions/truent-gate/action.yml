@@ -1,0 +1,71 @@
+name: 'Truent Security Gate'
+description: 'Deterministic smart-contract security gate — fails the PR on findings and surfaces them in the Security tab (SARIF). Zero LLM cost, identical result every run.'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'File or directory to scan.'
+    required: false
+    default: '.'
+  chain:
+    description: 'Chain: evm | solana | move | soroban.'
+    required: false
+    default: 'evm'
+  fail-on:
+    description: 'Minimum severity that fails the check: low | medium | high | critical.'
+    required: false
+    default: 'critical'
+  truent-bin:
+    description: 'Path to the truent binary (must already be built/installed).'
+    required: false
+    default: 'truent'
+  upload-sarif:
+    description: 'Upload SARIF to GitHub code scanning (needs security-events: write).'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Truent gate
+      id: scan
+      shell: bash
+      run: |
+        set +e
+        TRUENT_BIN='${{ inputs.truent-bin }}' \
+        SCAN_PATH='${{ inputs.path }}' \
+        SCAN_CHAIN='${{ inputs.chain }}' \
+        FAIL_ON='${{ inputs.fail-on }}' \
+        OUT_JSON="$RUNNER_TEMP/truent-report.json" \
+        OUT_SARIF="$RUNNER_TEMP/truent.sarif" \
+        bash '${{ github.action_path }}/scripts/gate.sh'
+        echo "rc=$?" >> "$GITHUB_OUTPUT"
+        echo "sarif=$RUNNER_TEMP/truent.sarif" >> "$GITHUB_OUTPUT"
+        echo "report=$RUNNER_TEMP/truent-report.json" >> "$GITHUB_OUTPUT"
+
+    - name: Upload SARIF to code scanning
+      if: ${{ always() && inputs.upload-sarif == 'true' && hashFiles(steps.scan.outputs.sarif) != '' }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+        category: truent
+
+    - name: Publish report artifact
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: truent-report
+        path: ${{ steps.scan.outputs.report }}
+        if-no-files-found: ignore
+
+    - name: Enforce gate
+      shell: bash
+      run: |
+        rc='${{ steps.scan.outputs.rc }}'
+        if [ "$rc" != "0" ]; then
+          echo "Truent gate failed (findings at or above '${{ inputs.fail-on }}')." >&2
+          exit "$rc"
+        fi
+        echo "Truent gate passed."

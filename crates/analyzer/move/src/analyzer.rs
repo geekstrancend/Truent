@@ -1,8 +1,8 @@
 //! Move analyzer implementation.
 
-use sentri_core::model::{FunctionModel, ProgramModel};
-use sentri_core::traits::ChainAnalyzer;
-use sentri_core::{AnalysisContext, Result};
+use truent_core::model::{FunctionModel, ProgramModel};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::{AnalysisContext, Result};
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::info;
@@ -20,7 +20,7 @@ impl ChainAnalyzer for MoveAnalyzer {
     fn analyze(&self, path: &Path) -> Result<ProgramModel> {
         info!("Analyzing Move program at {:?}", path);
 
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
 
         // Extract module name
         let module_name = extract_module_name(&source).unwrap_or_else(|| "move_module".to_string());
@@ -42,7 +42,7 @@ impl ChainAnalyzer for MoveAnalyzer {
 
         // Add resource types as state variables
         for resource in &resources {
-            use sentri_core::model::StateVar;
+            use truent_core::model::StateVar;
             program.add_state_var(StateVar {
                 name: resource.clone(),
                 type_name: "resource".to_string(),
@@ -71,7 +71,7 @@ impl MoveAnalyzer {
         let mut context = AnalysisContext::new(program);
 
         // Read source for warning collection
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
         let lines: Vec<&str> = source.lines().collect();
 
         // Scan for common Move vulnerability patterns

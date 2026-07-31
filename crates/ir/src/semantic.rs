@@ -5,7 +5,7 @@
 //! rules (see [`crate::rules`]) operate only on this IR, so a rule written
 //! once applies unmodified to every chain that populates the model. This is
 //! the minimal slice of the shared IR needed to prove that pattern end to
-//! end (Sentri PRD Epic 6.1) — it is expected to grow incrementally as more
+//! end (Truent PRD Epic 6.1) — it is expected to grow incrementally as more
 //! rules are ported onto it, not to be a complete cross-chain abstraction.
 
 use serde::{Deserialize, Serialize};

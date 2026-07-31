@@ -1,9 +1,9 @@
 //! Solana analyzer implementation.
 
 use quote::quote;
-use sentri_core::model::{FunctionModel, ProgramModel, StateVar};
-use sentri_core::traits::ChainAnalyzer;
-use sentri_core::{AnalysisContext, Result};
+use truent_core::model::{FunctionModel, ProgramModel, StateVar};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::{AnalysisContext, Result};
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::{debug, info};
@@ -48,13 +48,13 @@ impl ChainAnalyzer for SolanaAnalyzer {
         info!("Analyzing Solana program at {:?}", path);
 
         // Read the Rust source file
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
 
         debug!("Source file size: {} bytes", source.len());
 
         // Parse using syn to get proper AST
         let file = syn::parse_file(&source).map_err(|e| {
-            sentri_core::InvarError::AnalysisFailed(format!("Failed to parse Rust: {}", e))
+            truent_core::InvarError::AnalysisFailed(format!("Failed to parse Rust: {}", e))
         })?;
 
         // Create a basic program model
@@ -209,7 +209,7 @@ impl SolanaAnalyzer {
         let mut context = AnalysisContext::new(program);
 
         // Read source for warning collection
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
         let lines: Vec<&str> = source.lines().collect();
 
         // Scan for common vulnerability patterns and add warnings
@@ -291,7 +291,7 @@ impl SolanaAnalyzer {
 
     /// Analyze Anchor accounts using AST parsing with Anchor awareness (v0.2)
     pub fn analyze_anchor_accounts(&self, path: &Path) -> Result<Vec<crate::AnchorAccountStruct>> {
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
         let file_name = path
             .file_name()
             .unwrap_or_default()
@@ -299,7 +299,7 @@ impl SolanaAnalyzer {
             .to_string();
 
         crate::parse_anchor_accounts(&source, &file_name).map_err(|e| {
-            sentri_core::InvarError::AnalysisFailed(format!(
+            truent_core::InvarError::AnalysisFailed(format!(
                 "Failed to parse Anchor accounts: {}",
                 e
             ))

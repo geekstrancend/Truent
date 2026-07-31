@@ -1,0 +1,9 @@
+.truent-bin/
+node_modules/
+*.test.js
+__tests__/
+.github/
+.git/
+.gitignore
+.eslintrc.json
+jest.config.js

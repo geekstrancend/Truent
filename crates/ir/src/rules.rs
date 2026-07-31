@@ -7,7 +7,7 @@
 //! extractor, not re-deriving every rule.
 
 use crate::semantic::SemanticModel;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 /// The shared invariant ID for [`find_unauthorized_privileged_mutations`],
 /// reused verbatim by every chain that reports it.

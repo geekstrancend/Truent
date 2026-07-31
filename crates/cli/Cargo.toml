@@ -1,5 +1,5 @@
 [package]
-name = "sentri-cli"
+name = "truent-cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,14 +7,14 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: multi-chain smart contract security analyzer with static analysis, invariant checking, and vulnerability detection for Solana, EVM, and Move programs."
+description = "Truent: multi-chain smart contract security analyzer with static analysis, invariant checking, and vulnerability detection for Solana, EVM, and Move programs."
 
-keywords = ["sentri", "solana", "smart-contracts", "security", "static-analysis"]
+keywords = ["truent", "solana", "smart-contracts", "security", "static-analysis"]
 categories = ["command-line-utilities", "development-tools", "development-tools::testing"]
 readme = "../../README.md"
-documentation = "https://docs.rs/sentri-cli"
+documentation = "https://docs.rs/truent-cli"
 [[bin]]
-name = "sentri"
+name = "truent"
 path = "src/main.rs"
 
 [dependencies]
@@ -28,22 +28,22 @@ tracing-subscriber.workspace = true
 clap.workspace = true
 colored.workspace = true
 terminal_size.workspace = true
-sentri-core.workspace = true
-sentri-ir.workspace = true
-sentri-dsl-parser.workspace = true
-sentri-utils.workspace = true
-sentri-library.workspace = true
-sentri-report.workspace = true
-sentri-analyzer-solana.workspace = true
-sentri-analyzer-evm.workspace = true
-sentri-analyzer-move.workspace = true
-sentri-analyzer-soroban.workspace = true
-sentri-generator-solana.workspace = true
-sentri-generator-evm.workspace = true
-sentri-generator-move.workspace = true
-sentri-dynamic-core.workspace = true
-sentri-dynamic-evm = { workspace = true, features = ["revm-backend"] }
-sentri-dynamic-solana.workspace = true
+truent-core.workspace = true
+truent-ir.workspace = true
+truent-dsl-parser.workspace = true
+truent-utils.workspace = true
+truent-library.workspace = true
+truent-report.workspace = true
+truent-analyzer-solana.workspace = true
+truent-analyzer-evm.workspace = true
+truent-analyzer-move.workspace = true
+truent-analyzer-soroban.workspace = true
+truent-generator-solana.workspace = true
+truent-generator-evm.workspace = true
+truent-generator-move.workspace = true
+truent-dynamic-core.workspace = true
+truent-dynamic-evm = { workspace = true, features = ["revm-backend"] }
+truent-dynamic-solana.workspace = true
 hex.workspace = true
 
 [dev-dependencies]

@@ -1,5 +1,5 @@
 [package]
-name = "sentri-dynamic-core"
+name = "truent-dynamic-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: chain-agnostic dynamic/coverage-guided invariant fuzzing engine (execution backend, call-sequence generation, shrinking, invariant oracles)."
+description = "Truent: chain-agnostic dynamic/coverage-guided invariant fuzzing engine (execution backend, call-sequence generation, shrinking, invariant oracles)."
 
-keywords = ["sentri", "fuzzing", "invariant", "security", "dynamic-analysis"]
+keywords = ["truent", "fuzzing", "invariant", "security", "dynamic-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-dynamic-core"
+documentation = "https://docs.rs/truent-dynamic-core"
 
 [dependencies]
 rand.workspace = true

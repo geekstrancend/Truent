@@ -1,6 +1,6 @@
-# sentri-library
+# truent-library
 
-Standard library of built-in invariants for the Sentri framework.
+Standard library of built-in invariants for the Truent framework.
 
 Ships 22 pre-configured security checks: 10 for EVM, 7 for Solana, 5 for
 Move. Each compiles through the real DSL parser into an executable
@@ -10,14 +10,14 @@ Move. Each compiles through the real DSL parser into an executable
 
 ```toml
 [dependencies]
-sentri-library = "0.3.0"
-sentri-core = "0.3.0"
+truent-library = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ## Loading invariants
 
 ```rust
-use sentri_library::InvariantLibrary;
+use truent_library::InvariantLibrary;
 
 // Built-in defaults for one chain:
 let lib = InvariantLibrary::with_defaults("evm");
@@ -53,7 +53,7 @@ DSL parser, for invariants defined outside this crate's Rust source.
 
 These are IDs handled by the DSL/invariant layer specifically; they're
 distinct from (and smaller in number than) the 50 pattern-based detectors
-in `sentri-analyzer-{evm,solana,move}`, which run directly against source
+in `truent-analyzer-{evm,solana,move}`, which run directly against source
 text/AST rather than through the DSL.
 
 ## License

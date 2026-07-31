@@ -2,7 +2,7 @@
 //!
 //! Detectors for Solana/Anchor program vulnerabilities.
 
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 /// Detects missing signer constraint on accounts
 pub fn detect_missing_signer(source: &str, file_path: &str) -> Vec<Finding> {

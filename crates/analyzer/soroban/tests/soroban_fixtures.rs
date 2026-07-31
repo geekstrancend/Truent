@@ -1,4 +1,4 @@
-use sentri_analyzer_soroban::run_all_detectors;
+use truent_analyzer_soroban::run_all_detectors;
 
 /// A contract that follows every Soroban best practice this analyzer
 /// checks for: `require_auth` on every privileged function, an init guard,
@@ -44,7 +44,7 @@ fn well_guarded_contract_has_no_critical_or_high_findings() {
         .filter(|f| {
             matches!(
                 f.severity,
-                sentri_core::Severity::Critical | sentri_core::Severity::High
+                truent_core::Severity::Critical | truent_core::Severity::High
             )
         })
         .collect();

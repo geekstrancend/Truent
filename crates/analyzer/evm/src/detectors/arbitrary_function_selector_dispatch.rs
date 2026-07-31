@@ -15,7 +15,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref RAW_CALL_WITH_VARIABLE_DATA: Regex =

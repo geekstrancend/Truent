@@ -1,23 +1,23 @@
-# sentri-dsl-parser
+# truent-dsl-parser
 
-Parser for Sentri's invariant DSL, built on `pest`.
+Parser for Truent's invariant DSL, built on `pest`.
 
-Compiles a single invariant definition string into a `sentri_ir::Invariant`
+Compiles a single invariant definition string into a `truent_ir::Invariant`
 (name, expression, severity, category) — this is what backs
-`sentri-library`'s built-in invariants and any user-defined invariants.
+`truent-library`'s built-in invariants and any user-defined invariants.
 
 ## Usage
 
 ```toml
 [dependencies]
-sentri-dsl-parser = "0.3.0"
-sentri-ir = "0.3.0"
+truent-dsl-parser = "0.3.0"
+truent-ir = "0.3.0"
 ```
 
 ## Parsing an Invariant
 
 ```rust
-use sentri_dsl_parser::parse_invariant;
+use truent_dsl_parser::parse_invariant;
 
 let invariant = parse_invariant("invariant BalancePositive { balance >= 0 }")?;
 println!("{}: {}", invariant.name, invariant.expression);

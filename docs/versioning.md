@@ -2,7 +2,7 @@
 
 ## Versioning Policy
 
-Sentri follows **Semantic Versioning** as defined at https://semver.org/
+Truent follows **Semantic Versioning** as defined at https://semver.org/
 
 ```
 Version: MAJOR.MINOR.PATCH
@@ -76,10 +76,10 @@ sum(values) >= 100              // New: 101 minimum
 
 ```bash
 # BREAKING: Command removal
-sentri check file.invar          # Old command removed
+truent check file.invar          # Old command removed
 
 # BREAKING: Flag removal
-sentri check --old-flag file.invar
+truent check --old-flag file.invar
 
 # BREAKING: Output format change
 # JSON structure significantly reorganized
@@ -209,7 +209,7 @@ Release 0.2.0:
 ```
 "The 'forall' keyword with type annotations is deprecated.
  Use pattern matching instead. See migration guide:
- https://sentri.sh/docs/0.3/migration"
+ https://truent.sh/docs/0.3/migration"
 ```
 
 Release 0.3.0:
@@ -226,7 +226,7 @@ error: removed syntax: 'forall x:Type in items'
 
 The old type annotation syntax was removed.
 Update your invariants to: 'forall x in items'
-See https://sentri.sh/docs/1.0/migration
+See https://truent.sh/docs/1.0/migration
 ```
 
 ## Backward Compatibility Guarantee
@@ -262,8 +262,8 @@ For each major version, publish:
 - New: `invariant: balance_check`
 
 ### CLI
-- Old: `sentri check file.invar`
-- New: `sentri analyze file.invar`
+- Old: `truent check file.invar`
+- New: `truent analyze file.invar`
 
 ### JSON Output
 - Field `violations` renamed to `failed_invariants`
@@ -329,7 +329,7 @@ move = []  # Experimental
 advanced-dsl = []  # Experimental
 
 [[bin]]
-name = "sentri-debug"
+name = "truent-debug"
 required-features = ["advanced-dsl"]
 ```
 
@@ -338,9 +338,9 @@ required-features = ["advanced-dsl"]
 Documentation for each major version:
 
 ```
-https://sentri.sh/docs/0.2/     # Previous
-https://sentri.sh/docs/1.0/     # Current
-https://sentri.sh/docs/latest   # Alias to current
+https://truent.sh/docs/0.2/     # Previous
+https://truent.sh/docs/1.0/     # Current
+https://truent.sh/docs/latest   # Alias to current
 ```
 
 API documentation:
@@ -399,16 +399,16 @@ For production environments:
 
 ```toml
 # Good - Accept patch updates
-sentri = "1.0"    # Accepts 1.0.x
+truent = "1.0"    # Accepts 1.0.x
 
 # Good - Pin minor version
-sentri = "1.1"    # Accepts 1.1.x
+truent = "1.1"    # Accepts 1.1.x
 
 # Caution - Pin everything
-sentri = "=1.0.5" # Only 1.0.5
+truent = "=1.0.5" # Only 1.0.5
 
 # Bad - Too permissive
-sentri = "*"      # Accepts any version
+truent = "*"      # Accepts any version
 ```
 
 ## Communicating Changes
@@ -444,4 +444,4 @@ Prominent section on breaking changes and migration.
 
 For versioning questions:
 - GitHub Issues with label `versioning`
-- Email: release@sentri-project.dev
+- Email: release@truent-project.dev

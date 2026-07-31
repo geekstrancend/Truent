@@ -4,12 +4,12 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'sentri-npm/**'
+      - 'truent-npm/**'
       - '.github/workflows/npm-package-ci.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'sentri-npm/**'
+      - 'truent-npm/**'
       - '.github/workflows/npm-package-ci.yml'
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
         node-version: ["18", "20", "22"]
     defaults:
       run:
-        working-directory: sentri-npm
+        working-directory: truent-npm
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-          cache-dependency-path: sentri-npm/package-lock.json
+          cache-dependency-path: truent-npm/package-lock.json
 
       # The postinstall script downloads the matching platform binary from
       # GitHub Releases; it's designed to warn and continue (not fail) if no

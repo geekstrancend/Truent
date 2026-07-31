@@ -1,6 +1,6 @@
 # Security Release Policy
 
-This document describes how Sentri handles security issues and releases security updates.
+This document describes how Truent handles security issues and releases security updates.
 
 ## Security Advisory Process
 
@@ -8,7 +8,7 @@ This document describes how Sentri handles security issues and releases security
 
 **DO NOT** open public GitHub issues for security vulnerabilities.
 
-Instead, email security@sentri.dev (or equivalent contact if no dedicated security email) with:
+Instead, email security@truent.dev (or equivalent contact if no dedicated security email) with:
 - Description of the vulnerability
 - Affected versions
 - Steps to reproduce (if applicable)
@@ -103,7 +103,7 @@ cargo build --release --target aarch64-apple-darwin
 cargo build --release --target x86_64-pc-windows-msvc
 
 # 3. Compute checksums
-sha256sum sentri-* > sentri.sha256
+sha256sum truent-* > truent.sha256
 
 # 4. Create signed git tag
 git tag -s -m "Release v0.1.0" v0.1.0
@@ -128,10 +128,10 @@ diff /tmp/Cargo.lock.release Cargo.lock
 
 # 3. Rebuild and compare
 cargo build --release --locked
-sha256sum target/release/sentri > /tmp/build.sha256
+sha256sum target/release/truent > /tmp/build.sha256
 
 # 4. Compare with published checksum
-sha256sum -c sentri-v${version}.sha256
+sha256sum -c truent-v${version}.sha256
 ```
 
 ## Supported Versions
@@ -180,7 +180,7 @@ For critical security issues, publish within 14 days:
 
 ## Compensation and Bug Bounty
 
-Sentri may offer:
+Truent may offer:
 - **Critical**: Up to $5,000
 - **High**: Up to $2,000
 - **Medium**: Up to $500
@@ -193,5 +193,5 @@ Eligibility:
 
 ## Questions?
 
-Contact: security@sentri.dev
+Contact: security@truent.dev
 

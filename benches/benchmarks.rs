@@ -1,4 +1,4 @@
-//! Performance benchmarks for Sentri core components.
+//! Performance benchmarks for Truent core components.
 //!
 //! These benchmarks measure:
 //! - Parsing performance
@@ -17,7 +17,7 @@ forall x in items:
     x > 0
 "#;
         b.iter(|| {
-            let _lexer = sentri_dsl_parser::lexer::Lexer::new(black_box(input));
+            let _lexer = truent_dsl_parser::lexer::Lexer::new(black_box(input));
             // Benchmark parsing
         });
     });
@@ -39,7 +39,7 @@ global:
     max(state.individual_balance) <= MAX_ALLOWED
 "#;
         b.iter(|| {
-            let _lexer = sentri_dsl_parser::lexer::Lexer::new(black_box(input));
+            let _lexer = truent_dsl_parser::lexer::Lexer::new(black_box(input));
             // Benchmark parsing
         });
     });
@@ -49,7 +49,7 @@ global:
         let input = format!("invariant: test_{}\nforall x in items: x > {}", size, size);
         group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, _| {
             b.iter(|| {
-                let _lexer = sentri_dsl_parser::lexer::Lexer::new(black_box(&input));
+                let _lexer = truent_dsl_parser::lexer::Lexer::new(black_box(&input));
             });
         });
     }
@@ -60,7 +60,7 @@ fn bench_type_checker(c: &mut Criterion) {
     c.bench_function("type_check_simple", |b| {
         let input = "x > 0 && y < 100";
         b.iter(|| {
-            let mut checker = sentri_core::type_checker::TypeChecker::new();
+            let mut checker = truent_core::type_checker::TypeChecker::new();
             let _ = checker.check_expr(black_box(input));
         });
     });
@@ -68,7 +68,7 @@ fn bench_type_checker(c: &mut Criterion) {
     c.bench_function("type_check_complex", |b| {
         let input = "(a: u64) + (b: u64) > (c: u64) && (d: bool) || (e: string) == (f: string)";
         b.iter(|| {
-            let mut checker = sentri_core::type_checker::TypeChecker::new();
+            let mut checker = truent_core::type_checker::TypeChecker::new();
             let _ = checker.check_expr(black_box(input));
         });
     });
@@ -81,7 +81,7 @@ fn bench_type_checker(c: &mut Criterion) {
             .join(" && ");
         group.bench_with_input(BenchmarkId::from_parameter(depth), depth, |b, _| {
             b.iter(|| {
-                let mut checker = sentri_core::type_checker::TypeChecker::new();
+                let mut checker = truent_core::type_checker::TypeChecker::new();
                 let _ = checker.check_expr(black_box(&input));
             });
         });
@@ -93,7 +93,7 @@ fn bench_evaluator(c: &mut Criterion) {
     c.bench_function("eval_literal", |b| {
         let input = "42";
         b.iter(|| {
-            let evaluator = sentri_core::evaluator::Evaluator::new();
+            let evaluator = truent_core::evaluator::Evaluator::new();
             let _ = evaluator.eval(black_box(input));
         });
     });
@@ -101,7 +101,7 @@ fn bench_evaluator(c: &mut Criterion) {
     c.bench_function("eval_arithmetic", |b| {
         let input = "2 + 3 * 4 - 1";
         b.iter(|| {
-            let evaluator = sentri_core::evaluator::Evaluator::new();
+            let evaluator = truent_core::evaluator::Evaluator::new();
             let _ = evaluator.eval(black_box(input));
         });
     });
@@ -109,7 +109,7 @@ fn bench_evaluator(c: &mut Criterion) {
     c.bench_function("eval_comparison", |b| {
         let input = "(10 > 5) && (20 < 30) || (100 == 100)";
         b.iter(|| {
-            let evaluator = sentri_core::evaluator::Evaluator::new();
+            let evaluator = truent_core::evaluator::Evaluator::new();
             let _ = evaluator.eval(black_box(input));
         });
     });
@@ -122,7 +122,7 @@ fn bench_evaluator(c: &mut Criterion) {
             .join(" + ");
         group.bench_with_input(BenchmarkId::from_parameter(len), len, |b, _| {
             b.iter(|| {
-                let evaluator = sentri_core::evaluator::Evaluator::new();
+                let evaluator = truent_core::evaluator::Evaluator::new();
                 let _ = evaluator.eval(black_box(&input));
             });
         });
@@ -138,7 +138,7 @@ forall x in [1,2,3,4,5,6,7,8,9,10]:
     x > 0 && x < 11
 "#;
         b.iter(|| {
-            let _lexer = sentri_dsl_parser::lexer::Lexer::new(black_box(input));
+            let _lexer = truent_dsl_parser::lexer::Lexer::new(black_box(input));
             // Measures allocation overhead
         });
     });

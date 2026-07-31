@@ -1,4 +1,4 @@
-/// Comprehensive Test Infrastructure for Sentri Detectors
+/// Comprehensive Test Infrastructure for Truent Detectors
 ///
 /// Provides unified testing framework for validating detector implementations
 /// across EVM, Solana, and Move chains with consistent test patterns.

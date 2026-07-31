@@ -1,5 +1,5 @@
-// Example Sentri DSL file demonstrating invariant syntax
-// This shows how to write invariants using the Sentri DSL
+// Example Truent DSL file demonstrating invariant syntax
+// This shows how to write invariants using the Truent DSL
 
 invariant BalanceNeverNegative {
     balance >= 0

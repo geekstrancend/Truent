@@ -22,7 +22,7 @@ export default function PrivacyPage() {
               1. Introduction
             </h2>
             <p className="text-body-md text-sec leading-7">
-              {'Sentri Security ("we," "us," "our," or "Company") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.'}
+              {'Truent Security ("we," "us," "our," or "Company") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.'}
             </p>
           </section>
 
@@ -88,8 +88,8 @@ export default function PrivacyPage() {
               If you have questions or comments about this Privacy Policy, please contact us at:
             </p>
             <div className="mt-3 text-body-md text-sec">
-              <p>Email: privacy@sentri.dev</p>
-              <p>Address: Sentri Security, Inc.</p>
+              <p>Email: privacy@truent.dev</p>
+              <p>Address: Truent Security, Inc.</p>
             </div>
           </section>
         </div>

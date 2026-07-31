@@ -10,7 +10,7 @@ use crate::ast_walker::AstVisitor;
 use crate::bytecode::Severity;
 use tracing::debug;
 
-/// Placeholder for violation type until proper integration with sentri_core
+/// Placeholder for violation type until proper integration with truent_core
 #[derive(Debug, Clone)]
 struct Violation;
 
@@ -82,7 +82,7 @@ impl<'a> AstVisitor for FlashLoanDetector<'a> {
                     // This function reads balance and computes price — flash loan vector
                     let _lines: Vec<&str> = self.source.lines().collect();
 
-                    // TODO: Use proper violation type from sentri_core when available
+                    // TODO: Use proper violation type from truent_core when available
                     // For now, just track the detection in debug logs
                     debug!(
                         "Flash loan vulnerability detected in {}::{} at line {}",

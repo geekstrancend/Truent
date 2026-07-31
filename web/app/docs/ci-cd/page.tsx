@@ -19,7 +19,7 @@ export default function CICDPage() {
             CI/CD Integration
           </h1>
           <p className="text-body-lg text-sec max-w-2xl">
-            Integrate Sentri security scanning into your deployment pipeline to catch vulnerabilities early.
+            Integrate Truent security scanning into your deployment pipeline to catch vulnerabilities early.
           </p>
         </div>
 
@@ -30,15 +30,15 @@ export default function CICDPage() {
           <p className="text-body-md text-sec mb-4 leading-relaxed">
             Add security scanning to your GitHub workflow:
           </p>
-          <CodeBlock language="yaml" code={`name: Sentri Security
+          <CodeBlock language="yaml" code={`name: Truent Security
 on: [push, pull_request]
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cargo install sentri-cli
-      - run: sentri check . --chain evm --format json`} />
+      - run: cargo install truent-cli
+      - run: truent check . --chain evm --format json`} />
         </section>
 
         <section id="gitlab-ci">
@@ -51,8 +51,8 @@ jobs:
           <CodeBlock language="yaml" code={`security-scan:
   image: rust:latest
   script:
-    - cargo install sentri-cli
-    - sentri check . --chain evm --format json`} />
+    - cargo install truent-cli
+    - truent check . --chain evm --format json`} />
         </section>
 
         <section id="failing-on-findings">
@@ -97,7 +97,7 @@ jobs:
           </p>
           <CodeBlock language="yaml" code={`- uses: actions/upload-artifact@v3
   with:
-    name: sentri-report
+    name: truent-report
     path: report.json
     retention-days: 90`} />
         </section>

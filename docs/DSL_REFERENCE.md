@@ -1,10 +1,10 @@
-# Sentri Invariant DSL Reference
+# Truent Invariant DSL Reference
 
-The Sentri Invariant DSL (Domain Specific Language) is a declarative language for defining smart contract invariants—conditions that must always be true for a contract to be considered secure.
+The Truent Invariant DSL (Domain Specific Language) is a declarative language for defining smart contract invariants—conditions that must always be true for a contract to be considered secure.
 
 ## Overview
 
-An invariant is a Boolean expression that defines a critical property your contract must maintain. Sentri checks these invariants throughout execution and reports violations.
+An invariant is a Boolean expression that defines a critical property your contract must maintain. Truent checks these invariants throughout execution and reports violations.
 
 ## File Format
 
@@ -46,7 +46,7 @@ invariant balance_conservation {
   condition: (msg.value + balance_increase == total_outflow)
   
   remediation: "Ensure all balance changes are tracked and equivalent"
-  reference: "https://docs.sentri.dev/invariants/balance-conservation"
+  reference: "https://docs.truent.dev/invariants/balance-conservation"
 }
 ```
 
@@ -385,7 +385,7 @@ moved(value)             Value was moved
 
 ## Pre-defined Invariant Library
 
-Sentri includes 22 built-in invariants organized by category:
+Truent includes 22 built-in invariants organized by category:
 
 ### Balance & Arithmetic (5)
 - `balance_conservation` - Total supply constant
@@ -433,19 +433,19 @@ enabled = ["balance_conservation", "no_reentrancy", "owner_only_function"]
 ### Syntax Validation
 
 ```bash
-sentri doctor          # Validates all invariants
+truent doctor          # Validates all invariants
 ```
 
 ### Dry Run
 
 ```bash
-sentri check ./contracts --dry-run
+truent check ./contracts --dry-run
 ```
 
 ### Debug Mode
 
 ```bash
-sentri check ./contracts --verbose --debug
+truent check ./contracts --verbose --debug
 ```
 
 Prints detailed analysis of each invariant check.
@@ -497,7 +497,7 @@ invariant whitelist_enforced {
 
 ## Debugging Invariants
 
-When an invariant fails, Sentri shows:
+When an invariant fails, Truent shows:
 - **Line number** - Where the invariant is defined
 - **Expression** - The condition that failed
 - **Context** - Values of relevant variables at failure time

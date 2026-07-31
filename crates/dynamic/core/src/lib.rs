@@ -6,7 +6,7 @@
 //! This crate contains no VM: it only knows how to generate call
 //! sequences, drive an [`ExecutionBackend`], check [`Invariant`]s after
 //! every call, and shrink a failing sequence to a minimal reproduction.
-//! Chain-specific crates (starting with `sentri-dynamic-evm`, backed by
+//! Chain-specific crates (starting with `truent-dynamic-evm`, backed by
 //! `revm`) provide the [`ExecutionBackend`] implementation; this crate's
 //! own test suite proves the engine logic correct against an in-memory
 //! mock so it never depends on a real VM being available to be verified.

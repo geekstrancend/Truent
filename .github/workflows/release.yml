@@ -187,22 +187,22 @@ jobs:
         run: cargo build --release --locked --target x86_64-unknown-linux-gnu
 
       - name: Strip binary
-        run: strip target/x86_64-unknown-linux-gnu/release/sentri
+        run: strip target/x86_64-unknown-linux-gnu/release/truent
 
       # v0.1: Smoke test binary on Linux
       - name: Smoke test binary
         run: |
-          chmod +x target/x86_64-unknown-linux-gnu/release/sentri
-          target/x86_64-unknown-linux-gnu/release/sentri --version
-          target/x86_64-unknown-linux-gnu/release/sentri --help
-          target/x86_64-unknown-linux-gnu/release/sentri doctor
+          chmod +x target/x86_64-unknown-linux-gnu/release/truent
+          target/x86_64-unknown-linux-gnu/release/truent --version
+          target/x86_64-unknown-linux-gnu/release/truent --help
+          target/x86_64-unknown-linux-gnu/release/truent doctor
           echo "✓ Binary smoke test passed"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-x86_64-linux-gnu
-          path: target/x86_64-unknown-linux-gnu/release/sentri
+          name: truent-x86_64-linux-gnu
+          path: target/x86_64-unknown-linux-gnu/release/truent
 
   build-linux-musl:
     name: Build (x86_64-linux-musl)
@@ -230,22 +230,22 @@ jobs:
         run: cargo build --release --locked --target x86_64-unknown-linux-musl
 
       - name: Strip binary
-        run: strip target/x86_64-unknown-linux-musl/release/sentri
+        run: strip target/x86_64-unknown-linux-musl/release/truent
 
       # v0.1: Smoke test binary on Linux musl
       - name: Smoke test binary
         run: |
-          chmod +x target/x86_64-unknown-linux-musl/release/sentri
-          target/x86_64-unknown-linux-musl/release/sentri --version
-          target/x86_64-unknown-linux-musl/release/sentri --help
-          target/x86_64-unknown-linux-musl/release/sentri doctor
+          chmod +x target/x86_64-unknown-linux-musl/release/truent
+          target/x86_64-unknown-linux-musl/release/truent --version
+          target/x86_64-unknown-linux-musl/release/truent --help
+          target/x86_64-unknown-linux-musl/release/truent doctor
           echo "✓ Binary smoke test passed"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-x86_64-linux-musl
-          path: target/x86_64-unknown-linux-musl/release/sentri
+          name: truent-x86_64-linux-musl
+          path: target/x86_64-unknown-linux-musl/release/truent
 
   build-linux-aarch64:
     name: Build (aarch64-linux-gnu)
@@ -276,19 +276,19 @@ jobs:
           cargo build --release --locked --target aarch64-unknown-linux-gnu
 
       - name: Strip binary
-        run: aarch64-linux-gnu-strip target/aarch64-unknown-linux-gnu/release/sentri
+        run: aarch64-linux-gnu-strip target/aarch64-unknown-linux-gnu/release/truent
 
       # v0.1: Verify binary exists and has correct architecture (cannot execute aarch64 on x86_64)
       - name: Verify binary exists and has correct architecture
         run: |
-          file target/aarch64-unknown-linux-gnu/release/sentri | grep -q "aarch64"
+          file target/aarch64-unknown-linux-gnu/release/truent | grep -q "aarch64"
           echo "✓ Binary is aarch64 architecture"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-aarch64-linux-gnu
-          path: target/aarch64-unknown-linux-gnu/release/sentri
+          name: truent-aarch64-linux-gnu
+          path: target/aarch64-unknown-linux-gnu/release/truent
 
   build-macos-x86_64:
     name: Build (x86_64-darwin)
@@ -315,21 +315,21 @@ jobs:
       - name: Strip binary
         run: |
           export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
-          strip target/x86_64-apple-darwin/release/sentri
+          strip target/x86_64-apple-darwin/release/truent
 
       # v0.1: Smoke test binary on macOS
       - name: Smoke test binary
         run: |
-          target/x86_64-apple-darwin/release/sentri --version
-          target/x86_64-apple-darwin/release/sentri --help
-          target/x86_64-apple-darwin/release/sentri doctor
+          target/x86_64-apple-darwin/release/truent --version
+          target/x86_64-apple-darwin/release/truent --help
+          target/x86_64-apple-darwin/release/truent doctor
           echo "✓ Binary smoke test passed"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-x86_64-apple-darwin
-          path: target/x86_64-apple-darwin/release/sentri
+          name: truent-x86_64-apple-darwin
+          path: target/x86_64-apple-darwin/release/truent
 
   build-macos-aarch64:
     name: Build (aarch64-darwin)
@@ -352,21 +352,21 @@ jobs:
         run: cargo build --release --locked --target aarch64-apple-darwin
 
       - name: Strip binary
-        run: strip target/aarch64-apple-darwin/release/sentri
+        run: strip target/aarch64-apple-darwin/release/truent
 
       # v0.1: Smoke test binary on macOS ARM
       - name: Smoke test binary
         run: |
-          target/aarch64-apple-darwin/release/sentri --version
-          target/aarch64-apple-darwin/release/sentri --help
-          target/aarch64-apple-darwin/release/sentri doctor
+          target/aarch64-apple-darwin/release/truent --version
+          target/aarch64-apple-darwin/release/truent --help
+          target/aarch64-apple-darwin/release/truent doctor
           echo "✓ Binary smoke test passed"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-aarch64-apple-darwin
-          path: target/aarch64-apple-darwin/release/sentri
+          name: truent-aarch64-apple-darwin
+          path: target/aarch64-apple-darwin/release/truent
 
   build-windows-x86_64:
     name: Build (x86_64-windows)
@@ -391,17 +391,17 @@ jobs:
       # v0.1: Smoke test binary on Windows
       - name: Smoke test binary
         run: |
-          .\target\x86_64-pc-windows-msvc\release\sentri.exe --version
-          .\target\x86_64-pc-windows-msvc\release\sentri.exe --help
-          .\target\x86_64-pc-windows-msvc\release\sentri.exe doctor
+          .\target\x86_64-pc-windows-msvc\release\truent.exe --version
+          .\target\x86_64-pc-windows-msvc\release\truent.exe --help
+          .\target\x86_64-pc-windows-msvc\release\truent.exe doctor
           Write-Host "✓ Binary smoke test passed"
         shell: pwsh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sentri-x86_64-pc-windows-msvc
-          path: target/x86_64-pc-windows-msvc/release/sentri.exe
+          name: truent-x86_64-pc-windows-msvc
+          path: target/x86_64-pc-windows-msvc/release/truent.exe
 
   # Stage 5: Reproducibility Verification
   verify-reproducibility:
@@ -425,7 +425,7 @@ jobs:
         run: |
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
           cargo build --release --locked --target x86_64-unknown-linux-gnu
-          sha256sum target/x86_64-unknown-linux-gnu/release/sentri > /tmp/build1.sha256
+          sha256sum target/x86_64-unknown-linux-gnu/release/truent > /tmp/build1.sha256
           cat /tmp/build1.sha256
 
       - name: Clean build artifacts
@@ -435,7 +435,7 @@ jobs:
         run: |
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
           cargo build --release --locked --target x86_64-unknown-linux-gnu
-          sha256sum target/x86_64-unknown-linux-gnu/release/sentri > /tmp/build2.sha256
+          sha256sum target/x86_64-unknown-linux-gnu/release/truent > /tmp/build2.sha256
           cat /tmp/build2.sha256
 
       - name: Verify determinism
@@ -472,47 +472,47 @@ jobs:
           echo "Creating distribution packages for version $VERSION"
           
           # Linux x86_64 (glibc)
-          mkdir -p sentri-v${VERSION}-x86_64-unknown-linux-gnu
-          cp binaries/sentri-x86_64-linux-gnu/sentri sentri-v${VERSION}-x86_64-unknown-linux-gnu/
-          cp LICENSE README.md sentri-v${VERSION}-x86_64-unknown-linux-gnu/
-          echo "$VERSION" > sentri-v${VERSION}-x86_64-unknown-linux-gnu/VERSION
-          tar czf dist/sentri-v${VERSION}-x86_64-unknown-linux-gnu.tar.gz sentri-v${VERSION}-x86_64-unknown-linux-gnu
+          mkdir -p truent-v${VERSION}-x86_64-unknown-linux-gnu
+          cp binaries/truent-x86_64-linux-gnu/truent truent-v${VERSION}-x86_64-unknown-linux-gnu/
+          cp LICENSE README.md truent-v${VERSION}-x86_64-unknown-linux-gnu/
+          echo "$VERSION" > truent-v${VERSION}-x86_64-unknown-linux-gnu/VERSION
+          tar czf dist/truent-v${VERSION}-x86_64-unknown-linux-gnu.tar.gz truent-v${VERSION}-x86_64-unknown-linux-gnu
           
           # Linux x86_64 (musl)
-          mkdir -p sentri-v${VERSION}-x86_64-unknown-linux-musl
-          cp binaries/sentri-x86_64-linux-musl/sentri sentri-v${VERSION}-x86_64-unknown-linux-musl/
-          cp LICENSE README.md sentri-v${VERSION}-x86_64-unknown-linux-musl/
-          echo "$VERSION" > sentri-v${VERSION}-x86_64-unknown-linux-musl/VERSION
-          tar czf dist/sentri-v${VERSION}-x86_64-unknown-linux-musl.tar.gz sentri-v${VERSION}-x86_64-unknown-linux-musl
+          mkdir -p truent-v${VERSION}-x86_64-unknown-linux-musl
+          cp binaries/truent-x86_64-linux-musl/truent truent-v${VERSION}-x86_64-unknown-linux-musl/
+          cp LICENSE README.md truent-v${VERSION}-x86_64-unknown-linux-musl/
+          echo "$VERSION" > truent-v${VERSION}-x86_64-unknown-linux-musl/VERSION
+          tar czf dist/truent-v${VERSION}-x86_64-unknown-linux-musl.tar.gz truent-v${VERSION}-x86_64-unknown-linux-musl
           
           # Linux aarch64
-          mkdir -p sentri-v${VERSION}-aarch64-unknown-linux-gnu
-          cp binaries/sentri-aarch64-linux-gnu/sentri sentri-v${VERSION}-aarch64-unknown-linux-gnu/
-          cp LICENSE README.md sentri-v${VERSION}-aarch64-unknown-linux-gnu/
-          echo "$VERSION" > sentri-v${VERSION}-aarch64-unknown-linux-gnu/VERSION
-          tar czf dist/sentri-v${VERSION}-aarch64-unknown-linux-gnu.tar.gz sentri-v${VERSION}-aarch64-unknown-linux-gnu
+          mkdir -p truent-v${VERSION}-aarch64-unknown-linux-gnu
+          cp binaries/truent-aarch64-linux-gnu/truent truent-v${VERSION}-aarch64-unknown-linux-gnu/
+          cp LICENSE README.md truent-v${VERSION}-aarch64-unknown-linux-gnu/
+          echo "$VERSION" > truent-v${VERSION}-aarch64-unknown-linux-gnu/VERSION
+          tar czf dist/truent-v${VERSION}-aarch64-unknown-linux-gnu.tar.gz truent-v${VERSION}-aarch64-unknown-linux-gnu
           
           # macOS x86_64
-          mkdir -p sentri-v${VERSION}-x86_64-apple-darwin
-          cp binaries/sentri-x86_64-apple-darwin/sentri sentri-v${VERSION}-x86_64-apple-darwin/
-          cp LICENSE README.md sentri-v${VERSION}-x86_64-apple-darwin/
-          echo "$VERSION" > sentri-v${VERSION}-x86_64-apple-darwin/VERSION
-          tar czf dist/sentri-v${VERSION}-x86_64-apple-darwin.tar.gz sentri-v${VERSION}-x86_64-apple-darwin
+          mkdir -p truent-v${VERSION}-x86_64-apple-darwin
+          cp binaries/truent-x86_64-apple-darwin/truent truent-v${VERSION}-x86_64-apple-darwin/
+          cp LICENSE README.md truent-v${VERSION}-x86_64-apple-darwin/
+          echo "$VERSION" > truent-v${VERSION}-x86_64-apple-darwin/VERSION
+          tar czf dist/truent-v${VERSION}-x86_64-apple-darwin.tar.gz truent-v${VERSION}-x86_64-apple-darwin
           
           # macOS aarch64
-          mkdir -p sentri-v${VERSION}-aarch64-apple-darwin
-          cp binaries/sentri-aarch64-apple-darwin/sentri sentri-v${VERSION}-aarch64-apple-darwin/
-          cp LICENSE README.md sentri-v${VERSION}-aarch64-apple-darwin/
-          echo "$VERSION" > sentri-v${VERSION}-aarch64-apple-darwin/VERSION
-          tar czf dist/sentri-v${VERSION}-aarch64-apple-darwin.tar.gz sentri-v${VERSION}-aarch64-apple-darwin
+          mkdir -p truent-v${VERSION}-aarch64-apple-darwin
+          cp binaries/truent-aarch64-apple-darwin/truent truent-v${VERSION}-aarch64-apple-darwin/
+          cp LICENSE README.md truent-v${VERSION}-aarch64-apple-darwin/
+          echo "$VERSION" > truent-v${VERSION}-aarch64-apple-darwin/VERSION
+          tar czf dist/truent-v${VERSION}-aarch64-apple-darwin.tar.gz truent-v${VERSION}-aarch64-apple-darwin
           
           # Windows
-          mkdir -p sentri-v${VERSION}-x86_64-pc-windows-msvc
-          cp binaries/sentri-x86_64-pc-windows-msvc/sentri.exe sentri-v${VERSION}-x86_64-pc-windows-msvc/
-          cp LICENSE README.md sentri-v${VERSION}-x86_64-pc-windows-msvc/
-          echo "$VERSION" > sentri-v${VERSION}-x86_64-pc-windows-msvc/VERSION
-          cd sentri-v${VERSION}-x86_64-pc-windows-msvc
-          zip -r ../dist/sentri-v${VERSION}-x86_64-pc-windows-msvc.zip . 
+          mkdir -p truent-v${VERSION}-x86_64-pc-windows-msvc
+          cp binaries/truent-x86_64-pc-windows-msvc/truent.exe truent-v${VERSION}-x86_64-pc-windows-msvc/
+          cp LICENSE README.md truent-v${VERSION}-x86_64-pc-windows-msvc/
+          echo "$VERSION" > truent-v${VERSION}-x86_64-pc-windows-msvc/VERSION
+          cd truent-v${VERSION}-x86_64-pc-windows-msvc
+          zip -r ../dist/truent-v${VERSION}-x86_64-pc-windows-msvc.zip . 
           cd ..
           
           ls -lh dist/
@@ -637,17 +637,17 @@ jobs:
           }
 
           # Dependency order: each crate's internal deps must already be on
-          # crates.io before it publishes. sentri-cli depends on everything, so
+          # crates.io before it publishes. truent-cli depends on everything, so
           # it is last.
           CRATES="
-            sentri-core
-            sentri-ir sentri-utils
-            sentri-dsl-parser sentri-report
-            sentri-library
-            sentri-analyzer-evm sentri-analyzer-move sentri-analyzer-solana sentri-analyzer-soroban sentri-solana-macro
-            sentri-generator-evm sentri-generator-move sentri-generator-solana
-            sentri-dynamic-core sentri-dynamic-evm sentri-dynamic-solana
-            sentri-cli
+            truent-core
+            truent-ir truent-utils
+            truent-dsl-parser truent-report
+            truent-library
+            truent-analyzer-evm truent-analyzer-move truent-analyzer-solana truent-analyzer-soroban truent-solana-macro
+            truent-generator-evm truent-generator-move truent-generator-solana
+            truent-dynamic-core truent-dynamic-evm truent-dynamic-solana
+            truent-cli
           "
           for crate in $CRATES; do
             publish_crate "$crate" || exit 1
@@ -704,7 +704,7 @@ jobs:
           cat /tmp/changelog.txt > /tmp/release_notes.md
 
           # v0.1: Enhanced release notes with quick start and new features
-          printf '\n## Installation\n\nInstall the latest version with:\n\n```bash\ncargo install sentri-cli --version %s\n```\n\nOr download pre-built binaries from the Assets section below.\n\n## Quick Start\n\n```bash\n# Check an EVM contract\nsentri check ./contracts --chain evm\n\n# Check a Solana program\nsentri check ./programs --chain solana\n\n# Initialize config file\nsentri init\n\n# Verify installation\nsentri doctor\n```\n\n## New in v%s\n\n- **Multi-chain invariant checking**: EVM, Solana, and Move support\n- **22 built-in security invariants**: Comprehensive checks across all chains\n- **Structured output**: JSON and HTML report generation\n- **Violation suppression**: Inline comments and config-level control\n- **Health checks**: `sentri doctor` command for component verification\n- **Professional CLI**: Colored output, TTY detection, responsive design\n- **Cross-platform binaries**: Linux (glibc/musl), macOS (Intel/ARM), Windows\n\n## Verification\n\nVerify artifact integrity:\n\n```bash\nsha256sum -c SHA256SUMS\n```\n\n## Multi-Platform Binaries\n\n- **Linux (x86_64, glibc)**: Standard Linux distributions\n- **Linux (x86_64, musl)**: Alpine and other musl-based systems\n- **Linux (aarch64)**: ARM64 Linux servers\n- **macOS (Intel)**: x86_64 Mac systems\n- **macOS (Apple Silicon)**: aarch64 M1/M2/M3 Macs\n- **Windows (x86_64)**: Windows 10/11\n\nAll binaries are deterministically built and reproducible.\n' "$VERSION" "$VERSION" >> /tmp/release_notes.md
+          printf '\n## Installation\n\nInstall the latest version with:\n\n```bash\ncargo install truent-cli --version %s\n```\n\nOr download pre-built binaries from the Assets section below.\n\n## Quick Start\n\n```bash\n# Check an EVM contract\ntruent check ./contracts --chain evm\n\n# Check a Solana program\ntruent check ./programs --chain solana\n\n# Initialize config file\ntruent init\n\n# Verify installation\ntruent doctor\n```\n\n## New in v%s\n\n- **Multi-chain invariant checking**: EVM, Solana, and Move support\n- **22 built-in security invariants**: Comprehensive checks across all chains\n- **Structured output**: JSON and HTML report generation\n- **Violation suppression**: Inline comments and config-level control\n- **Health checks**: `truent doctor` command for component verification\n- **Professional CLI**: Colored output, TTY detection, responsive design\n- **Cross-platform binaries**: Linux (glibc/musl), macOS (Intel/ARM), Windows\n\n## Verification\n\nVerify artifact integrity:\n\n```bash\nsha256sum -c SHA256SUMS\n```\n\n## Multi-Platform Binaries\n\n- **Linux (x86_64, glibc)**: Standard Linux distributions\n- **Linux (x86_64, musl)**: Alpine and other musl-based systems\n- **Linux (aarch64)**: ARM64 Linux servers\n- **macOS (Intel)**: x86_64 Mac systems\n- **macOS (Apple Silicon)**: aarch64 M1/M2/M3 Macs\n- **Windows (x86_64)**: Windows 10/11\n\nAll binaries are deterministically built and reproducible.\n' "$VERSION" "$VERSION" >> /tmp/release_notes.md
 
           cat /tmp/release_notes.md
 
@@ -714,8 +714,8 @@ jobs:
           tag_name: v${{ needs.validate-version.outputs.version }}
           body_path: /tmp/release_notes.md
           files: |
-            dist/sentri-*.tar.gz
-            dist/sentri-*.zip
+            dist/truent-*.tar.gz
+            dist/truent-*.zip
             checksums/SHA256SUMS
           draft: false
           prerelease: ${{ contains(needs.validate-version.outputs.version, '-') }}
@@ -746,7 +746,7 @@ jobs:
       - name: Release Summary
         run: |
           echo "=========================================="
-          echo "✓ SENTRI v${{ needs.validate-version.outputs.version }}"
+          echo "✓ TRUENT v${{ needs.validate-version.outputs.version }}"
           echo "  RELEASE PIPELINE COMPLETED SUCCESSFULLY"
           echo "=========================================="
           echo ""
@@ -762,16 +762,16 @@ jobs:
           echo "  · Multi-chain invariant checking (EVM, Solana, Move)"
           echo "  · 22 built-in security invariants"
           echo "  · JSON + HTML report output"
-          echo "  · sentri doctor health check"
+          echo "  · truent doctor health check"
           echo "  · Professional colored CLI output"
           echo "  · Cross-platform support (Linux/macOS/Windows)"
           echo ""
           echo "Install:"
-          echo "  cargo install sentri-cli"
+          echo "  cargo install truent-cli"
           echo ""
           echo "Quick start:"
-          echo "  sentri check ./contracts --chain evm"
-          echo "  sentri doctor"
+          echo "  truent check ./contracts --chain evm"
+          echo "  truent doctor"
 
 
 

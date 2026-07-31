@@ -14,7 +14,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 lazy_static! {
     static ref ECRECOVER_CALL: Regex = Regex::new(r"(?i)ecrecover\s*\(").unwrap();

@@ -1,9 +1,9 @@
-//! Banner component for Sentri CLI introduction.
+//! Banner component for Truent CLI introduction.
 
 use crate::ui::constants::{color_dim, color_header};
 use crate::ui::utils::is_tty;
 
-/// Render the Sentri banner.
+/// Render the Truent banner.
 ///
 /// Displays the ASCII art logo and version information.
 /// Only shown on interactive TTY; returns empty string for piped output.
@@ -18,12 +18,12 @@ pub fn render_banner(version: &str) -> String {
         return String::new();
     }
 
-    let logo = r#"  ███████╗███████╗███╗   ██╗████████╗██████╗ ██╗
-  ██╔════╝██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██║
-  ███████╗█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║
-  ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║
-  ███████║███████╗██║ ╚████║   ██║   ██║  ██║██║
-  ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚═╝"#;
+    let logo = r#"  ████████╗██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗
+  ╚══██╔══╝██╔══██╗██║   ██║██╔════╝████╗  ██║╚══██╔══╝
+     ██║   ██████╔╝██║   ██║█████╗  ██╔██╗ ██║   ██║
+     ██║   ██╔══██╗██║   ██║██╔══╝  ██║╚██╗██║   ██║
+     ██║   ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║
+     ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝"#;
 
     let colored_logo = logo
         .lines()
@@ -49,7 +49,7 @@ mod tests {
         let banner = render_banner("0.1.1");
         if !banner.is_empty() {
             // If TTY, check that it contains expected parts
-            assert!(banner.contains("Sentri") || banner.is_empty());
+            assert!(banner.contains("Truent") || banner.is_empty());
             assert!(banner.contains("0.1.1") || banner.is_empty());
         }
     }

@@ -2,50 +2,50 @@
 
 ## Installation
 
-### Q: How do I install Sentri?
+### Q: How do I install Truent?
 
 **A:** Multiple options:
 
 ```bash
 # Using curl (recommended)
-curl -fsSL https://install.sentri.dev | bash
+curl -fsSL https://install.truent.dev | bash
 
 # Using Homebrew
-brew install sentri
+brew install truent
 
 # From source
-git clone https://github.com/geekstrancend/Sentri.git
-cd Sentri
+git clone https://github.com/geekstrancend/Truent.git
+cd Truent
 cargo install --path crates/cli
 
 # Using Docker
-docker pull geekstrancend/sentri:latest
+docker pull geekstrancend/truent:latest
 ```
 
-### Q: I get "command not found: sentri"
+### Q: I get "command not found: truent"
 
-**A:** Add Sentri to your PATH:
+**A:** Add Truent to your PATH:
 
 ```bash
 # Find where it's installed
-which sentri
+which truent
 
 # If empty, add to PATH in ~/.bashrc or ~/.zshrc
-export PATH="$PATH:$HOME/.sentri/bin"
+export PATH="$PATH:$HOME/.truent/bin"
 
 # Reload shell
 source ~/.bashrc  # or ~/.zshrc
 ```
 
-### Q: How do I update Sentri?
+### Q: How do I update Truent?
 
 **A:** Use the update command:
 
 ```bash
-sentri update --yes
+truent update --yes
 
 # Or reinstall
-curl -fsSL https://install.sentri.dev | bash
+curl -fsSL https://install.truent.dev | bash
 ```
 
 ## Configuration
@@ -55,21 +55,21 @@ curl -fsSL https://install.sentri.dev | bash
 **A:** Run init command:
 
 ```bash
-sentri init --project myproject
+truent init --project myproject
 
 # Creates:
-# myproject/sentri.toml
+# myproject/truent.toml
 # myproject/invariants.invar
 # myproject/.invarignore
 ```
 
-### Q: Where should I put sentri.toml?
+### Q: Where should I put truent.toml?
 
 **A:** In your project root:
 
 ```
 my-project/
-├── sentri.toml          ← Here
+├── truent.toml          ← Here
 ├── invariants.invar    ← Or in subdirectory
 ├── src/
 └── contracts/
@@ -78,7 +78,7 @@ my-project/
 Can also reference from anywhere:
 
 ```bash
-sentri analyze --config /path/to/sentri.toml
+truent analyze --config /path/to/truent.toml
 ```
 
 ### Q: How do I exclude files?
@@ -160,10 +160,10 @@ Collections:
 
 ```bash
 # Full analysis with report
-sentri analyze --config sentri.toml
+truent analyze --config truent.toml
 
 # Quick check (pass/fail)
-sentri check --config sentri.toml --strict
+truent check --config truent.toml --strict
 ```
 
 ### Q: How do I run only specific invariants?
@@ -172,13 +172,13 @@ sentri check --config sentri.toml --strict
 
 ```bash
 # Include specific invariant
-sentri analyze --include vault_conservation
+truent analyze --include vault_conservation
 
 # Exclude patterns
-sentri analyze --exclude experimental_*
+truent analyze --exclude experimental_*
 
 # Only specific chain
-sentri analyze --chain solana
+truent analyze --chain solana
 ```
 
 ### Q: What do the exit codes mean?
@@ -195,7 +195,7 @@ sentri analyze --chain solana
 Use in scripts:
 
 ```bash
-sentri analyze --config sentri.toml
+truent analyze --config truent.toml
 case $? in
   0) echo "Success" ;;
   1) exit 1  # Halt build
@@ -210,30 +210,30 @@ esac
 **A:** Use output flag:
 
 ```bash
-sentri analyze --output json
+truent analyze --output json
 
 # Or pipe to jq
-sentri analyze --output json | jq '.summary'
+truent analyze --output json | jq '.summary'
 ```
 
 ## Performance
 
-### Q: Sentri is slow, how do I speed it up?
+### Q: Truent is slow, how do I speed it up?
 
 **A:** Several strategies:
 
 ```bash
 # 1. Skip slow invariants
-sentri analyze --exclude slow_*
+truent analyze --exclude slow_*
 
 # 2. Analyze specific chain only
-sentri analyze --chain solana
+truent analyze --chain solana
 
 # 3. Limit analysis scope
-sentri analyze --path src/ --path contracts/
+truent analyze --path src/ --path contracts/
 
 # 4. Skip caching
-sentri analyze --no-cache
+truent analyze --no-cache
 ```
 
 ### Q: How do I profile performance?
@@ -241,10 +241,10 @@ sentri analyze --no-cache
 **A:** Check timing:
 
 ```bash
-time sentri analyze --config sentri.toml
+time truent analyze --config truent.toml
 
 # More detailed
-RUST_LOG=debug sentri analyze --config sentri.toml
+RUST_LOG=debug truent analyze --config truent.toml
 ```
 
 ### Q: What's taking the most time?
@@ -252,7 +252,7 @@ RUST_LOG=debug sentri analyze --config sentri.toml
 **A:** Run with timing output:
 
 ```bash
-sentri analyze --config sentri.toml --verbose --verbose
+truent analyze --config truent.toml --verbose --verbose
 # Shows timing for each phase
 ```
 
@@ -277,14 +277,14 @@ global: "string" + 42
 global: "string_" + string_value
 ```
 
-Check syntax at https://sentri-dsl.dev/syntax
+Check syntax at https://truent-dsl.dev/syntax
 
 ### Q: How do I debug my invariant?
 
 **A:** Use logging:
 
 ```bash
-RUST_LOG=debug sentri analyze --config sentri.toml --verbose
+RUST_LOG=debug truent analyze --config truent.toml --verbose
 
 # See what's being evaluated
 ```
@@ -335,7 +335,7 @@ global: accounts[0].owner == expected_owner
 
 ## CI/CD
 
-### Q: How do I add Sentri to GitHub Actions?
+### Q: How do I add Truent to GitHub Actions?
 
 **A:** Simple workflow:
 
@@ -344,15 +344,15 @@ name: Invariant Check
 on: [push, pull_request]
 
 jobs:
-  sentri:
+  truent:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
       - name: Run Invariants
         run: |
-          curl -fsSL https://install.sentri.dev | bash
-          sentri analyze --config sentri.toml --strict
+          curl -fsSL https://install.truent.dev | bash
+          truent analyze --config truent.toml --strict
 ```
 
 ### Q: How do I prevent merge if invariants fail?
@@ -362,31 +362,31 @@ jobs:
 2. Add rule for main branch
 3. Require "Invariant Check" to pass
 
-### Q: Can I run Sentri in Docker?
+### Q: Can I run Truent in Docker?
 
 **A:** Yes:
 
 ```bash
-docker run -v /path/to/project:/project zelius/sentri:latest \
-  analyze --config /project/sentri.toml
+docker run -v /path/to/project:/project zelius/truent:latest \
+  analyze --config /project/truent.toml
 ```
 
 Or in docker-compose:
 
 ```yaml
 services:
-  sentri:
-    image: geekstrancend/sentri:latest
+  truent:
+    image: geekstrancend/truent:latest
     volumes:
       - ./invariants.invar:/app/invariants.invar
-    command: analyze --config /app/sentri.toml
+    command: analyze --config /app/truent.toml
 ```
 
 ## Security
 
-### Q: Is it safe to run Sentri on untrusted code?
+### Q: Is it safe to run Truent on untrusted code?
 
-**A:** Yes, Sentri uses sandboxing:
+**A:** Yes, Truent uses sandboxing:
 - No filesystem access
 - No network access
 - No external execution
@@ -394,10 +394,10 @@ services:
 
 See [Security Model](docs/security-model.md) for details.
 
-### Q: Should I use Sentri instead of audits?
+### Q: Should I use Truent instead of audits?
 
 **A:** No, use together:
-1. **Sentri** - Checks invariants automatically
+1. **Truent** - Checks invariants automatically
 2. **Audit** - Reviews logic and design
 3. **Testing** - Unit and integration tests
 4. **Monitoring** - Runtime observation
@@ -406,7 +406,7 @@ See [Security Model](docs/security-model.md) for details.
 
 **A:** Don't use GitHub Issues for security.
 
-Email: security@sentri.dev
+Email: security@truent.dev
 
 Include:
 - Description of vulnerability
@@ -416,7 +416,7 @@ Include:
 
 ## Technical
 
-### Q: What's the difference between Sentri versions?
+### Q: What's the difference between Truent versions?
 
 **A:** Check [Versioning Policy](docs/versioning.md):
 
@@ -424,7 +424,7 @@ Include:
 - **v1.x** - Stable API (backward compatible)
 - **Patch** (v1.0.x) - Bug fixes only
 
-### Q: Can I use Sentri with language X?
+### Q: Can I use Truent with language X?
 
 **A:** Depends on the blockchain:
 
@@ -438,7 +438,7 @@ Include:
 
 Request new language support in GitHub Issues.
 
-### Q: Can I extend Sentri?
+### Q: Can I extend Truent?
 
 **A:** Limited extension support:
 
@@ -447,7 +447,7 @@ Request new language support in GitHub Issues.
 
 For plugin system, see [Roadmap](README.md#Roadmap).
 
-### Q: What resources does Sentri use?
+### Q: What resources does Truent use?
 
 **A:** Typical usage:
 
@@ -462,9 +462,9 @@ For plugin system, see [Roadmap](README.md#Roadmap).
 
 - [Documentation](docs/README.md) - Complete guides
 - [Examples](examples/) - Real-world usage
-- [GitHub Issues](https://github.com/geekstrancend/Sentri/issues) - Ask community
-- [GitHub Discussions](https://github.com/geekstrancend/Sentri/discussions) - Discussions
-- [Discord](https://discord.gg/sentri) - Real-time chat
+- [GitHub Issues](https://github.com/geekstrancend/Truent/issues) - Ask community
+- [GitHub Discussions](https://github.com/geekstrancend/Truent/discussions) - Discussions
+- [Discord](https://discord.gg/truent) - Real-time chat
 
 ### Getting Help
 
@@ -475,7 +475,7 @@ For plugin system, see [Roadmap](README.md#Roadmap).
 
 ## Contributing
 
-Found a bug or want to improve Sentri?
+Found a bug or want to improve Truent?
 
 - [Contributing Guide](CONTRIBUTING_EXTENDED.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
@@ -484,4 +484,4 @@ Found a bug or want to improve Sentri?
 ---
 
 **Last updated:** 2024-01-15  
-**Sentri version:** 0.1.0
+**Truent version:** 0.1.0

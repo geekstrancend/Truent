@@ -2611,305 +2611,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sentri-analyzer-evm"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "criterion",
- "insta",
- "lazy_static",
- "petgraph",
- "proptest",
- "rayon",
- "regex",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "solc",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-analyzer-move"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "cc",
- "lazy_static",
- "regex",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
- "tree-sitter",
-]
-
-[[package]]
-name = "sentri-analyzer-solana"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "lazy_static",
- "proc-macro2",
- "quote",
- "regex",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "syn 2.0.117",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-analyzer-soroban"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "lazy_static",
- "proc-macro2",
- "quote",
- "regex",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "syn 2.0.117",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-cli"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "assert_cmd",
- "clap",
- "colored",
- "hex",
- "predicates",
- "proptest",
- "regex",
- "sentri-analyzer-evm",
- "sentri-analyzer-move",
- "sentri-analyzer-solana",
- "sentri-analyzer-soroban",
- "sentri-core",
- "sentri-dsl-parser",
- "sentri-dynamic-core",
- "sentri-dynamic-evm",
- "sentri-dynamic-solana",
- "sentri-generator-evm",
- "sentri-generator-move",
- "sentri-generator-solana",
- "sentri-ir",
- "sentri-library",
- "sentri-report",
- "sentri-utils",
- "serde",
- "serde_json",
- "tempfile",
- "terminal_size",
- "thiserror 1.0.69",
- "toml",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "sentri-core"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "once_cell",
- "proptest",
- "regex",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "sentri-dsl-parser"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "pest",
- "pest_derive",
- "sentri-core",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "sentri-dynamic-core"
-version = "0.4.1"
-dependencies = [
- "rand 0.8.6",
- "serde",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "sentri-dynamic-evm"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "hex",
- "rand 0.8.6",
- "revm",
- "sentri-core",
- "sentri-dynamic-core",
- "sentri-utils",
- "serde",
- "serde_json",
- "sha3",
- "ureq",
-]
-
-[[package]]
-name = "sentri-dynamic-solana"
-version = "0.4.1"
-dependencies = [
- "bs58",
- "rand 0.8.6",
- "sentri-dynamic-core",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "sentri-generator-evm"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "sentri-analyzer-evm",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-generator-move"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "sentri-analyzer-move",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-generator-solana"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "proc-macro2",
- "proptest",
- "quote",
- "sentri-analyzer-solana",
- "sentri-core",
- "sentri-ir",
- "sentri-utils",
- "serde",
- "serde_json",
- "syn 2.0.117",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "sentri-ir"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "sentri-core",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "sentri-library"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "sentri-core",
- "sentri-dsl-parser",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "sentri-report"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "chrono",
- "sentri-core",
- "serde",
- "serde_json",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "sentri-solana-macro"
-version = "0.4.1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "sentri-utils"
-version = "0.4.1"
-dependencies = [
- "anyhow",
- "chrono",
- "hex",
- "serde",
- "serde_json",
- "sha3",
- "tempfile",
- "thiserror 1.0.69",
- "tracing",
- "tracing-subscriber",
- "ureq",
-]
-
-[[package]]
 name = "serde"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3478,6 +3179,305 @@ checksum = "e747b1f9b7b931ed39a548c1fae149101497de3c1fc8d9e18c62c1a66c683d3d"
 dependencies = [
  "cc",
  "regex",
+]
+
+[[package]]
+name = "truent-analyzer-evm"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "criterion",
+ "insta",
+ "lazy_static",
+ "petgraph",
+ "proptest",
+ "rayon",
+ "regex",
+ "serde",
+ "serde_json",
+ "solc",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-analyzer-move"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "cc",
+ "lazy_static",
+ "regex",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "tree-sitter",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-analyzer-solana"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "serde",
+ "serde_json",
+ "syn 2.0.117",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-analyzer-soroban"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "serde",
+ "serde_json",
+ "syn 2.0.117",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-cli"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "assert_cmd",
+ "clap",
+ "colored",
+ "hex",
+ "predicates",
+ "proptest",
+ "regex",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "terminal_size",
+ "thiserror 1.0.69",
+ "toml",
+ "tracing",
+ "tracing-subscriber",
+ "truent-analyzer-evm",
+ "truent-analyzer-move",
+ "truent-analyzer-solana",
+ "truent-analyzer-soroban",
+ "truent-core",
+ "truent-dsl-parser",
+ "truent-dynamic-core",
+ "truent-dynamic-evm",
+ "truent-dynamic-solana",
+ "truent-generator-evm",
+ "truent-generator-move",
+ "truent-generator-solana",
+ "truent-ir",
+ "truent-library",
+ "truent-report",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-core"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "once_cell",
+ "proptest",
+ "regex",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "truent-dsl-parser"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "pest",
+ "pest_derive",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "truent-core",
+]
+
+[[package]]
+name = "truent-dynamic-core"
+version = "0.4.1"
+dependencies = [
+ "rand 0.8.6",
+ "serde",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "truent-dynamic-evm"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "hex",
+ "rand 0.8.6",
+ "revm",
+ "serde",
+ "serde_json",
+ "sha3",
+ "truent-core",
+ "truent-dynamic-core",
+ "truent-utils",
+ "ureq",
+]
+
+[[package]]
+name = "truent-dynamic-solana"
+version = "0.4.1"
+dependencies = [
+ "bs58",
+ "rand 0.8.6",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 1.0.69",
+ "truent-dynamic-core",
+]
+
+[[package]]
+name = "truent-generator-evm"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-analyzer-evm",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-generator-move"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-analyzer-move",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-generator-solana"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "proc-macro2",
+ "proptest",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn 2.0.117",
+ "thiserror 1.0.69",
+ "tracing",
+ "truent-analyzer-solana",
+ "truent-core",
+ "truent-ir",
+ "truent-utils",
+]
+
+[[package]]
+name = "truent-ir"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+ "truent-core",
+]
+
+[[package]]
+name = "truent-library"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "toml",
+ "tracing",
+ "truent-core",
+ "truent-dsl-parser",
+]
+
+[[package]]
+name = "truent-report"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "serde",
+ "serde_json",
+ "toml",
+ "tracing",
+ "truent-core",
+]
+
+[[package]]
+name = "truent-solana-macro"
+version = "0.4.1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "truent-utils"
+version = "0.4.1"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha3",
+ "tempfile",
+ "thiserror 1.0.69",
+ "tracing",
+ "tracing-subscriber",
+ "ureq",
 ]
 
 [[package]]

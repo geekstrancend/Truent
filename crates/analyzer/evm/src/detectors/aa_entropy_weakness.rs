@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref AA_FACTORY: Regex =
@@ -48,7 +48,7 @@ pub fn detect_aa_entropy_weakness(source: &str, file_path: &str) -> Vec<Finding>
             findings.push(
                 Finding::new(
                     "evm_aa_entropy_weakness".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

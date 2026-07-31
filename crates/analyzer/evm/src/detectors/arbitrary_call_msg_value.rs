@@ -26,7 +26,7 @@
 /// ```
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref ARBITRARY_CALL_PATTERN: Regex =
@@ -83,7 +83,7 @@ pub fn detect_arbitrary_call_msg_value(source: &str, file_path: &str) -> Vec<Fin
         let is_hardcoded = line.contains("address(this)") || line.contains("0x");
 
         if !has_validation && !is_hardcoded {
-            let severity = sentri_core::Severity::Critical;
+            let severity = truent_core::Severity::Critical;
 
             findings.push(
                 Finding::new(
@@ -119,7 +119,7 @@ pub fn detect_arbitrary_call_msg_value(source: &str, file_path: &str) -> Vec<Fin
             findings.push(
                 Finding::new(
                     "evm_arbitrary_call_msg_value".to_string(),
-                    sentri_core::Severity::High,
+                    truent_core::Severity::High,
                     file_path.to_string(),
                     line_num + 1,
                     0,
@@ -179,7 +179,7 @@ mod tests {
         let findings = detect_arbitrary_call_msg_value(safe, "test.sol");
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         assert!(critical_findings.is_empty(), "Should allow validated call");
     }
@@ -217,7 +217,7 @@ mod tests {
         );
         assert_eq!(
             findings[0].severity,
-            sentri_core::Severity::Critical,
+            truent_core::Severity::Critical,
             "Delegatecall should be critical"
         );
     }
@@ -235,7 +235,7 @@ mod tests {
         let findings = detect_arbitrary_call_msg_value(weak, "test.sol");
         let critical_findings: Vec<_> = findings
             .iter()
-            .filter(|f| f.severity == sentri_core::Severity::Critical)
+            .filter(|f| f.severity == truent_core::Severity::Critical)
             .collect();
         // Should trigger because require(router != address(0)) is not in ADDRESS_VALIDATION pattern
         assert!(

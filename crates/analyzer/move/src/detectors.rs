@@ -2,7 +2,7 @@
 //!
 //! Detectors for Move (Aptos/Sui) module vulnerabilities.
 
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 /// Detects missing access control in public entry functions
 pub fn detect_access_control_missing(source: &str, file_path: &str) -> Vec<Finding> {

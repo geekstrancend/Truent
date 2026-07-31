@@ -12,7 +12,7 @@
 
 use crate::anchor_model::AccountSecurity;
 use crate::anchor_parser::parse_anchor_accounts;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 /// Field-name substrings suggesting this account is a token/mint/collateral
 /// reference, where a fake-account substitution would let an attacker mint

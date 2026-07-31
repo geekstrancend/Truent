@@ -1,7 +1,7 @@
-# Complete Sentri Configuration Example
+# Complete Truent Configuration Example
 # 
-# This file demonstrates all supported configuration options for Sentri.
-# Copy this to sentri.toml and customize for your environment.
+# This file demonstrates all supported configuration options for Truent.
+# Copy this to truent.toml and customize for your environment.
 #
 # Environment variable substitution is supported: ${VAR_NAME}
 # Missing variables will cause an error. Use .env file or export in shell.
@@ -248,9 +248,9 @@ severities = ["critical"]
 type = "webhook"
 name = "custom-backend"
 
-url = "https://my-ops.example.com/sentri/violations"
+url = "https://my-ops.example.com/truent/violations"
 
-headers = { "Authorization" = "Bearer ${OPS_API_TOKEN}", "X-Source" = "sentri" }
+headers = { "Authorization" = "Bearer ${OPS_API_TOKEN}", "X-Source" = "truent" }
 
 method = "post"
 
@@ -276,7 +276,7 @@ mode = "block_based"
 
 
 # ─────────────────────────────────────────────────────────────────
-# DAEMON MODE (sentri watch)
+# DAEMON MODE (truent watch)
 # ─────────────────────────────────────────────────────────────────
 #
 
@@ -313,7 +313,7 @@ level = "info"
 format = "pretty"
 
 # Optional: log file path (if omitted, logs go to stdout)
-# file = "/var/log/sentri.log"
+# file = "/var/log/truent.log"
 
 # Optional: log file rotation
 # max_size_mb = 100
@@ -356,11 +356,11 @@ sample_rate = 1.0
 #
 #   2. Load in shell before running:
 #      source .env
-#      sentri watch --config sentri.toml
+#      truent watch --config truent.toml
 #
 #   3. Or use environment setup in your deployment:
 #      - Docker/Kubernetes: secrets mounted as env vars
-#      - systemd: EnvironmentFile=/etc/sentri/.env
+#      - systemd: EnvironmentFile=/etc/truent/.env
 #      - GitHub Actions: secrets.VARIABLE_NAME
 
 [security]
@@ -409,6 +409,6 @@ cache_ttl_secs = 60
 # export OPS_API_TOKEN="YOUR_CUSTOM_TOKEN"
 #
 # Then run:
-#   sentri validate-config --config sentri.toml
-#   sentri watch --config sentri.toml
+#   truent validate-config --config truent.toml
+#   truent watch --config truent.toml
 #

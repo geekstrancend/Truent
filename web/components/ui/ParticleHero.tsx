@@ -56,7 +56,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3)
 
 export function ParticleHero({
-  wordmark = 'SENTRI',
+  wordmark = 'TRUENT',
   eyebrow,
   headline,
   subline,

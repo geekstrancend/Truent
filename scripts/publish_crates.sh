@@ -1,11 +1,11 @@
 #!/bin/bash
-# Publication script for Sentri crates v0.1.7
+# Publication script for Truent crates v0.1.7
 # Publishes all crates to crates.io in dependency order
 
 set -e
 
 echo "================================"
-echo "Sentri Crate Publishing Script"
+echo "Truent Crate Publishing Script"
 echo "Version: 0.1.7"
 echo "================================"
 echo ""
@@ -18,27 +18,27 @@ NC='\033[0m' # No Color
 
 # Check if we're in the right directory
 if [ ! -f "Cargo.toml" ] || [ ! -d "crates" ]; then
-    echo -e "${RED}Error: Must be run from Sentri workspace root${NC}"
+    echo -e "${RED}Error: Must be run from Truent workspace root${NC}"
     exit 1
 fi
 
 # List of crates in dependency order
 CRATES=(
-    "sentri-utils"
-    "sentri-core"
-    "sentri-ir"
-    "sentri-dsl-parser"
-    "sentri-solana-macro"
-    "sentri-analyzer-evm"
-    "sentri-analyzer-solana"
-    "sentri-analyzer-move"
-    "sentri-generator-evm"
-    "sentri-generator-solana"
-    "sentri-generator-move"
-    "sentri-library"
-    "sentri-report"
-    "sentri-simulator"
-    "sentri-cli"
+    "truent-utils"
+    "truent-core"
+    "truent-ir"
+    "truent-dsl-parser"
+    "truent-solana-macro"
+    "truent-analyzer-evm"
+    "truent-analyzer-solana"
+    "truent-analyzer-move"
+    "truent-generator-evm"
+    "truent-generator-solana"
+    "truent-generator-move"
+    "truent-library"
+    "truent-report"
+    "truent-simulator"
+    "truent-cli"
 )
 
 # Check cargo auth
@@ -99,7 +99,7 @@ echo ""
 if [ $FAILED -eq 0 ]; then
     echo -e "${GREEN}✓ All crates published successfully!${NC}"
     echo ""
-    echo "Verify at: https://crates.io/crates/sentri-cli/0.1.7"
+    echo "Verify at: https://crates.io/crates/truent-cli/0.1.7"
 else
     echo -e "${RED}✗ Some crates failed to publish${NC}"
     exit 1

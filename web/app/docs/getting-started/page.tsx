@@ -19,7 +19,7 @@ export default function GettingStartedPage() {
             Getting Started
           </h1>
           <p className="text-body-lg text-sec max-w-2xl">
-            Install Sentri and run your first security scan in minutes. This guide will walk you through the essential steps.
+            Install Truent and run your first security scan in minutes. This guide will walk you through the essential steps.
           </p>
         </div>
 
@@ -29,18 +29,18 @@ export default function GettingStartedPage() {
             Installation
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Sentri provides two installation methods: Rust CLI for local scanning and npm package for JavaScript integration.
+            Truent provides two installation methods: Rust CLI for local scanning and npm package for JavaScript integration.
           </p>
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
             Rust CLI (Recommended)
           </h3>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Install the Sentri CLI via Cargo:
+            Install the Truent CLI via Cargo:
           </p>
           <CodeBlock
             language="bash"
-            code={`cargo install sentri-cli`}
+            code={`cargo install truent-cli`}
           />
           <p className="text-body-sm text-sec mt-2">
             Requires Rust 1.70 or later. Install Rust at <a href="https://rustup.rs" target="_blank" rel="noopener" className="text-indigo hover:text-indigo/80">rustup.rs</a>.
@@ -64,11 +64,11 @@ export default function GettingStartedPage() {
             Running Your First Scan
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Once installed, run Sentri on a smart contract directory:
+            Once installed, run Truent on a smart contract directory:
           </p>
           <CodeBlock
             language="bash"
-            code={`sentri check . --chain evm`}
+            code={`truent check . --chain evm`}
           />
           <p className="text-body-md text-sec mb-4 leading-relaxed mt-4">
             This command scans all Solidity files in the current directory using the EVM analyzer. Replace <code className="bg-panel border border-hair px-1.5 py-0.5 rounded font-mono text-xs">evm</code> with <code className="bg-panel border border-hair px-1.5 py-0.5 rounded font-mono text-xs">solana</code> for Rust programs or <code className="bg-panel border border-hair px-1.5 py-0.5 rounded font-mono text-xs">move</code> for Move modules.
@@ -113,7 +113,7 @@ export default function GettingStartedPage() {
             Understanding the Output
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Sentri reports findings using a standard severity classification system. Each finding is categorized by impact level:
+            Truent reports findings using a standard severity classification system. Each finding is categorized by impact level:
           </p>
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -159,7 +159,7 @@ export default function GettingStartedPage() {
             Next Steps
           </h2>
           <p className="text-body-md text-sec mb-6 leading-relaxed">
-            Now that you&apos;ve run your first scan, explore the full capabilities of Sentri:
+            Now that you&apos;ve run your first scan, explore the full capabilities of Truent:
           </p>
           <ul className="list-disc list-inside space-y-3 text-body-md text-sec">
             <li>

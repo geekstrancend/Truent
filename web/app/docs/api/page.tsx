@@ -19,7 +19,7 @@ export default function APIReferencePage() {
             REST API Reference
           </h1>
           <p className="text-body-lg text-sec max-w-2xl">
-            Integrate Sentri programmatically with the REST API for headless security scanning and report generation.
+            Integrate Truent programmatically with the REST API for headless security scanning and report generation.
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export default function APIReferencePage() {
             Obtaining an API Key
           </h3>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Generate API keys in your Sentri dashboard under Settings → API Keys. Keep them secure and rotate regularly.
+            Generate API keys in your Truent dashboard under Settings → API Keys. Keep them secure and rotate regularly.
           </p>
         </section>
 

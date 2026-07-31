@@ -1,10 +1,10 @@
-# Sentri Built-in Invariant Library
+# Truent Built-in Invariant Library
 
-Sentri includes 22 rigorously tested, production-grade invariants covering the most critical smart contract security properties. These invariants are automatically available in all Sentri analyses.
+Truent includes 22 rigorously tested, production-grade invariants covering the most critical smart contract security properties. These invariants are automatically available in all Truent analyses.
 
 ## Expression Parsing
 
-All invariant expressions are parsed through Sentri's deterministic DSL parser (v0.1.2+), which supports:
+All invariant expressions are parsed through Truent's deterministic DSL parser (v0.1.2+), which supports:
 
 - **Binary operators:** `==`, `!=`, `<`, `>`, `<=`, `>=`
 - **Logical operators:** `&&` (AND), `||` (OR), `!` (NOT)
@@ -758,7 +758,7 @@ function generateRandom() public view returns (uint256) {
 
 ### Enable Specific Invariants
 
-In `.sentri.toml`:
+In `.truent.toml`:
 
 ```toml
 [invariants]
@@ -800,7 +800,7 @@ invariants = ["balance_conservation"]
 
 ## Interpreting Results
 
-When an invariant fails, Sentri shows:
+When an invariant fails, Truent shows:
 
 1. **Invariant Name** - Which rule was violated
 2. **Severity** - CRITICAL, HIGH, MEDIUM, LOW

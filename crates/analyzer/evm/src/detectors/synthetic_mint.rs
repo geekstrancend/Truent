@@ -5,7 +5,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Regex to match mint functions
@@ -64,7 +64,7 @@ pub fn detect_unbacked_synthetic_mint(source: &str, file_path: &str) -> Vec<Find
             findings.push(
                 Finding::new(
                     "evm_unbacked_synthetic_mint".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     func_line_num + 1,
                     0,
@@ -94,7 +94,7 @@ pub fn detect_unbacked_synthetic_mint(source: &str, file_path: &str) -> Vec<Find
         findings.push(
             Finding::new(
                 "evm_unbacked_synthetic_mint".to_string(),
-                sentri_core::Severity::High,
+                truent_core::Severity::High,
                 file_path.to_string(),
                 1,
                 0,

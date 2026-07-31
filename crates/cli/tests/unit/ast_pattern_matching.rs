@@ -8,7 +8,7 @@
 //! - Field extraction via pattern matching
 
 mod expression_pattern_tests {
-    use sentri_core::model::{BinaryOp, Expression, LogicalOp};
+    use truent_core::model::{BinaryOp, Expression, LogicalOp};
 
     // ============================================================================
     // 1. LITERAL TESTS - Boolean and Int
@@ -792,7 +792,7 @@ mod expression_pattern_tests {
 
 #[cfg(test)]
 mod module_integration_tests {
-    use sentri_core::model::Expression;
+    use truent_core::model::Expression;
 
     /// Verify all Expression variants are accessible and constructible
     #[test]
@@ -817,17 +817,17 @@ mod module_integration_tests {
             expr1: Box::new(Expression::Int(1)),
             phase2: "test".to_string(),
             expr2: Box::new(Expression::Int(2)),
-            op: sentri_core::model::BinaryOp::Lt,
+            op: truent_core::model::BinaryOp::Lt,
         };
         let _int_expr = Expression::Int(42);
         let _bin_op = Expression::BinaryOp {
             left: Box::new(Expression::Int(1)),
-            op: sentri_core::model::BinaryOp::Eq,
+            op: truent_core::model::BinaryOp::Eq,
             right: Box::new(Expression::Int(2)),
         };
         let _logical = Expression::Logical {
             left: Box::new(Expression::Boolean(true)),
-            op: sentri_core::model::LogicalOp::And,
+            op: truent_core::model::LogicalOp::And,
             right: Box::new(Expression::Boolean(false)),
         };
         let _not = Expression::Not(Box::new(Expression::Boolean(true)));

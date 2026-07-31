@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Sentri project will be documented in this file.
+All notable changes to the Truent project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.4.0] - 2026-07-21 — Dynamic Execution: findings proved by running the code
-The headline change is that a finding no longer has to be taken on trust. Sentri
+The headline change is that a finding no longer has to be taken on trust. Truent
 deploys the contract, drives adversarial sequences at it, and only reports a
 violation once it has actually made the bug fire — then shrinks the trace to the
 shortest sequence that reproduces it. Static analysis stays as the fast first
@@ -16,42 +16,42 @@ pass; the engine is what settles it.
 
 ### Added
 
-- **Dynamic invariant fuzzing for EVM** (`sentri-dynamic-core`, `sentri-dynamic-evm`; `sentri fuzz --dynamic`). Deploys the contract into an in-memory `revm`, generates call sequences from its ABI, and checks auto-detected invariants after **every** call, shrinking any violation to a minimal proof-of-concept via delta debugging. Four property shapes are recognised without the user writing a harness: conservation (`totalSupply`/`balanceOf`), monotonicity (no-arg accumulator getters), access control (`owner`/`transferOwnership`), and reentrancy (call-stack inspection for a state write after an external call). Both crates are new to crates.io.
-- **Dynamic invariant fuzzing for Solana** (`sentri-dynamic-solana`). Solana's execution model is account-based — an instruction is a program id, an ordered list of `AccountMeta`s and an opaque data blob — not the EVM's flat single-caller calldata, so this is a native call model, invariant set, generator and shrink loop rather than the EVM types reused. Ships two oracles: token conservation (`sum(token account amounts) == mint supply`, which catches minting out of thin air) and account-owner integrity (unchecked ownership reassignment). The engine is proven against an in-memory mock program by default; a `litesvm-backend` feature runs real BPF bytecode.
-- **Anchor IDL front-end for Solana fuzzing** (`sentri fuzz <idl.json> --dynamic --chain solana --plan <plan.json>`). Reads both IDL layouts — 0.30+ with explicit discriminators, and legacy, where the discriminator is recomputed as `sha256("global:<snake_case>")[..8]` — and derives the instruction surface from it. The accompanying fuzz plan supplies what an IDL cannot: genesis accounts, the account pool, pinned account positions and the invariants to check. Instructions taking non-fixed-width Borsh arguments (`String`, `Vec`, structs) cannot be encoded correctly, so they are excluded **and reported**, because partial coverage must never read as full coverage. A plan declaring no invariants is rejected rather than silently reporting a clean run.
+- **Dynamic invariant fuzzing for EVM** (`truent-dynamic-core`, `truent-dynamic-evm`; `truent fuzz --dynamic`). Deploys the contract into an in-memory `revm`, generates call sequences from its ABI, and checks auto-detected invariants after **every** call, shrinking any violation to a minimal proof-of-concept via delta debugging. Four property shapes are recognised without the user writing a harness: conservation (`totalSupply`/`balanceOf`), monotonicity (no-arg accumulator getters), access control (`owner`/`transferOwnership`), and reentrancy (call-stack inspection for a state write after an external call). Both crates are new to crates.io.
+- **Dynamic invariant fuzzing for Solana** (`truent-dynamic-solana`). Solana's execution model is account-based — an instruction is a program id, an ordered list of `AccountMeta`s and an opaque data blob — not the EVM's flat single-caller calldata, so this is a native call model, invariant set, generator and shrink loop rather than the EVM types reused. Ships two oracles: token conservation (`sum(token account amounts) == mint supply`, which catches minting out of thin air) and account-owner integrity (unchecked ownership reassignment). The engine is proven against an in-memory mock program by default; a `litesvm-backend` feature runs real BPF bytecode.
+- **Anchor IDL front-end for Solana fuzzing** (`truent fuzz <idl.json> --dynamic --chain solana --plan <plan.json>`). Reads both IDL layouts — 0.30+ with explicit discriminators, and legacy, where the discriminator is recomputed as `sha256("global:<snake_case>")[..8]` — and derives the instruction surface from it. The accompanying fuzz plan supplies what an IDL cannot: genesis accounts, the account pool, pinned account positions and the invariants to check. Instructions taking non-fixed-width Borsh arguments (`String`, `Vec`, structs) cannot be encoded correctly, so they are excluded **and reported**, because partial coverage must never read as full coverage. A plan declaring no invariants is rejected rather than silently reporting a clean run.
 - **Reentrancy detection by execution**, via a revm call-stack inspector that identifies a contract re-entering itself and writing state after an external call (a CEI violation), rather than pattern-matching for it.
-- **On-chain bytecode fuzzing** (`sentri fuzz --dynamic --address <addr> --rpc-url <url>`) for deployed contracts with no verified source, probing fetched bytecode against known ERC20/Ownable selectors.
-- **Claude Code skills** (`skills/`): `sentri-audit` (deterministic engine pass first, then LLM lenses, then engine verification of each candidate, reported as VERIFIED or REASONED), `sentri-recon` (git-history risk mining — fix candidates, churn hotspots, late changes, forked dependencies) and `sentri-fuzz` (emits Medusa/Echidna harnesses).
-- **`sentri-gate` GitHub Action**: a deterministic CI gate wrapping `sentri scan --fail-on <severity>` and converting findings to SARIF 2.1.0 for inline GitHub code-scanning annotations.
+- **On-chain bytecode fuzzing** (`truent fuzz --dynamic --address <addr> --rpc-url <url>`) for deployed contracts with no verified source, probing fetched bytecode against known ERC20/Ownable selectors.
+- **Claude Code skills** (`skills/`): `truent-audit` (deterministic engine pass first, then LLM lenses, then engine verification of each candidate, reported as VERIFIED or REASONED), `truent-recon` (git-history risk mining — fix candidates, churn hotspots, late changes, forked dependencies) and `truent-fuzz` (emits Medusa/Echidna harnesses).
+- **`truent-gate` GitHub Action**: a deterministic CI gate wrapping `truent scan --fail-on <severity>` and converting findings to SARIF 2.1.0 for inline GitHub code-scanning annotations.
 
 
 - **Chain-agnostic detection rule** (`unauthorized_privileged_mutation`): flags privileged mutations (fund transfers, authority changes, upgrades, account closes) with no authorization check reaching them. Each chain's analyzer builds a shared `SemanticModel` from its own native syntax; the rule itself is written once and applies unmodified to all four chains.
 - **Real Move parsing** via a vendored Sui Move tree-sitter grammar (see `crates/analyzer/move/vendor/tree-sitter-move-sui/PROVENANCE.md`), replacing Move's previous regex-only extraction for the shared semantic model. Falls back to the regex heuristic if a file fails to parse.
-- **Soroban (Stellar) support**: a fourth full chain analyzer (`sentri-analyzer-soroban`, `--chain soroban`) covering `#[contract]`/`#[contractimpl]` Rust contracts, with 8 detectors (missing `require_auth`, unprotected contract upgrade, re-initialization, unchecked arithmetic, storage TTL never extended, durable state kept in `temporary()` storage, reentrancy-shaped checks-effects-interactions violations, unhandled `.unwrap()`/`.expect()` panics) plus 6 new built-in invariants and integration into the shared `unauthorized_privileged_mutation` rule.
+- **Soroban (Stellar) support**: a fourth full chain analyzer (`truent-analyzer-soroban`, `--chain soroban`) covering `#[contract]`/`#[contractimpl]` Rust contracts, with 8 detectors (missing `require_auth`, unprotected contract upgrade, re-initialization, unchecked arithmetic, storage TTL never extended, durable state kept in `temporary()` storage, reentrancy-shaped checks-effects-interactions violations, unhandled `.unwrap()`/`.expect()` panics) plus 6 new built-in invariants and integration into the shared `unauthorized_privileged_mutation` rule.
 - **4 more detectors added in a third round, covering 2026 incidents and one proactive/forward-looking pattern**: `sor_thin_liquidity_oracle_price` (Soroban's first oracle-manipulation detector — a price read from a single spot-price call with no TWAP/multi-source corroboration, the pattern behind YieldBlox, $10.2M, Feb 2026, the first Stellar/Soroban DeFi exploit this analyzer has had a citable incident for), `evm_unbounded_pricing_input` (a buy/mint/purchase function using its amount parameter directly in pricing arithmetic with no upper-bound check, behind the Truebit hack, $26.2M, Jan 2026, where an oversized input wrapped the computed mint price to near-zero), `evm_erc4337_validation_side_effects` (a `validateUserOp`/`validatePaymasterUserOp` implementation performing a state-mutating token call, which ERC-4337 validation must never do, behind the Lumi Finance hack, $270K, Jul 13 2026 — days before this detector was written), and `evm_eip7702_eoa_assumption`, the first detector in this project written **proactively**: `tx.origin`-based access control is flagged because EIP-7702 (live on Ethereum mainnet via the Pectra upgrade) lets an EOA delegate to arbitrary contract code, breaking the assumption that `tx.origin` identifies a plain externally-owned account — security researchers have flagged this composition as an emerging attack surface, but no public exploit of it has been confirmed yet. Also researched but explicitly did not build detectors for: private-key/AWS-key compromises (Step Finance $27.3M, Resolv $25M) and Aptos's Move-VM type-confusion bug ($70B systemic risk) — both are outside what source-level static analysis can ever detect (off-chain infrastructure compromise and a VM implementation bug, respectively, not a pattern in user contract code).
-- **9 new detectors added across two rounds of auditing real historical exploits against Sentri's existing detector set** to close confirmed gaps. Round 1: `evm_readonly_reentrancy` (an unguarded view/pure getter alongside an external-call-before-state-write elsewhere in the file — the dForce/$3.7M Feb 2023 and ~$70M Aug 2023 Curve-pool class of bugs, distinct from classic state-changing reentrancy), `evm_insufficient_multisig_threshold` (an M-of-N signature threshold at or below 60% of the signer count — the Ronin Bridge/$625M and Harmony Horizon/$100M 2022 key-compromise thefts both had low thresholds relative to signer count), `sol_unchecked_token_account_type` (an Anchor account field that looks like a token/mint/collateral reference but is a raw, unconstrained `AccountInfo` — the Cashio/$52M and Crema Finance/$8.8M 2022 fake-account substitution bugs), and `move_manual_overflow_check` (a left-shift next to a hex-bitmask bounds comparison — the exact shape of the Cetus Protocol/$223M May 2025 Sui hack's `checked_shlw` bug). Also broadened Solana's shared-IR sensitive-handler list (`semantic_model.rs`) to include mint/deposit/collateral/borrow/liquidate/swap, since Cashio's exploited entry point wasn't named withdraw/transfer/close/set_authority/upgrade and would have slipped past the existing list. Round 2: `sol_fake_sysvar_instruction_account` (unchecked `load_instruction_at` reading the Instructions sysvar with no address verification — the root cause of the Wormhole Solana bridge hack, $326M, Feb 2022, still the second-largest DeFi exploit ever), `evm_arbitrary_function_selector_dispatch` (a low-level `.call`/`.delegatecall` forwarding relayer-supplied calldata with no selector allowlist — the Poly Network hack, $611M, Aug 2021, one of the largest DeFi exploits ever), `evm_stale_oracle_price` (a `latestRoundData()` call whose `updatedAt` is never checked against a staleness threshold — a widely recurring audit finding, related to the Venus Protocol BSC/LUNA-crash exploit), `evm_fee_on_transfer_incompatibility` (a `transferFrom` whose nominal amount is trusted directly for accounting instead of a before/after balance diff — a frequent code4rena/Sherlock finding with a documented Balancer/STA-token exploit), and `evm_cross_chain_replay_missing_chainid` (signature verification with no `block.chainid` bound into the signed payload anywhere in the file — the $20M Wintermute-targeted Optimism exploit and a Multichain hardcoded-chainId bug).
+- **9 new detectors added across two rounds of auditing real historical exploits against Truent's existing detector set** to close confirmed gaps. Round 1: `evm_readonly_reentrancy` (an unguarded view/pure getter alongside an external-call-before-state-write elsewhere in the file — the dForce/$3.7M Feb 2023 and ~$70M Aug 2023 Curve-pool class of bugs, distinct from classic state-changing reentrancy), `evm_insufficient_multisig_threshold` (an M-of-N signature threshold at or below 60% of the signer count — the Ronin Bridge/$625M and Harmony Horizon/$100M 2022 key-compromise thefts both had low thresholds relative to signer count), `sol_unchecked_token_account_type` (an Anchor account field that looks like a token/mint/collateral reference but is a raw, unconstrained `AccountInfo` — the Cashio/$52M and Crema Finance/$8.8M 2022 fake-account substitution bugs), and `move_manual_overflow_check` (a left-shift next to a hex-bitmask bounds comparison — the exact shape of the Cetus Protocol/$223M May 2025 Sui hack's `checked_shlw` bug). Also broadened Solana's shared-IR sensitive-handler list (`semantic_model.rs`) to include mint/deposit/collateral/borrow/liquidate/swap, since Cashio's exploited entry point wasn't named withdraw/transfer/close/set_authority/upgrade and would have slipped past the existing list. Round 2: `sol_fake_sysvar_instruction_account` (unchecked `load_instruction_at` reading the Instructions sysvar with no address verification — the root cause of the Wormhole Solana bridge hack, $326M, Feb 2022, still the second-largest DeFi exploit ever), `evm_arbitrary_function_selector_dispatch` (a low-level `.call`/`.delegatecall` forwarding relayer-supplied calldata with no selector allowlist — the Poly Network hack, $611M, Aug 2021, one of the largest DeFi exploits ever), `evm_stale_oracle_price` (a `latestRoundData()` call whose `updatedAt` is never checked against a staleness threshold — a widely recurring audit finding, related to the Venus Protocol BSC/LUNA-crash exploit), `evm_fee_on_transfer_incompatibility` (a `transferFrom` whose nominal amount is trusted directly for accounting instead of a before/after balance diff — a frequent code4rena/Sherlock finding with a documented Balancer/STA-token exploit), and `evm_cross_chain_replay_missing_chainid` (signature verification with no `block.chainid` bound into the signed payload anywhere in the file — the $20M Wintermute-targeted Optimism exploit and a Multichain hardcoded-chainId bug).
 - musl support for the npm installer (Alpine and other musl-based Linux systems now get the matching binary instead of a glibc build that won't start).
-- CI coverage for `web/` and `sentri-npm/` — neither had any automated checks before (which is exactly how several of the bugs above went uncaught).
+- CI coverage for `web/` and `truent-npm/` — neither had any automated checks before (which is exactly how several of the bugs above went uncaught).
 - Web app: session-checked/rate-limited `/api/analyze`, real crypto-payment verification, consolidated NextAuth config, zod validation on remaining API routes, a Prisma 7 driver adapter (required as of Prisma 7 — the app didn't build without one), and a large accessibility/consistency pass.
 
 ### Changed
 
-- **Dynamic Solana fuzzing is opt-in when building from source.** It links a real Solana VM, which takes `sentri-cli` from 221 dependencies to 449, and the workflow it enables already requires a compiled `.so`, an Anchor IDL and a fuzz plan — so someone reaching for it can pass a flag, while someone scanning Solidity should not pay for it. Build it with `cargo install sentri-cli --features solana-dynamic`; without it the command exits with that exact instruction. Static Solana analysis and dynamic EVM fuzzing are unaffected. Prebuilt binaries (GitHub releases, npm) ship with the backend included, since those users download rather than compile.
+- **Dynamic Solana fuzzing is opt-in when building from source.** It links a real Solana VM, which takes `truent-cli` from 221 dependencies to 449, and the workflow it enables already requires a compiled `.so`, an Anchor IDL and a fuzz plan — so someone reaching for it can pass a flag, while someone scanning Solidity should not pay for it. Build it with `cargo install truent-cli --features solana-dynamic`; without it the command exits with that exact instruction. Static Solana analysis and dynamic EVM fuzzing are unaffected. Prebuilt binaries (GitHub releases, npm) ship with the backend included, since those users download rather than compile.
 - The marketing site was rebuilt on a flat, hairline-separated editorial layout with a scroll-scrubbed particle hero, and the landing page's figures now cite what the tool actually reports (71 detectors, 4 chains, 21 reproduced exploits, $1.76B of losses in the registry) instead of unverifiable marketing numbers.
 
 ### Fixed
 
-- **The release workflow published an incomplete, unusable set of crates.** `sentri-dynamic-core`, `sentri-dynamic-evm`, `sentri-dynamic-solana` and `sentri-analyzer-soroban` were absent from every publish layer despite `sentri-cli` depending on all four; `sentri-simulator` was still listed after being removed from the workspace; and because each publish pipes to `tee` without `pipefail`, a failed publish took tee's exit status and was silently swallowed, letting the job report success while crates were missing from the registry. This is why `sentri-cli` 0.3.0 reached crates.io with unpublished dependencies and why npm never received 0.3.0.
+- **The release workflow published an incomplete, unusable set of crates.** `truent-dynamic-core`, `truent-dynamic-evm`, `truent-dynamic-solana` and `truent-analyzer-soroban` were absent from every publish layer despite `truent-cli` depending on all four; `truent-simulator` was still listed after being removed from the workspace; and because each publish pipes to `tee` without `pipefail`, a failed publish took tee's exit status and was silently swallowed, letting the job report success while crates were missing from the registry. This is why `truent-cli` 0.3.0 reached crates.io with unpublished dependencies and why npm never received 0.3.0.
 
 
 
-- **Detection pipeline was completely disconnected from the CLI.** `sentri check`/`sentri scan` hardcoded an empty violation list regardless of input; the 35 EVM + 9 Solana + 6 Move detector functions existed and were tested in isolation but were never actually called from the command handlers. All 50 are now wired into `run_all_detectors()` per chain and reachable from the CLI.
-- **`sentri fuzz` was a no-op stub.** Now mutates real source files (line deletion/duplication/truncation/swap, seeded for reproducibility) and runs them through the live detectors looking for crashes, plus an optional precision/recall self-test against four detector-benchmark fuzzers that existed but were never wired to anything.
+- **Detection pipeline was completely disconnected from the CLI.** `truent check`/`truent scan` hardcoded an empty violation list regardless of input; the 35 EVM + 9 Solana + 6 Move detector functions existed and were tested in isolation but were never actually called from the command handlers. All 50 are now wired into `run_all_detectors()` per chain and reachable from the CLI.
+- **`truent fuzz` was a no-op stub.** Now mutates real source files (line deletion/duplication/truncation/swap, seeded for reproducibility) and runs them through the live detectors looking for crashes, plus an optional precision/recall self-test against four detector-benchmark fuzzers that existed but were never wired to anything.
 - Fixed a bug where an absolute file path passed to the EVM analyzer's solc-staging step could overwrite that real file with whatever source was being compiled, due to `Path::join` discarding its base for absolute arguments.
 - Fixed a UTF-8 slice panic and an unbounded-recursion stack-overflow risk in the EVM bytecode/AST-walking code.
 - Fixed report-generation (JSON/CSV/HTML) escaping gaps that could be triggered by attacker-influenced contract names or messages.
 - Fixed the invariant library's built-in defaults, which stored a bare variable reference instead of a compiled expression; they now compile through the real DSL parser.
-- Fixed multiple bugs in `sentri-npm` (the `@dextonicx/cli` npm wrapper): its test suite had never actually run due to wrong import paths in all four test files; `detectPlatform()` never returned a `version` field, silently 404ing every checksum fetch; and a live bug where `.tar.gz` release archives (Linux/macOS) nest the binary in a subdirectory while `.zip` (Windows) doesn't, which the installer didn't account for.
+- Fixed multiple bugs in `truent-npm` (the `@dextonicx/cli` npm wrapper): its test suite had never actually run due to wrong import paths in all four test files; `detectPlatform()` never returned a `version` field, silently 404ing every checksum fetch; and a live bug where `.tar.gz` release archives (Linux/macOS) nest the binary in a subdirectory while `.zip` (Windows) doesn't, which the installer didn't account for.
 
 ### Removed
 
@@ -154,13 +154,13 @@ pass; the engine is what settles it.
   - Windows: x86_64
 
 - **crates.io Publication**: All 14 crates published in dependency order
-  - Layer 1: sentri-core
-  - Layer 2: sentri-ir, sentri-utils
-  - Layer 3: sentri-dsl-parser, sentri-report
-  - Layer 4: sentri-library
-  - Layer 5: sentri-analyzer-evm, sentri-analyzer-move, sentri-analyzer-solana, sentri-solana-macro
-  - Layer 6: sentri-generator-evm, sentri-generator-move, sentri-generator-solana
-  - Layer 7: sentri-cli
+  - Layer 1: truent-core
+  - Layer 2: truent-ir, truent-utils
+  - Layer 3: truent-dsl-parser, truent-report
+  - Layer 4: truent-library
+  - Layer 5: truent-analyzer-evm, truent-analyzer-move, truent-analyzer-solana, truent-solana-macro
+  - Layer 6: truent-generator-evm, truent-generator-move, truent-generator-solana
+  - Layer 7: truent-cli
 
 ---
 
@@ -171,11 +171,11 @@ pass; the engine is what settles it.
 - **Reproducible analysis** — New `--seed` flag for deterministic results across runs (default: 42)
   - Ensures security audits produce consistent results
   - Useful for CI/CD pipelines and regression testing
-  - Usage: `sentri check ./programs --seed 12345`
+  - Usage: `truent check ./programs --seed 12345`
 
 - **Flexible output options** — Enhanced `--output` flag for saving reports to disk
   - Works with all formats: text, JSON, and HTML
-  - Usage: `sentri check ./programs --format json --output ./report.json`
+  - Usage: `truent check ./programs --format json --output ./report.json`
   - Enables programmatic result parsing and team sharing
 
 - **HTML report generation** — New `--format html` produces styled security reports
@@ -183,7 +183,7 @@ pass; the engine is what settles it.
   - Color-coded severity indicators (Critical, High, Medium, Low)
   - Summary statistics and violation table
   - Shareable with non-technical stakeholders
-  - Usage: `sentri check ./programs --format html --output ./report.html`
+  - Usage: `truent check ./programs --format html --output ./report.html`
 
 ### Changed
 
@@ -233,7 +233,7 @@ This release fixes the critical UX issue where all violations were reported at l
 
 v0.1 used pattern matching against raw source text. It worked well for general vulnerability detection but had no awareness of Anchor's type system, producing false positives on correct idiomatic Anchor code.
 
-v0.2 replaces pattern matching with **real Rust AST parsing** using the `syn` crate. Sentri now reads your code as a syntax tree, understands what each Anchor type enforces, and only fires violations where there is genuine risk.
+v0.2 replaces pattern matching with **real Rust AST parsing** using the `syn` crate. Truent now reads your code as a syntax tree, understands what each Anchor type enforces, and only fires violations where there is genuine risk.
 
 ### Added
 
@@ -269,9 +269,9 @@ v0.2 replaces pattern matching with **real Rust AST parsing** using the `syn` cr
 - Solana analyzer now has AST-first security analysis for Anchor programs
 - Violation severity for constrained `AccountInfo` accounts downgraded from HIGH to LOW
 - All crates now have improved crates.io discoverability with:
-  - Keywords starting with "sentri" (crates.io fuzzy-match override)
+  - Keywords starting with "truent" (crates.io fuzzy-match override)
   - Proper categories (`development-tools`, `development-tools::testing`)
-  - Explicit descriptions mentioning Sentri
+  - Explicit descriptions mentioning Truent
 
 ### Still Correctly Flagged
 
@@ -285,13 +285,13 @@ v0.2 replaces pattern matching with **real Rust AST parsing** using the `syn` cr
 
 ```bash
 # Rust developers
-cargo install sentri-cli --force
+cargo install truent-cli --force
 
 # JavaScript / TypeScript developers
 npm install -g @dextonicx/cli@latest
 
 # Verify
-sentri --version   # sentri 0.2.0
+truent --version   # truent 0.2.0
 ```
 
 ### Platform Binaries
@@ -313,7 +313,7 @@ Pre-built binaries available for download:
 
 ### Looking Ahead — v0.3
 
-Runtime fuzzing via embedded `revm` for EVM and `solana-program-test` for Solana. Throw randomized inputs at your programs and watch invariants break before attackers find them. This makes Sentri the only dedicated invariant fuzzer for Solana programs in existence.
+Runtime fuzzing via embedded `revm` for EVM and `solana-program-test` for Solana. Throw randomized inputs at your programs and watch invariants break before attackers find them. This makes Truent the only dedicated invariant fuzzer for Solana programs in existence.
 
 ## [0.1.1] - 2026-02-18
 
@@ -376,12 +376,12 @@ Runtime fuzzing via embedded `revm` for EVM and `solana-program-test` for Solana
 
 ### CLI
 
-- `sentri init` command
-- `sentri build` command with chain selection
-- `sentri simulate` command with seed control
-- `sentri upgrade-check` command
-- `sentri report` command with format selection
-- `sentri list` command for invariant discovery
+- `truent init` command
+- `truent build` command with chain selection
+- `truent simulate` command with seed control
+- `truent upgrade-check` command
+- `truent report` command with format selection
+- `truent list` command for invariant discovery
 - Comprehensive help system
 - Colored output support
 - Verbose logging control
@@ -413,7 +413,7 @@ Runtime fuzzing via embedded `revm` for EVM and `solana-program-test` for Solana
 #### Project Structure
 
 ```text
-sentri/
+truent/
 ├── 15 specialized crates
 ├── Zero external unsafe code
 ├── 100% test passing
@@ -613,7 +613,7 @@ For questions, issues, or contributions:
 
 ## Contributors
 
-- Sentri Team - Initial design and implementation
+- Truent Team - Initial design and implementation
 
 ---
 
@@ -643,7 +643,7 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Note**: Sentri follows Semantic Versioning. See <https://semver.org> for details.
+**Note**: Truent follows Semantic Versioning. See <https://semver.org> for details.
 
 - **MAJOR** version for incompatible API changes
 - **MINOR** version for new backward-compatible functionality

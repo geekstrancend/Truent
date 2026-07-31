@@ -1,8 +1,8 @@
-# Getting Started with Sentri
+# Getting Started with Truent
 
-## What is Sentri?
+## What is Truent?
 
-Sentri is a **production-grade invariant enforcement system** for smart contracts across Solana, EVM, and Move chains.
+Truent is a **production-grade invariant enforcement system** for smart contracts across Solana, EVM, and Move chains.
 
 It lets you:
 
@@ -14,7 +14,7 @@ It lets you:
 
 ## Choose Your Path
 
-Sentri supports two main workflows:
+Truent supports two main workflows:
 
 1. **Security Analysis** (Recommended for first-time users) — Quickly scan smart contracts for common security vulnerabilities
 2. **Invariant Definition** (Advanced) — Define custom properties that your contracts must always satisfy
@@ -23,59 +23,59 @@ Sentri supports two main workflows:
 
 ## Path 1: Security Analysis (First-Time Users)
 
-### Step 1: Install Sentri
+### Step 1: Install Truent
 
 #### **Option A: Cargo (Recommended for Rust Projects)**
 
 ```bash
-cargo install sentri
+cargo install truent
 ```
 
-This installs sentri globally and adds it to your PATH (usually `~/.cargo/bin/sentri`).
+This installs truent globally and adds it to your PATH (usually `~/.cargo/bin/truent`).
 
 #### **Option B: Homebrew (macOS)**
 
 ```bash
-brew install sentri
+brew install truent
 ```
 
 #### **Option C: Build from Source**
 
 ```bash
-git clone https://github.com/geekstrancend/sentri.git
-cd sentri
+git clone https://github.com/geekstrancend/truent.git
+cd truent
 cargo install --path .
 ```
 
 #### **Option D: Download Pre-built Binary**
 
-Visit the [Sentri Releases](https://github.com/geekstrancend/sentri/releases) page and download the binary for your OS (Linux, macOS, Windows).
+Visit the [Truent Releases](https://github.com/geekstrancend/truent/releases) page and download the binary for your OS (Linux, macOS, Windows).
 
 Extract and add to PATH:
 
 ```bash
 # Example for Linux
-tar -xzf sentri-v0.1.10-x86_64-unknown-linux-gnu.tar.gz
-sudo mv sentri /usr/local/bin/
+tar -xzf truent-v0.1.10-x86_64-unknown-linux-gnu.tar.gz
+sudo mv truent /usr/local/bin/
 ```
 
 ### Step 2: Verify Installation
 
 ```bash
-sentri --version
+truent --version
 ```
 
 Expected output:
 
 ```text
-sentri 0.1.10
+truent 0.1.10
 ```
 
-Verify sentri is accessible:
+Verify truent is accessible:
 
 ```bash
-which sentri
-# Output: /home/user/.cargo/bin/sentri (or similar)
+which truent
+# Output: /home/user/.cargo/bin/truent (or similar)
 ```
 
 If command not found, add to PATH:
@@ -92,10 +92,10 @@ source ~/.bashrc
 ### Step 3: Verify Dependencies
 
 ```bash
-sentri doctor
+truent doctor
 ```
 
-This checks that all Sentri components are working correctly. Output example:
+This checks that all Truent components are working correctly. Output example:
 
 ```text
 ✓ Analyzer ready
@@ -117,10 +117,10 @@ Ensure your project has:
 ### Step 5: Initialize Configuration
 
 ```bash
-sentri init
+truent init
 ```
 
-This creates .sentri.toml in your project root with default settings. Edit it to match your project:
+This creates .truent.toml in your project root with default settings. Edit it to match your project:
 
 ```toml
 [checks]
@@ -137,7 +137,7 @@ enabled = [
 
 [report]
 format = "json"
-output = "sentri-report.json"
+output = "truent-report.json"
 fail_on = "high"
 
 [ignore]
@@ -159,26 +159,26 @@ files = ["target/**", "node_modules/**", "tests/**"]
 #### **Basic Command**
 
 ```bash
-sentri check <PATH> --chain <BLOCKCHAIN>
+truent check <PATH> --chain <BLOCKCHAIN>
 ```
 
 #### **For Solana Projects**
 
 ```bash
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana
+truent check ./programs/geekslibrary/src/lib.rs --chain solana
 ```
 
 #### **With Options**
 
 ```bash
 # Human-readable output with details
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana --verbose
+truent check ./programs/geekslibrary/src/lib.rs --chain solana --verbose
 
 # Save JSON report
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana --format json --output sentri-report.json
+truent check ./programs/geekslibrary/src/lib.rs --chain solana --format json --output truent-report.json
 
 # Fail if violations found
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana --fail-on high
+truent check ./programs/geekslibrary/src/lib.rs --chain solana --fail-on high
 ```
 
 **Supported Chains:**
@@ -198,7 +198,7 @@ sentri check ./programs/geekslibrary/src/lib.rs --chain solana --fail-on high
 Output structure:
 
 ```text
-Sentri · Multi-chain Invariant Checker · v0.1.10
+Truent · Multi-chain Invariant Checker · v0.1.10
 
 Target  ./programs/geekslibrary/src/lib.rs
 Chain  Solana
@@ -272,7 +272,7 @@ Common fixes:
 After making fixes:
 
 ```bash
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana --verbose
+truent check ./programs/geekslibrary/src/lib.rs --chain solana --verbose
 ```
 
 Verify:
@@ -286,13 +286,13 @@ Verify:
 Create a JSON report for documentation/CI:
 
 ```bash
-sentri check ./programs/geekslibrary/src/lib.rs --chain solana --format json --output sentri-report.json
+truent check ./programs/geekslibrary/src/lib.rs --chain solana --format json --output truent-report.json
 ```
 
 View the report:
 
 ```bash
-cat sentri-report.json
+cat truent-report.json
 ```
 
 ### Step 11: Set Up for CI/CD (Optional)
@@ -301,13 +301,13 @@ Add to your build pipeline (GitHub Actions, GitLab CI, etc.):
 
 ```yaml
 # GitHub Actions example
-- name: Run Sentri Security Analysis
+- name: Run Truent Security Analysis
   run: |
-    sentri check ./programs/geekslibrary/src/lib.rs \
+    truent check ./programs/geekslibrary/src/lib.rs \
       --chain solana \
       --fail-on high \
       --format json \
-      --output sentri-report.json
+      --output truent-report.json
 ```
 
 Exit codes:
@@ -321,10 +321,10 @@ Track violations over time:
 
 ```bash
 # Run daily and save timestamped reports
-sentri check ./programs/geekslibrary/src/lib.rs \
+truent check ./programs/geekslibrary/src/lib.rs \
   --chain solana \
   --format json \
-  --output reports/sentri-$(date +%Y%m%d).json
+  --output reports/truent-$(date +%Y%m%d).json
 ```
 
 ---
@@ -333,26 +333,26 @@ sentri check ./programs/geekslibrary/src/lib.rs \
 
 ```bash
 # 1. Install
-cargo install sentri
+cargo install truent
 
 # 2. Verify
-sentri --version
-sentri doctor
+truent --version
+truent doctor
 
 # 3. Navigate to project
 cd /path/to/project
 
 # 4. Initialize config
-sentri init
+truent init
 
 # 5. Run analysis
-sentri check ./path/to/contract.rs --chain solana --verbose
+truent check ./path/to/contract.rs --chain solana --verbose
 
 # 6. Save report
-sentri check ./path/to/contract.rs --chain solana --format json --output sentri-report.json
+truent check ./path/to/contract.rs --chain solana --format json --output truent-report.json
 
 # 7. Re-verify after fixes
-sentri check ./path/to/contract.rs --chain solana --fail-on high
+truent check ./path/to/contract.rs --chain solana --fail-on high
 ```
 
 ---
@@ -361,11 +361,11 @@ sentri check ./path/to/contract.rs --chain solana --fail-on high
 
 | Problem | Solution |
 | --- | --- |
-| `sentri: command not found` | Add `~/.cargo/bin` to PATH or reinstall with `cargo install sentri` |
+| `truent: command not found` | Add `~/.cargo/bin` to PATH or reinstall with `cargo install truent` |
 | `Failed to analyze EVM` | Use correct `--chain` flag; specify file not directory |
-| `FAIL — violations found` | Exit code 1; check sentri-report.json for details |
+| `FAIL — violations found` | Exit code 1; check truent-report.json for details |
 | `Is a directory` error | Provide path to `.rs` or `.sol` file, not folder |
-| Config file not found | Run `sentri init` in project root to create .sentri.toml |
+| Config file not found | Run `truent init` in project root to create .truent.toml |
 
 ---
 
@@ -374,9 +374,9 @@ sentri check ./path/to/contract.rs --chain solana --fail-on high
 ### Initialize New Projects
 
 ```bash
-sentri init my-project
-sentri init --template solana my-solana-vault
-sentri init --template evm my-evm-token
+truent init my-project
+truent init --template solana my-solana-vault
+truent init --template evm my-evm-token
 ```
 
 ## Writing Invariants
@@ -466,7 +466,7 @@ global:
 Add to `.github/workflows/check.yml`:
 
 ```yaml
-name: Sentri Check
+name: Truent Check
 
 on: [push, pull_request]
 
@@ -476,11 +476,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Sentri
-        run: cargo install sentri
+      - name: Install Truent
+        run: cargo install truent
       
       - name: Check invariants
-        run: sentri check invariants/
+        run: truent check invariants/
 ```
 
 ### Local Pre-commit Hook
@@ -490,7 +490,7 @@ Create `.git/hooks/pre-commit`:
 ```bash
 #!/bin/bash
 set -e
-sentri check invariants/ || exit 1
+truent check invariants/ || exit 1
 echo "Invariants passed"
 ```
 
@@ -502,7 +502,7 @@ chmod +x .git/hooks/pre-commit
 
 ## Configuration
 
-### sentri.toml
+### truent.toml
 
 ```toml
 [project]
@@ -570,14 +570,14 @@ Error: Invariant violated in vault.invar:5
 
 ## Common Issues with Invariant Definition
 
-### "Command not found: sentri"
+### "Command not found: truent"
 
 ```bash
 # Make sure it's installed
-which sentri
+which truent
 
 # If not found, install
-cargo install sentri
+cargo install truent
 
 # Or add to PATH
 export PATH="$PATH:$HOME/.cargo/bin"
@@ -593,14 +593,14 @@ pwd
 ls -la invariants/
 
 # Use absolute paths if needed
-sentri check /full/path/to/vault.invar
+truent check /full/path/to/vault.invar
 ```
 
 ### "Invalid invariant syntax"
 
 ```bash
 # Run with verbose mode
-sentri check --verbose invariants/
+truent check --verbose invariants/
 
 # Check for common mistakes:
 # - Missing ':' after 'invariant'
@@ -614,21 +614,21 @@ sentri check --verbose invariants/
 2. **Check [Examples](example-invariants.md)** - Real-world patterns
 3. **CI Integration** - Add to your pipeline
 4. **Security Model** - Understand guarantees
-5. **Contributing** - Help improve Sentri
+5. **Contributing** - Help improve Truent
 
 ## Getting Help
 
-- **Documentation**: [https://sentri.dev/docs](https://sentri.dev/docs)
-- **Issues**: [GitHub Issues](https://github.com/geekstrancend/Sentri/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/geekstrancend/Sentri/discussions)
-- **Security**: [security@sentri.dev](mailto:security@sentri.dev)
+- **Documentation**: [https://truent.dev/docs](https://truent.dev/docs)
+- **Issues**: [GitHub Issues](https://github.com/geekstrancend/Truent/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/geekstrancend/Truent/discussions)
+- **Security**: [security@truent.dev](mailto:security@truent.dev)
 
 ## Key Concepts
 
 ### Exit Codes
 
 ```bash
-sentri check vault.invar
+truent check vault.invar
 echo $?  # Exit code
 ```
 
@@ -641,13 +641,13 @@ echo $?  # Exit code
 
 ```bash
 # Machine-readable JSON
-sentri check --format json vault.invar
+truent check --format json vault.invar
 
 # Human-readable Markdown
-sentri check --format markdown vault.invar
+truent check --format markdown vault.invar
 
 # CI-friendly SARIF
-sentri check --format sarif vault.invar
+truent check --format sarif vault.invar
 ```
 
 ## Performance Notes
@@ -656,13 +656,13 @@ For large analyses:
 
 ```bash
 # Enable parallel processing (default: on)
-sentri check --parallel
+truent check --parallel
 
 # Use specific number of threads
-sentri check --threads 4
+truent check --threads 4
 
 # Disable parallelism for debugging
-sentri check --threads 1
+truent check --threads 1
 ```
 
 ## Support Level

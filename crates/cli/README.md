@@ -1,43 +1,43 @@
-# sentri
+# truent
 
 Multi-chain smart contract invariant checker for EVM, Solana, Move, and Soroban.
 
-[![Crates.io](https://img.shields.io/crates/v/sentri-cli)](https://crates.io/crates/sentri-cli)
-[![Downloads](https://img.shields.io/crates/d/sentri-cli)](https://crates.io/crates/sentri-cli)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/geekstrancend/Sentri/blob/main/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/truent-cli)](https://crates.io/crates/truent-cli)
+[![Downloads](https://img.shields.io/crates/d/truent-cli)](https://crates.io/crates/truent-cli)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/geekstrancend/Truent/blob/main/LICENSE)
 
-## What is Sentri?
+## What is Truent?
 
-Sentri is a unified invariant checking framework for smart contracts. Define security properties once in Sentri's DSL and verify them across EVM, Solana, Move, and Soroban contracts automatically.
+Truent is a unified invariant checking framework for smart contracts. Define security properties once in Truent's DSL and verify them across EVM, Solana, Move, and Soroban contracts automatically.
 
 ## Quick Start
 
 ### Install
 
 ```bash
-cargo install sentri-cli
+cargo install truent-cli
 ```
 
 Verify installation:
 ```bash
-sentri doctor
+truent doctor
 ```
 
 ### Usage
 
 Initialize project:
 ```bash
-sentri init
+truent init
 ```
 
 Run checks:
 ```bash
-sentri check ./contracts --chain evm
+truent check ./contracts --chain evm
 ```
 
 Generate report:
 ```bash
-sentri check ./contracts --format json --output report.json
+truent check ./contracts --format json --output report.json
 ```
 
 ## Supported Chains
@@ -61,7 +61,7 @@ sentri check ./contracts --format json --output report.json
 
 ## Documentation
 
-Full documentation: [github.com/geekstrancend/Sentri](https://github.com/geekstrancend/Sentri)
+Full documentation: [github.com/geekstrancend/Truent](https://github.com/geekstrancend/Truent)
 
 ## License
 

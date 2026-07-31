@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 /**
  * @title SimpleToken
- * @dev Example EVM contract for Sentri analysis
+ * @dev Example EVM contract for Truent analysis
  * Demonstrates state mutations and invariant violations
  */
 contract SimpleToken {

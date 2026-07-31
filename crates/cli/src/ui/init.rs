@@ -9,7 +9,7 @@ use std::path::Path;
 /// Displays a boxed message with next steps after initialization.
 ///
 /// # Arguments
-/// * `path` - The path where .sentri.toml was created
+/// * `path` - The path where .truent.toml was created
 ///
 /// # Returns
 /// The formatted init output
@@ -21,7 +21,7 @@ pub fn render_init_success(path: &Path) -> String {
 
     // Top border
     output.push_str(&format!(
-        "{}─ Sentri Init ─{}\n",
+        "{}─ Truent Init ─{}\n",
         "╭",
         divider(width.saturating_sub(14))
     ));
@@ -30,9 +30,9 @@ pub fn render_init_success(path: &Path) -> String {
     output.push_str(&format!("{}\n", empty_box_line(width)));
 
     // Success message
-    let config_file = path.join(".sentri.toml");
+    let config_file = path.join(".truent.toml");
     let success_line = format!(
-        "{}  Created .sentri.toml at {}",
+        "{}  Created .truent.toml at {}",
         color_success(ICON_PASS),
         config_file.display()
     );
@@ -45,9 +45,9 @@ pub fn render_init_success(path: &Path) -> String {
 
     // Steps
     let steps = vec![
-        "Edit .sentri.toml to configure your chain and invariants",
-        "Run: sentri check ./contracts",
-        "Add to CI: sentri check ./contracts --fail-on high",
+        "Edit .truent.toml to configure your chain and invariants",
+        "Run: truent check ./contracts",
+        "Add to CI: truent check ./contracts --fail-on high",
     ];
 
     for step in steps {
@@ -59,7 +59,7 @@ pub fn render_init_success(path: &Path) -> String {
 
     // Docs link
     let docs_line = format!(
-        "{}  https://docs.sentri.dev/quickstart",
+        "{}  https://docs.truent.dev/quickstart",
         color_label("Docs:")
     );
     output.push_str(&format!("{}\n", box_line(&docs_line, width)));
@@ -82,9 +82,9 @@ mod tests {
         let path = PathBuf::from("./contracts");
         let output = render_init_success(&path);
 
-        assert!(output.contains("Sentri Init"));
-        assert!(output.contains(".sentri.toml"));
+        assert!(output.contains("Truent Init"));
+        assert!(output.contains(".truent.toml"));
         assert!(output.contains("configure"));
-        assert!(output.contains("sentri check"));
+        assert!(output.contains("truent check"));
     }
 }

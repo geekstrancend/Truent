@@ -6,7 +6,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Regex to match durable nonce read operations
@@ -63,7 +63,7 @@ pub fn detect_solana_durable_nonce_validation(source: &str, file_path: &str) -> 
                 findings.push(
                     Finding::new(
                         "sol_durable_nonce_validation".to_string(),
-                        sentri_core::Severity::Critical,
+                        truent_core::Severity::Critical,
                         file_path.to_string(),
                         handler_line_num + 1,
                         0,
@@ -98,7 +98,7 @@ pub fn detect_solana_durable_nonce_validation(source: &str, file_path: &str) -> 
                 findings.push(
                     Finding::new(
                         "sol_durable_nonce_validation".to_string(),
-                        sentri_core::Severity::High,
+                        truent_core::Severity::High,
                         file_path.to_string(),
                         handler_line_num + 1,
                         0,

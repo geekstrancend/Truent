@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
             currency: currency || 'usd',
             product_data: {
               name: planName,
-              description: `Sentri ${planName} Plan`,
+              description: `Truent ${planName} Plan`,
             },
             unit_amount: Math.round(price * 100),
             recurring: {

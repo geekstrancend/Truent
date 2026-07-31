@@ -125,7 +125,7 @@ const COMPARISON_ROWS = [
 const FAQS = [
   {
     q: 'What counts as a "scan"?',
-    a: 'A scan is one analysis run on a set of contracts. You can include multiple Solidity, Rust, or Move files in a single scan. Sentri runs all 50+ invariant checks plus symbolic execution in one pass.',
+    a: 'A scan is one analysis run on a set of contracts. You can include multiple Solidity, Rust, or Move files in a single scan. Truent runs all 50+ invariant checks plus symbolic execution in one pass.',
   },
   {
     q: 'Can I try Professional features before paying?',
@@ -133,7 +133,7 @@ const FAQS = [
   },
   {
     q: 'Which chains are supported?',
-    a: 'Sentri currently supports EVM-compatible chains (Ethereum, Arbitrum, Base, Polygon, Optimism, Avalanche, BNB Chain), Solana (Anchor programs), and Move-based chains (Aptos, Sui). More chains are added regularly.',
+    a: 'Truent currently supports EVM-compatible chains (Ethereum, Arbitrum, Base, Polygon, Optimism, Avalanche, BNB Chain), Solana (Anchor programs), and Move-based chains (Aptos, Sui). More chains are added regularly.',
   },
   {
     q: 'How does annual billing work?',
@@ -144,7 +144,7 @@ const FAQS = [
     a: 'Enterprise customers receive a 99.9% uptime SLA for the scanning API and a maximum 4-hour response time for P1 security incidents. Custom SLAs are available on request.',
   },
   {
-    q: 'Can I use Sentri for client audit work?',
+    q: 'Can I use Truent for client audit work?',
     a: 'Yes. The Professional plan allows you to generate reports for up to 10 separate client protocols per month. Enterprise customers have unlimited client workspaces and white-label reporting.',
   },
 ]
@@ -330,7 +330,7 @@ export default function PricingPage() {
         <section className="px-6 py-24 max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl font-[600] text-text mb-3">Frequently Asked Questions</h2>
-            <p className="text-body-md text-sec">Everything you need to know about Sentri&apos;s plans</p>
+            <p className="text-body-md text-sec">Everything you need to know about Truent&apos;s plans</p>
           </div>
           <div ref={faqRef} className="space-y-3 reveal">
             {FAQS.map((faq, i) => (

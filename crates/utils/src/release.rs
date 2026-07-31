@@ -55,7 +55,7 @@ impl ReleaseManager {
         version: SemanticVersion,
         artifacts: &[ReleaseArtifact],
     ) -> String {
-        let mut manifest = format!("# Sentri Release {}\n\n", version);
+        let mut manifest = format!("# Truent Release {}\n\n", version);
         manifest.push_str("## Artifacts\n\n");
 
         for artifact in artifacts {
@@ -69,14 +69,14 @@ impl ReleaseManager {
         manifest.push_str("\n## Installation\n\n");
         manifest.push_str("```bash\n");
         manifest.push_str("# Extract the appropriate archive for your platform:\n");
-        manifest.push_str("tar xzf sentri-VERSION-PLATFORM.tar.gz\n");
-        manifest.push_str("sudo mv sentri /usr/local/bin/\n");
+        manifest.push_str("tar xzf truent-VERSION-PLATFORM.tar.gz\n");
+        manifest.push_str("sudo mv truent /usr/local/bin/\n");
         manifest.push_str("```\n");
 
         manifest.push_str("\n## Verification\n\n");
         manifest.push_str("Verify the checksum (replace CHECKSUM):\n");
         manifest.push_str("```bash\n");
-        manifest.push_str("sha256sum -c sentri-CHECKSUM.txt\n");
+        manifest.push_str("sha256sum -c truent-CHECKSUM.txt\n");
         manifest.push_str("```\n");
 
         manifest
@@ -158,7 +158,7 @@ mod tests {
         let manager = ReleaseManager::new(std::path::PathBuf::from("/tmp"));
         let manifest = manager.generate_manifest(SemanticVersion::new(0, 1, 0), &artifacts);
 
-        assert!(manifest.contains("Sentri Release 0.1.0"));
+        assert!(manifest.contains("Truent Release 0.1.0"));
         assert!(manifest.contains("linux-x86_64"));
         assert!(manifest.contains("darwin-aarch64"));
         assert!(manifest.contains("Installation"));

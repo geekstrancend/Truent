@@ -18,7 +18,7 @@
     /* ── Editorial surface system ──
        A flat darkness ladder (bg → surface → panel) separated by hairline
        borders rather than shadows, so panels read as inked areas on one
-       sheet instead of floating cards. Accent stays Sentri indigo. */
+       sheet instead of floating cards. Accent stays Truent indigo. */
     --bg: #08090c;
     --surface-2: #101218;
     --panel: #171a22;

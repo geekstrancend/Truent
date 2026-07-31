@@ -107,7 +107,7 @@ pub use upgrade_path_verification::detect_upgrade_path_verification;
 ///
 /// This is the single entry point the CLI should use for EVM analysis: each detector
 /// operates directly on raw source text, so no solc/AST availability is required.
-pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Finding> {
+pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<truent_core::Finding> {
     let mut findings = implementations::detect_all(source, file_path);
 
     findings.extend(aa_entropy_weakness::detect_aa_entropy_weakness(
@@ -204,7 +204,7 @@ pub fn run_all_detectors(source: &str, file_path: &str) -> Vec<sentri_core::Find
     // breaking the rest of the scan.
     if let Ok(contract) = crate::ast::SolidityParser::parse_source(source, file_path) {
         let model = crate::semantic_model::build_semantic_model(&contract, source, file_path);
-        findings.extend(sentri_ir::rules::find_unauthorized_privileged_mutations(
+        findings.extend(truent_ir::rules::find_unauthorized_privileged_mutations(
             &model,
         ));
     }

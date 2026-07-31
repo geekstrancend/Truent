@@ -3,7 +3,7 @@
 //! All EVM detectors implement this trait to provide a consistent interface
 //! for discovering invariant violations.
 
-use sentri_core::Finding;
+use truent_core::Finding;
 
 /// Trait for EVM vulnerability detectors.
 pub trait Detector {

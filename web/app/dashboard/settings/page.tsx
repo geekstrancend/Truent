@@ -8,7 +8,7 @@ import { Copy, Eye, EyeOff, Check, AlertCircle } from 'lucide-react'
 export default function SettingsPage() {
   const [fullName, setFullName] = useState('Alex Developer')
   const [email, setEmail] = useState('alex@example.com')
-  const [apiKey, setApiKey] = useState('sentri_sk_1234567890abcdefghijk')
+  const [apiKey, setApiKey] = useState('truent_sk_1234567890abcdefghijk')
   const [showApiKey, setShowApiKey] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [copiedApiKey, setCopiedApiKey] = useState(false)
@@ -26,7 +26,7 @@ export default function SettingsPage() {
 
   const handleRegenerateApiKey = () => {
     // In a real app, this would call an API endpoint
-    setApiKey('sentri_sk_' + Math.random().toString(36).slice(2, 24))
+    setApiKey('truent_sk_' + Math.random().toString(36).slice(2, 24))
   }
 
   return (

@@ -1,6 +1,6 @@
 //! A `revm` execution inspector that records the call/storage structure of
 //! a transaction as a `Vec<TraceEvent>`, which
-//! [`sentri_dynamic_core::detect_reentrancy`] then analyzes.
+//! [`truent_dynamic_core::detect_reentrancy`] then analyzes.
 //!
 //! This is the piece that makes reentrancy detection actually fire on real
 //! compiled contracts: the chain-agnostic engine proved the *analysis*
@@ -16,7 +16,7 @@
 
 use revm::interpreter::{opcode, CallInputs, CallOutcome, InstructionResult, Interpreter};
 use revm::{Database, EvmContext, Inspector};
-use sentri_dynamic_core::TraceEvent;
+use truent_dynamic_core::TraceEvent;
 
 /// Accumulates [`TraceEvent`]s over the course of one transaction. A fresh
 /// one is used per top-level call so `events` holds exactly that call's

@@ -27,20 +27,20 @@ process against a newer commit) to pick up upstream grammar fixes.
   everything else)
 - `src/` — solver-generated parser output (`parser.c`,
   `node-types.json`, `grammar.json`) as committed upstream, used as a
-  reference; Sentri regenerates its own `bindings/rust/*` and
+  reference; Truent regenerates its own `bindings/rust/*` and
   `src/parser.c` locally via `tree-sitter generate` so the ABI matches
   whatever `tree-sitter` crate version this workspace pins, rather
   than trusting upstream's pre-generated output to match.
 - `queries/` — syntax-highlighting queries (not currently used by
-  Sentri, kept for completeness/future use)
+  Truent, kept for completeness/future use)
 - `tests/` — upstream's own corpus of real-world `.move` snippets,
-  useful as a smoke-test corpus beyond Sentri's own fixtures
+  useful as a smoke-test corpus beyond Truent's own fixtures
 
 ## Upstream status
 
 Upstream's own README describes this as a **work-in-progress**
 grammar with "no guarantees" on parsing all valid Move code. Treat it
 as a best-effort structural parser, not a validating compiler
-front-end - Sentri's detectors should degrade gracefully (as they
+front-end - Truent's detectors should degrade gracefully (as they
 already do for solc-dependent EVM analysis) if a real-world Move file
 fails to parse.

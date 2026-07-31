@@ -83,7 +83,7 @@ done
 # Update npm package
 echo ""
 echo "Updating npm package..."
-update_package_json "sentri-npm/package.json"
+update_package_json "truent-npm/package.json"
 
 # Update CHANGELOG with new entry (optional)
 echo ""

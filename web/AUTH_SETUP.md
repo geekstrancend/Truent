@@ -1,6 +1,6 @@
-# Sentri Web Authentication Setup
+# Truent Web Authentication Setup
 
-This guide explains how to set up and use the authentication system in the Sentri web application.
+This guide explains how to set up and use the authentication system in the Truent web application.
 
 ## Overview
 
@@ -58,7 +58,7 @@ To enable GitHub sign-in:
 
 1. Go to GitHub Settings → Developer settings → OAuth Apps
 2. Create a new OAuth App:
-   - **Application name**: Sentri
+   - **Application name**: Truent
    - **Homepage URL**: http://localhost:3000 (development)
    - **Authorization callback URL**: http://localhost:3000/api/auth/callback/github
 3. Copy the **Client ID** and **Client Secret**

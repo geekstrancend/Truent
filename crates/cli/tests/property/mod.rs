@@ -5,7 +5,7 @@
 
 mod parser_properties {
     use proptest::prelude::*;
-    use sentri_dsl_parser::InvariantParser;
+    use truent_dsl_parser::InvariantParser;
 
     proptest! {
         #[test]
@@ -52,7 +52,7 @@ mod parser_properties {
 
 mod evaluator_properties {
     use proptest::prelude::*;
-    use sentri_core::{model::Expression, Evaluator, ExecutionContext};
+    use truent_core::{model::Expression, Evaluator, ExecutionContext};
 
     proptest! {
         #[test]
@@ -111,14 +111,14 @@ mod evaluator_properties {
 
 mod type_checker_properties {
     use proptest::prelude::*;
-    use sentri_core::model::Expression;
+    use truent_core::model::Expression;
 
     proptest! {
         #[test]
         fn prop_type_checker_never_panics(
             a in 0i64..1000,
         ) {
-            let checker = sentri_core::TypeChecker::new();
+            let checker = truent_core::TypeChecker::new();
             let expr = Expression::Int(a as i128);
             let _ = checker.check_expr(&expr);
             // Property: no panic
@@ -130,11 +130,11 @@ mod type_checker_properties {
         ) {
             let _var_val = var_val;
 
-            let checker1 = sentri_core::TypeChecker::new();
+            let checker1 = truent_core::TypeChecker::new();
             let expr = Expression::Int(var_val as i128);
             let result1 = checker1.check_expr(&expr);
 
-            let checker2 = sentri_core::TypeChecker::new();
+            let checker2 = truent_core::TypeChecker::new();
             let result2 = checker2.check_expr(&expr);
 
             prop_assert_eq!(

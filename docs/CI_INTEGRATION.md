@@ -1,15 +1,15 @@
-# Sentri CI/CD Integration Guide
+# Truent CI/CD Integration Guide
 
-Integrate Sentri into your continuous integration pipeline to catch invariant violations before they reach production.
+Integrate Truent into your continuous integration pipeline to catch invariant violations before they reach production.
 
 ## Quick Start
 
 ### GitHub Actions
 
-Add this workflow to `.github/workflows/sentri.yml`:
+Add this workflow to `.github/workflows/truent.yml`:
 
 ```yaml
-name: Sentri Invariant Check
+name: Truent Invariant Check
 
 on:
   push:
@@ -24,7 +24,7 @@ on:
       - 'programs/**'
 
 jobs:
-  sentri-check:
+  truent-check:
     runs-on: ubuntu-latest
     
     steps:
@@ -33,18 +33,18 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       
-      - name: Install Sentri
-        run: cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
+      - name: Install Truent
+        run: cargo install --git https://github.com/geekstrancend/Truent --bin truent
       
-      - name: Run Sentri Checks
-        run: sentri check ./contracts --chain evm --fail-on high --format json --output sentri-report.json
+      - name: Run Truent Checks
+        run: truent check ./contracts --chain evm --fail-on high --format json --output truent-report.json
       
       - name: Upload Report
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: sentri-report
-          path: sentri-report.json
+          name: truent-report
+          path: truent-report.json
       
       - name: Comment PR
         if: failure() && github.event_name == 'pull_request'
@@ -55,7 +55,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '❌ Sentri invariant checks failed. See workflow run for details.'
+              body: '❌ Truent invariant checks failed. See workflow run for details.'
             })
 ```
 
@@ -64,17 +64,17 @@ jobs:
 Add to `.gitlab-ci.yml`:
 
 ```yaml
-sentri:
+truent:
   image: rust:latest
   stage: test
   script:
-    - cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
-    - sentri check ./contracts --chain evm --fail-on high --quiet
+    - cargo install --git https://github.com/geekstrancend/Truent --bin truent
+    - truent check ./contracts --chain evm --fail-on high --quiet
   artifacts:
     reports:
-      junit: sentri-report.xml
+      junit: truent-report.xml
     paths:
-      - sentri-report.json
+      - truent-report.json
     expire_in: 30 days
   on:
     - main
@@ -88,25 +88,25 @@ Add to `.circleci/config.yml`:
 
 ```yaml
 jobs:
-  sentri-check:
+  truent-check:
     docker:
       - image: rust:latest
     steps:
       - checkout
       - run:
-          name: Install Sentri
-          command: cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
+          name: Install Truent
+          command: cargo install --git https://github.com/geekstrancend/Truent --bin truent
       - run:
-          name: Run Sentri Checks
-          command: sentri check ./contracts --chain evm --fail-on high
+          name: Run Truent Checks
+          command: truent check ./contracts --chain evm --fail-on high
       - store_artifacts:
-          path: sentri-report.json
+          path: truent-report.json
 
 workflows:
   version: 2
   test:
     jobs:
-      - sentri-check:
+      - truent-check:
           filters:
             branches:
               only:
@@ -116,7 +116,7 @@ workflows:
 
 ## Configuration
 
-### Basic Configuration (`.sentri.toml`)
+### Basic Configuration (`.truent.toml`)
 
 ```toml
 [project]
@@ -166,41 +166,41 @@ enabled = false  # Not using Move
 
 **Text (default)** - Colored output for humans:
 ```bash
-sentri check ./contracts --format text
+truent check ./contracts --format text
 ```
 
 **JSON** - Machine-readable format:
 ```bash
-sentri check ./contracts --format json --output results.json
+truent check ./contracts --format json --output results.json
 ```
 
 **HTML** - Styled report for web viewing:
 ```bash
-sentri check ./contracts --format html --output report.html
+truent check ./contracts --format html --output report.html
 ```
 
 ### Retry Behavior
 
 **Fail on any violation:**
 ```bash
-sentri check ./contracts --fail-on low
+truent check ./contracts --fail-on low
 ```
 
 **Fail only on critical/high:**
 ```bash
-sentri check ./contracts --fail-on high
+truent check ./contracts --fail-on high
 ```
 
 **Never fail (just report):**
 ```bash
-sentri check ./contracts --fail-on none
+truent check ./contracts --fail-on none
 ```
 
 ### Quiet Mode
 
 Suppress all output except errors:
 ```bash
-sentri check ./contracts --quiet
+truent check ./contracts --quiet
 ```
 
 Useful for CI to reduce log spam.
@@ -209,7 +209,7 @@ Useful for CI to reduce log spam.
 
 Show all checks including passed ones:
 ```bash
-sentri check ./contracts --verbose
+truent check ./contracts --verbose
 ```
 
 ## Pre-commit Hook
@@ -223,30 +223,30 @@ Install `.git/hooks/pre-commit`:
 
 set -e
 
-# Check if sentri is installed
-if ! command -v sentri &> /dev/null; then
-    echo "sentri not found. Install with: cargo install --bin sentri"
+# Check if truent is installed
+if ! command -v truent &> /dev/null; then
+    echo "truent not found. Install with: cargo install --bin truent"
     exit 1
 fi
 
-# Run sentri on staged contracts
+# Run truent on staged contracts
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(sol|rs)$' || true)
 
 if [ -n "$STAGED_FILES" ]; then
-    echo "Running Sentri checks on staged files..."
+    echo "Running Truent checks on staged files..."
     
     for file in $STAGED_FILES; do
         if [ -f "$file" ]; then
-            sentri check "$file" --quiet
+            truent check "$file" --quiet
             if [ $? -ne 0 ]; then
-                echo "❌ Sentri check failed for $file"
+                echo "❌ Truent check failed for $file"
                 echo "Fix violations and try again."
                 exit 1
             fi
         fi
     done
     
-    echo "✓ All Sentri checks passed"
+    echo "✓ All Truent checks passed"
 fi
 ```
 
@@ -262,7 +262,7 @@ chmod +x .git/hooks/pre-commit
 Suppress a specific check for a function:
 
 ```solidity
-// @sentri-suppress: no_reentrancy
+// @truent-suppress: no_reentrancy
 function withdraw() public {
     // ... implementation ...
 }
@@ -271,7 +271,7 @@ function withdraw() public {
 Suppress multiple checks:
 
 ```solidity
-// @sentri-suppress: no_reentrancy, safe_delegatecall
+// @truent-suppress: no_reentrancy, safe_delegatecall
 function complexOperation() public {
     // ...
 }
@@ -279,7 +279,7 @@ function complexOperation() public {
 
 ### Config-level Suppression
 
-In `.sentri.toml`:
+In `.truent.toml`:
 
 ```toml
 [[suppression]]
@@ -305,15 +305,15 @@ strategy:
     chain: [evm, solana, move]
 
 steps:
-  - run: sentri check ./contracts --chain ${{ matrix.chain }}
+  - run: truent check ./contracts --chain ${{ matrix.chain }}
 ```
 
 ### Report Posting
 
 ```yaml
-- name: Run Sentri
-  id: sentri
-  run: sentri check ./contracts --format json --output report.json
+- name: Run Truent
+  id: truent
+  run: truent check ./contracts --format json --output report.json
   continue-on-error: true
 
 - name: Post Report Comment
@@ -325,7 +325,7 @@ steps:
       const report = JSON.parse(fs.readFileSync('report.json', 'utf8'));
       
       const summary = `
-      ## Sentri Analysis
+      ## Truent Analysis
       - **Total violations:** ${report.summary.violations}
       - **Critical:** ${report.summary.critical}
       - **High:** ${report.summary.high}
@@ -347,13 +347,13 @@ steps:
   run: git fetch origin main:main
 
 - name: Check current branch
-  run: sentri check ./contracts --format json --output current.json
+  run: truent check ./contracts --format json --output current.json
 
 - name: Check main branch
   run: |
     git stash
     git checkout main
-    sentri check ./contracts --format json --output main.json
+    truent check ./contracts --format json --output main.json
     git checkout -
 
 - name: Compare results
@@ -367,20 +367,20 @@ steps:
 ```dockerfile
 FROM rust:latest
 
-RUN cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
+RUN cargo install --git https://github.com/geekstrancend/Truent --bin truent
 
 WORKDIR /workspace
 
-ENTRYPOINT ["sentri"]
+ENTRYPOINT ["truent"]
 CMD ["doctor"]
 ```
 
 Usage:
 
 ```bash
-docker build -t sentri-check .
+docker build -t truent-check .
 
-docker run -v $(pwd):/workspace sentri-check check ./contracts
+docker run -v $(pwd):/workspace truent-check check ./contracts
 ```
 
 ### Docker Compose
@@ -388,11 +388,11 @@ docker run -v $(pwd):/workspace sentri-check check ./contracts
 ```yaml
 version: '3'
 services:
-  sentri:
-    image: sentri-check:latest
+  truent:
+    image: truent-check:latest
     volumes:
       - ./contracts:/workspace/contracts
-      - ./sentri.toml:/workspace/.sentri.toml
+      - ./truent.toml:/workspace/.truent.toml
     command: check ./contracts --format html --output report.html
 ```
 
@@ -409,11 +409,11 @@ GitHub Actions caching:
     path: ~/.cargo/registry
     key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-- name: Cache Sentri installation
+- name: Cache Truent installation
   uses: actions/cache@v3
   with:
-    path: ~/.cargo/bin/sentri
-    key: ${{ runner.os }}-sentri-bin
+    path: ~/.cargo/bin/truent
+    key: ${{ runner.os }}-truent-bin
 ```
 
 ### Limiting Scope
@@ -422,7 +422,7 @@ Only check changed files:
 
 ```bash
 # Get changed files from main
-git diff --name-only main...HEAD -- '*.sol' | xargs sentri check
+git diff --name-only main...HEAD -- '*.sol' | xargs truent check
 ```
 
 ### Parallel Checks
@@ -431,15 +431,15 @@ Check multiple chains in parallel (GitHub Actions):
 
 ```yaml
 jobs:
-  sentri:
+  truent:
     strategy:
       matrix:
         chain: [evm, solana]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cargo install --bin sentri
-      - run: sentri check ./contracts --chain ${{ matrix.chain }}
+      - run: cargo install --bin truent
+      - run: truent check ./contracts --chain ${{ matrix.chain }}
 ```
 
 ## Monitoring & Analytics
@@ -451,7 +451,7 @@ Store reports over time:
 ```bash
 # On successful run
 mkdir -p reports/$(date +%Y-%m-%d)
-sentri check ./contracts --format json --output reports/$(date +%Y-%m-%d)/report.json
+truent check ./contracts --format json --output reports/$(date +%Y-%m-%d)/report.json
 ```
 
 ### Trend Analysis
@@ -473,28 +473,28 @@ for report_file in reports:
 Export metrics for Grafana:
 
 ```bash
-sentri check ./contracts --format json | jq '
+truent check ./contracts --format json | jq '
 .summary |
-"sentri_violations " + (.violations | tostring) + "\n" +
-"sentri_critical " + (.critical | tostring) + "\n" +
-"sentri_high " + (.high | tostring)'
+"truent_violations " + (.violations | tostring) + "\n" +
+"truent_critical " + (.critical | tostring) + "\n" +
+"truent_high " + (.high | tostring)'
 ```
 
 ## Troubleshooting
 
-### "sentri: command not found"
+### "truent: command not found"
 
 Ensure installation in CI environment:
 
 ```bash
 # Check if installed
-which sentri
+which truent
 
 # Install if missing
-cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
+cargo install --git https://github.com/geekstrancend/Truent --bin truent
 
 # Verify
-sentri --version
+truent --version
 ```
 
 ### Timeout Issues
@@ -511,16 +511,16 @@ Set memory limits:
 
 ```bash
 # Limit to 2GB
-sentri check ./contracts --max-memory 2GB
+truent check ./contracts --max-memory 2GB
 ```
 
 ### Configuration Not Found
 
-Ensure `.sentri.toml` is in working directory:
+Ensure `.truent.toml` is in working directory:
 
 ```bash
-ls -la .sentri.toml
-sentri init .  # Create if missing
+ls -la .truent.toml
+truent init .  # Create if missing
 ```
 
 ## Best Practices
@@ -528,11 +528,11 @@ sentri init .  # Create if missing
 1. **Fail Fast** - Use `--fail-on high` to catch critical issues immediately
 2. **Review Reports** - Always review the full HTML report
 3. **Suppressions** - Document why checks are suppressed with `approved_by`
-4. **Regular Updates** - Update Sentri regularly for new invariants
+4. **Regular Updates** - Update Truent regularly for new invariants
 5. **Monitoring** - Track violations over time to detect trends
-6. **Local Testing** - Run `sentri check` locally before pushing
+6. **Local Testing** - Run `truent check` locally before pushing
 7. **Pre-commit Hooks** - Prevent commits with violations
-8. **Documentation** - Link to Sentri docs when violations are found
+8. **Documentation** - Link to Truent docs when violations are found
 
 ## Example Workflow
 
@@ -544,7 +544,7 @@ name: Smart Contract Analysis
 on: [push, pull_request]
 
 jobs:
-  sentri:
+  truent:
     runs-on: ubuntu-latest
     
     steps:
@@ -556,36 +556,36 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
       
-      - name: Install Sentri
-        run: cargo install --git https://github.com/geekstrancend/Sentri --bin sentri
+      - name: Install Truent
+        run: cargo install --git https://github.com/geekstrancend/Truent --bin truent
       
-      - name: Run Sentri
-        id: sentri
+      - name: Run Truent
+        id: truent
         run: |
-          sentri check ./contracts \
+          truent check ./contracts \
             --chain evm \
             --fail-on high \
             --format json \
-            --output sentri-report.json
+            --output truent-report.json
         continue-on-error: true
       
       - name: Upload Report
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: sentri-report
-          path: sentri-report.json
+          name: truent-report
+          path: truent-report.json
       
       - name: Check Results
-        if: steps.sentri.outcome == 'failure'
+        if: steps.truent.outcome == 'failure'
         run: |
-          echo "❌ Sentri checks failed"
-          cat sentri-report.json | jq .
+          echo "❌ Truent checks failed"
+          cat truent-report.json | jq .
           exit 1
   
   test:
     runs-on: ubuntu-latest
-    needs: sentri
+    needs: truent
     steps:
       - uses: actions/checkout@v3
       - run: cargo test --lib
@@ -594,7 +594,7 @@ jobs:
 ## Support
 
 For issues with CI integration:
-- Check `.sentri.toml` syntax: `sentri doctor`
+- Check `.truent.toml` syntax: `truent doctor`
 - View full output: Remove `--quiet` flag
 - See debug info: Add `--verbose`
 - Check logs in CI dashboard for error details

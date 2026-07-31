@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# Sentri Installation Script
+# Truent Installation Script
 #
 # Automatically detects OS and CPU architecture, downloads the correct pre-built binary,
 # verifies the checksum, and installs it to $PATH.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/geekstrancend/Sentri/main/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/geekstrancend/Truent/main/scripts/install.sh | bash
 #
 # Or with options:
 #   bash install.sh [--prefix /custom/path] [--version v0.1.0]
@@ -21,11 +21,11 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-GITHUB_REPO="geekstrancend/Sentri"
+GITHUB_REPO="geekstrancend/Truent"
 INSTALL_PREFIX="${INSTALL_PREFIX:-${HOME}/.local/bin}"
 BINARY_VERSION="${BINARY_VERSION:-latest}"
 TMP_DIR=$(mktemp -d)
-BINARY_NAME="sentri"
+BINARY_NAME="truent"
 
 # Trap cleanup
 cleanup() {
@@ -109,20 +109,20 @@ get_download_url() {
         linux)
             local variant=$(detect_linux_variant)
             if [ "${variant}" = "musl" ]; then
-                BINARY_FILE="sentri-v${ACTUAL_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+                BINARY_FILE="truent-v${ACTUAL_VERSION}-x86_64-unknown-linux-musl.tar.gz"
             else
                 if [ "${arch}" = "aarch64" ]; then
-                    BINARY_FILE="sentri-v${ACTUAL_VERSION}-aarch64-unknown-linux-gnu.tar.gz"
+                    BINARY_FILE="truent-v${ACTUAL_VERSION}-aarch64-unknown-linux-gnu.tar.gz"
                 else
-                    BINARY_FILE="sentri-v${ACTUAL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+                    BINARY_FILE="truent-v${ACTUAL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
                 fi
             fi
             ;;
         macos)
-            BINARY_FILE="sentri-v${ACTUAL_VERSION}-${arch}-apple-darwin.tar.gz"
+            BINARY_FILE="truent-v${ACTUAL_VERSION}-${arch}-apple-darwin.tar.gz"
             ;;
         windows)
-            BINARY_FILE="sentri-v${ACTUAL_VERSION}-x86_64-pc-windows-msvc.zip"
+            BINARY_FILE="truent-v${ACTUAL_VERSION}-x86_64-pc-windows-msvc.zip"
             ;;
     esac
     
@@ -169,10 +169,10 @@ extract_binary() {
             cd "${TMP_DIR}"
             tar -xzf "${archive}"
             # Find the binary (might be in a directory)
-            if [ -f "sentri" ]; then
-                cp sentri "${TMP_DIR}/sentri.bin"
-            elif [ -d "sentri-v"* ]; then
-                cp sentri-v*/sentri "${TMP_DIR}/sentri.bin"
+            if [ -f "truent" ]; then
+                cp truent "${TMP_DIR}/truent.bin"
+            elif [ -d "truent-v"* ]; then
+                cp truent-v*/truent "${TMP_DIR}/truent.bin"
             else
                 log_error "Could not find binary in archive"
                 return 1
@@ -184,10 +184,10 @@ extract_binary() {
                 log_error "Failed to extract Windows binary"
                 return 1
             }
-            if [ -f "sentri.exe" ]; then
-                cp sentri.exe "${TMP_DIR}/sentri.bin"
-            elif [ -d "sentri-v"* ]; then
-                cp sentri-v*/sentri.exe "${TMP_DIR}/sentri.bin"
+            if [ -f "truent.exe" ]; then
+                cp truent.exe "${TMP_DIR}/truent.bin"
+            elif [ -d "truent-v"* ]; then
+                cp truent-v*/truent.exe "${TMP_DIR}/truent.bin"
             else
                 log_error "Could not find binary in archive"
                 return 1
@@ -207,13 +207,13 @@ install_binary() {
     
     # Copy binary
     if [ "${os}" = "windows" ]; then
-        cp "${TMP_DIR}/sentri.bin" "${INSTALL_PREFIX}/sentri.exe"
-        chmod +x "${INSTALL_PREFIX}/sentri.exe"
-        BINARY_PATH="${INSTALL_PREFIX}/sentri.exe"
+        cp "${TMP_DIR}/truent.bin" "${INSTALL_PREFIX}/truent.exe"
+        chmod +x "${INSTALL_PREFIX}/truent.exe"
+        BINARY_PATH="${INSTALL_PREFIX}/truent.exe"
     else
-        cp "${TMP_DIR}/sentri.bin" "${INSTALL_PREFIX}/sentri"
-        chmod +x "${INSTALL_PREFIX}/sentri"
-        BINARY_PATH="${INSTALL_PREFIX}/sentri"
+        cp "${TMP_DIR}/truent.bin" "${INSTALL_PREFIX}/truent"
+        chmod +x "${INSTALL_PREFIX}/truent"
+        BINARY_PATH="${INSTALL_PREFIX}/truent"
     fi
     
     # Verify installation
@@ -235,7 +235,7 @@ check_path() {
 
 # Main installation flow
 main() {
-    log_info "Sentri Installation Script"
+    log_info "Truent Installation Script"
     echo ""
     
     # Detect system
@@ -301,7 +301,7 @@ while [ $# -gt 0 ]; do
             ;;
         --help)
             cat <<EOF
-Sentri Installation Script
+Truent Installation Script
 
 Usage:
   bash install.sh [OPTIONS]

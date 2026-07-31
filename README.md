@@ -1,15 +1,15 @@
-# Sentri
+# Truent
 
-[![crates.io](https://img.shields.io/crates/v/sentri-cli.svg)](https://crates.io/crates/sentri-cli)
+[![crates.io](https://img.shields.io/crates/v/truent-cli.svg)](https://crates.io/crates/truent-cli)
 [![npm](https://img.shields.io/npm/v/@dextonicx/cli.svg)](https://www.npmjs.com/package/@dextonicx/cli)
-[![Downloads](https://img.shields.io/crates/d/sentri-cli.svg)](https://crates.io/crates/sentri-cli)
+[![Downloads](https://img.shields.io/crates/d/truent-cli.svg)](https://crates.io/crates/truent-cli)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/geekstrancend/Sentri/actions/workflows/ci.yml/badge.svg)](https://github.com/geekstrancend/Sentri/actions)
+[![CI](https://github.com/geekstrancend/Truent/actions/workflows/ci.yml/badge.svg)](https://github.com/geekstrancend/Truent/actions)
 
 **Multi-chain smart contract security analyzer for EVM, Solana, Move, and Soroban.**
 
-Sentri checks your smart contracts and programs for vulnerabilities before
-deployment. Define what should always be true — invariants — and Sentri
+Truent checks your smart contracts and programs for vulnerabilities before
+deployment. Define what should always be true — invariants — and Truent
 verifies your code cannot violate them.
 
 One tool. Four chains. One DSL.
@@ -23,11 +23,11 @@ chain-agnostic detection layer on top of it.
 
 **Key improvements:**
 
-- ✅ **71 Smart Contract Vulnerability Detectors** — Comprehensive coverage of critical and high-priority exploits, wired end-to-end into `sentri check`/`sentri scan`
+- ✅ **71 Smart Contract Vulnerability Detectors** — Comprehensive coverage of critical and high-priority exploits, wired end-to-end into `truent check`/`truent scan`
 - ✅ **Chain-agnostic shared rule** — `unauthorized_privileged_mutation` runs against a common semantic model built by each chain's own analyzer, so one rule (missing an authorization check on a privileged mutation) is written once and applies to all four chains
 - ✅ **Real Move parsing** — a vendored Sui Move tree-sitter grammar backs Move's semantic extraction, with the original regex heuristic kept as an automatic fallback if a file fails to parse
 - ✅ **Soroban (Stellar) support** — a fourth full chain analyzer covering `require_auth` gaps, unprotected contract upgrades, re-initialization, unchecked arithmetic, storage TTL/expiry, and reentrancy-shaped checks-effects-interactions violations
-- ✅ **Real fuzzing** — `sentri fuzz` mutates real source files and runs them through the live detectors looking for crashes, instead of a no-op stub
+- ✅ **Real fuzzing** — `truent fuzz` mutates real source files and runs them through the live detectors looking for crashes, instead of a no-op stub
 - ✅ **Production Ready** — All tests passing, security audit complete, reproducible builds
 
 **Detector Coverage:**
@@ -36,8 +36,8 @@ chain-agnostic detection layer on top of it.
 - **Move**: 7 detectors (resource destruction, type safety, access control, hand-rolled overflow checks)
 - **Soroban**: 9 detectors (missing require_auth, unprotected upgrade, re-initialization, unchecked arithmetic, storage TTL/expiry, reentrancy, thin-liquidity oracle price)
 
-Sentri also ships a web dashboard (`web/`) — sign-up, scan submission, and
-report viewing on top of the same CLI engine — alongside the `sentri` CLI
+Truent also ships a web dashboard (`web/`) — sign-up, scan submission, and
+report viewing on top of the same CLI engine — alongside the `truent` CLI
 and its npm wrapper (`@dextonicx/cli`).
 
 ---
@@ -70,7 +70,7 @@ v0.2.1 fixes violation location reporting — all violations now show their actu
 ## What's new in v0.2.0
 
 v0.2 replaces pattern matching with real Rust AST parsing via the `syn`
-crate. Sentri now understands Anchor's type system and eliminates false
+crate. Truent now understands Anchor's type system and eliminates false
 positives on idiomatic Anchor programs.
 
 | Pattern | v0.1 | v0.2 |
@@ -81,7 +81,7 @@ positives on idiomatic Anchor programs.
 | `AccountInfo` with `/// CHECK:` | ❌ False positive | ✅ Downgraded to INFO |
 | `AccountInfo` with no constraint | ✅ CRITICAL | ✅ Still CRITICAL |
 
-> **Upgrading from v0.1/v0.2.0?** Run `cargo install sentri-cli --force`
+> **Upgrading from v0.1/v0.2.0?** Run `cargo install truent-cli --force`
 
 ---
 
@@ -89,18 +89,18 @@ positives on idiomatic Anchor programs.
 
 ```bash
 # Rust developers
-cargo install sentri-cli
+cargo install truent-cli
 
 # JavaScript / TypeScript developers
 npm install -g @dextonicx/cli
 
 # Verify installation
-sentri --version   # sentri 0.4.1
-sentri doctor
+truent --version   # truent 0.4.1
+truent doctor
 ```
 
 Or download a pre-built binary directly from
-[GitHub Releases](https://github.com/geekstrancend/Sentri/releases).
+[GitHub Releases](https://github.com/geekstrancend/Truent/releases).
 
 **Supported platforms:**
 
@@ -112,44 +112,44 @@ Or download a pre-built binary directly from
 
 ## Use it on your codebase
 
-Three steps: install, point Sentri at your repo, gate your CI.
+Three steps: install, point Truent at your repo, gate your CI.
 
-**1. Install** (see above) — `cargo install sentri-cli` or `npm install -g @dextonicx/cli`.
+**1. Install** (see above) — `cargo install truent-cli` or `npm install -g @dextonicx/cli`.
 
-**2. Scan your code.** Run from your project root and point Sentri at the files
+**2. Scan your code.** Run from your project root and point Truent at the files
 you want checked. `--chain` defaults to `evm`; set it for other ecosystems:
 
 ```bash
-sentri scan .                          # Solidity / EVM (the default)
-sentri scan ./programs  --chain solana
-sentri scan ./sources   --chain move
-sentri scan ./contracts --chain soroban
+truent scan .                          # Solidity / EVM (the default)
+truent scan ./programs  --chain solana
+truent scan ./sources   --chain move
+truent scan ./contracts --chain soroban
 ```
 
 Each finding is printed with its severity, file and line, and the real-world
 exploit pattern it maps to. Want a report to share or feed into other tools?
 
 ```bash
-sentri scan . --format html --output sentri-report.html   # styled, shareable
-sentri scan . --format json --output sentri-report.json   # machine-readable
+truent scan . --format html --output truent-report.html   # styled, shareable
+truent scan . --format json --output truent-report.json   # machine-readable
 ```
 
 **3. Gate your CI.** Make a risky change fail the build:
 
 ```bash
-sentri scan . --chain evm --fail-on high   # exit non-zero on High/Critical
+truent scan . --chain evm --fail-on high   # exit non-zero on High/Critical
 ```
 
 Drop that into GitHub Actions and you're done:
 
 ```yaml
-- name: Sentri security scan
+- name: Truent security scan
   run: |
-    cargo install sentri-cli
-    sentri scan . --chain evm --fail-on high
+    cargo install truent-cli
+    truent scan . --chain evm --fail-on high
 ```
 
-`sentri scan --help` lists every option; `sentri doctor` verifies your install.
+`truent scan --help` lists every option; `truent doctor` verifies your install.
 
 ---
 
@@ -157,34 +157,34 @@ Drop that into GitHub Actions and you're done:
 
 ```bash
 # Check a Solana program
-sentri scan ./programs --chain solana
+truent scan ./programs --chain solana
 
 # Check Solidity contracts
-sentri scan ./contracts --chain evm
+truent scan ./contracts --chain evm
 
 # Check Move modules
-sentri scan ./sources --chain move
+truent scan ./sources --chain move
 
 # Check Soroban contracts
-sentri scan ./contracts --chain soroban
+truent scan ./contracts --chain soroban
 
 # Output as JSON
-sentri scan ./programs --chain solana --format json
+truent scan ./programs --chain solana --format json
 
 # Output as HTML
-sentri scan ./programs --chain solana --format html --output ./report.html
+truent scan ./programs --chain solana --format html --output ./report.html
 
 # Reproducible analysis with fixed seed
-sentri scan ./programs --chain solana --seed 42
+truent scan ./programs --chain solana --seed 42
 
 # Fail CI if high or critical violations found
-sentri scan ./programs --chain solana --fail-on high
+truent scan ./programs --chain solana --fail-on high
 
 # Run health check
-sentri doctor
+truent doctor
 
 # Initialize config
-sentri init
+truent init
 ```
 
 ---
@@ -195,22 +195,22 @@ sentri init
 
 ```bash
 # Text report (default, human-readable)
-sentri scan ./programs --chain solana --format text
+truent scan ./programs --chain solana --format text
 
 # JSON report (machine-readable, for parsing/CI)
-sentri scan ./programs --chain solana --format json
+truent scan ./programs --chain solana --format json
 
 # HTML report (styled, shareable with team)
-sentri scan ./programs --chain solana --format html
+truent scan ./programs --chain solana --format html
 ```
 
 ### Saving reports to disk
 
 ```bash
 # Save any format to file
-sentri scan ./programs --chain solana --format json --output ./report.json
-sentri scan ./programs --chain solana --format html --output ./report.html
-sentri scan ./programs --chain solana --format text --output ./report.txt
+truent scan ./programs --chain solana --format json --output ./report.json
+truent scan ./programs --chain solana --format html --output ./report.html
+truent scan ./programs --chain solana --format text --output ./report.txt
 ```
 
 ### Reproducible analysis
@@ -219,10 +219,10 @@ For deterministic results (useful in CI or security audits), use `--seed`:
 
 ```bash
 # Always uses seed 42 by default
-sentri scan ./programs --chain solana
+truent scan ./programs --chain solana
 
 # Use a custom seed
-sentri scan ./programs --chain solana --seed 12345
+truent scan ./programs --chain solana --seed 12345
 
 # Results will be identical on the same code with the same seed
 ```
@@ -234,10 +234,10 @@ sentri scan ./programs --chain solana --seed 12345
 Add one step to your workflow:
 
 ```yaml
-- name: Sentri security check
+- name: Truent security check
   run: |
-    cargo install sentri-cli
-    sentri scan ./programs --chain solana --fail-on high
+    cargo install truent-cli
+    truent scan ./programs --chain solana --fail-on high
 ```
 
 CI fails automatically on high or critical violations. Zero additional
@@ -247,7 +247,7 @@ configuration required.
 
 ## Built-in invariants
 
-Sentri ships with 28 built-in security checks across all four chains.
+Truent ships with 28 built-in security checks across all four chains.
 
 ### EVM (10 invariants)
 
@@ -301,7 +301,7 @@ Sentri ships with 28 built-in security checks across all four chains.
 
 ## Configuration
 
-Create `.sentri.toml` in your project root:
+Create `.truent.toml` in your project root:
 
 ```toml
 [project]
@@ -316,12 +316,12 @@ severity_threshold = "low"
 format = "text"   # text | json | html
 ```
 
-Or run `sentri init` to generate a config automatically.
+Or run `truent init` to generate a config automatically.
 
 ### Inline suppression
 
 ```rust
-// sentri: ignore sol_account_validation — external VRF oracle account
+// truent: ignore sol_account_validation — external VRF oracle account
 pub oracle_queue: AccountInfo<'info>,
 ```
 
@@ -329,7 +329,7 @@ pub oracle_queue: AccountInfo<'info>,
 
 ## Anchor false positive guide (v0.2+)
 
-Sentri v0.2 understands Anchor's type system. These patterns are
+Truent v0.2 understands Anchor's type system. These patterns are
 correctly handled:
 
 ```rust
@@ -347,7 +347,7 @@ pub vault: AccountInfo<'info>,
 /// CHECK: This is the Switchboard VRF oracle. Address validated off-chain.
 pub oracle_queue: AccountInfo<'info>,
 
-// CRITICAL — genuinely unchecked, Sentri correctly fires
+// CRITICAL — genuinely unchecked, Truent correctly fires
 pub mystery: AccountInfo<'info>,
 ```
 
@@ -368,10 +368,10 @@ pub mystery: AccountInfo<'info>,
 
 ## Links
 
-- **GitHub**: [geekstrancend/Sentri](https://github.com/geekstrancend/Sentri)
-- **crates.io**: [sentri-cli](https://crates.io/crates/sentri-cli)
+- **GitHub**: [geekstrancend/Truent](https://github.com/geekstrancend/Truent)
+- **crates.io**: [truent-cli](https://crates.io/crates/truent-cli)
 - **npm**: [@dextonicx/cli](https://www.npmjs.com/package/@dextonicx/cli)
-- **Docs**: [docs.rs/sentri-cli](https://docs.rs/sentri-cli)
+- **Docs**: [docs.rs/truent-cli](https://docs.rs/truent-cli)
 
 ---
 

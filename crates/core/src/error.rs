@@ -1,8 +1,8 @@
-//! Error types for Sentri core operations.
+//! Error types for Truent core operations.
 
 use thiserror::Error;
 
-/// The result type for Sentri core operations.
+/// The result type for Truent core operations.
 pub type Result<T> = std::result::Result<T, InvarError>;
 
 /// Errors that can occur during invariant analysis and generation.

@@ -1,4 +1,4 @@
-//! Formal type system for Sentri DSL.
+//! Formal type system for Truent DSL.
 //!
 //! This module defines a strictly typed system for invariant expressions.
 //! No implicit conversions. All type errors are explicit and actionable.
@@ -7,7 +7,7 @@ use crate::model::Expression;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-/// A formal type in the Sentri type system.
+/// A formal type in the Truent type system.
 ///
 /// Supports only deterministic, provable types. No floating point, no null.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Hash)]

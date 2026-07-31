@@ -71,7 +71,7 @@ export default function AICoAuditorPage() {
         <Callout type="info" title="PRO TIP">
           The AI Co-Auditor works best when project documentation is provided via a{' '}
           <code className="bg-panel border border-hair text-acc-text px-1.5 py-0.5 rounded font-mono text-xs">
-            SENTRI.md
+            TRUENT.md
           </code>
           {' '}file in the root directory.
         </Callout>

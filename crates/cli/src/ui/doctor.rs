@@ -32,7 +32,7 @@ pub fn render_doctor_results(checks: &[HealthCheck]) -> String {
     output.push_str(&format!("{}\n", divider(width)));
     output.push_str(&format!(
         "{}  {}  Component Health Check\n",
-        color_label("Sentri Doctor"),
+        color_label("Truent Doctor"),
         "·"
     ));
     output.push_str(&format!("{}\n", divider(width)));
@@ -65,7 +65,7 @@ pub fn render_doctor_results(checks: &[HealthCheck]) -> String {
     // Summary line
     if all_passed {
         output.push_str(&format!(
-            "{} All {} components healthy. Sentri is ready.\n",
+            "{} All {} components healthy. Truent is ready.\n",
             color_success(ICON_PASS),
             checks.len()
         ));
@@ -91,7 +91,7 @@ mod tests {
     fn test_doctor_all_passed() {
         let checks = vec![
             HealthCheck {
-                component: "sentri-core".to_string(),
+                component: "truent-core".to_string(),
                 passed: true,
                 message: "Initialized successfully".to_string(),
             },
@@ -103,8 +103,8 @@ mod tests {
         ];
 
         let output = render_doctor_results(&checks);
-        assert!(output.contains("Sentri Doctor"));
-        assert!(output.contains("sentri-core"));
+        assert!(output.contains("Truent Doctor"));
+        assert!(output.contains("truent-core"));
         assert!(output.contains("EVM analyzer"));
         assert!(output.contains("All 2 components healthy"));
     }
@@ -113,7 +113,7 @@ mod tests {
     fn test_doctor_with_failures() {
         let checks = vec![
             HealthCheck {
-                component: "sentri-core".to_string(),
+                component: "truent-core".to_string(),
                 passed: true,
                 message: "OK".to_string(),
             },

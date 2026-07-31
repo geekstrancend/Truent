@@ -29,16 +29,16 @@ forall tx in transactions:
 
 #[test]
 fn test_cli_help_output() {
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("--help");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("Sentri"));
+        .stdout(predicate::str::contains("Truent"));
 }
 
 #[test]
 fn test_cli_version_output() {
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("--version");
     cmd.assert().success();
 }
@@ -48,7 +48,7 @@ fn test_cli_init_creates_project() {
     let temp = TempDir::new().expect("Failed to create temp dir");
     let project_path = temp.path().join("new_project");
 
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("init").arg(&project_path);
 
     cmd.assert().success();
@@ -60,7 +60,7 @@ fn test_cli_init_creates_project() {
 
 #[test]
 fn test_cli_missing_file_exits_with_error() {
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("build")
         .arg("--source")
         .arg("/nonexistent/file.rs")
@@ -76,7 +76,7 @@ fn test_cli_missing_file_exits_with_error() {
 fn test_cli_invalid_chain_exits_with_error() {
     let temp = setup_test_project();
 
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("build")
         .arg("--source")
         .arg(temp.path().join("test.rs"))
@@ -92,7 +92,7 @@ fn test_cli_invalid_chain_exits_with_error() {
 fn test_cli_verbose_flag_produces_output() {
     let _temp = setup_test_project();
 
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("--verbose").arg("doctor");
 
     cmd.assert().success();
@@ -100,7 +100,7 @@ fn test_cli_verbose_flag_produces_output() {
 
 #[test]
 fn test_cli_log_level_flag() {
-    let mut cmd = Command::cargo_bin("sentri").expect("Found to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Found to find binary");
     cmd.arg("--verbose").arg("doctor");
 
     cmd.assert().success();
@@ -108,7 +108,7 @@ fn test_cli_log_level_flag() {
 
 #[test]
 fn test_cli_invalid_subcommand() {
-    let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+    let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
     cmd.arg("nonexistent_command");
 
     cmd.assert().failure();
@@ -120,7 +120,7 @@ mod exit_codes {
 
     #[test]
     fn test_exit_code_success_is_zero() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("--help");
 
         let output = cmd.output().expect("Failed to execute");
@@ -129,7 +129,7 @@ mod exit_codes {
 
     #[test]
     fn test_exit_code_error_is_nonzero() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("nonexistent_command");
 
         let output = cmd.output().expect("Failed to execute");
@@ -149,7 +149,7 @@ mod output_formats {
     fn test_json_output_is_valid() {
         let temp = setup_test_project();
 
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("report")
             .arg("--input")
             .arg(temp.path().join("test_report.json"))
@@ -170,7 +170,7 @@ mod output_formats {
     fn test_markdown_output() {
         let temp = setup_test_project();
 
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("report")
             .arg("--input")
             .arg(temp.path().join("test_report.json"))
@@ -219,11 +219,11 @@ mod determinism {
         let _temp = setup_test_project();
 
         // Run the same command twice
-        let mut cmd1 = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd1 = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd1.arg("list");
         let output1 = cmd1.output().expect("Failed to execute");
 
-        let mut cmd2 = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd2 = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd2.arg("list");
         let output2 = cmd2.output().expect("Failed to execute");
 
@@ -236,7 +236,7 @@ mod determinism {
     }
 }
 
-/// Regression tests asserting that `sentri check` actually detects real
+/// Regression tests asserting that `truent check` actually detects real
 /// vulnerabilities in the bundled fixtures, instead of always reporting a
 /// clean scan. These fixtures previously sat unused by any test while the
 /// detection pipeline itself was disconnected (see CHANGELOG / git history).
@@ -251,7 +251,7 @@ mod detection {
 
     #[test]
     fn test_check_detects_vulnerable_evm_fixture() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("check")
             .arg(fixture_path("test_vulnerable_evm.sol"))
             .arg("--chain")
@@ -280,7 +280,7 @@ mod detection {
 
     #[test]
     fn test_check_detects_vulnerable_solana_fixture() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("check")
             .arg(fixture_path("test_vulnerable_solana.rs"))
             .arg("--chain")
@@ -303,7 +303,7 @@ mod detection {
 
     #[test]
     fn test_check_detects_vulnerable_move_fixture() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("check")
             .arg(fixture_path("test_vulnerable_move.move"))
             .arg("--chain")
@@ -325,7 +325,7 @@ mod detection {
     }
 
     /// The chain-agnostic shared-IR rule (`unauthorized_privileged_mutation`,
-    /// sentri_ir::rules) used to only fire in each analyzer crate's own unit
+    /// truent_ir::rules) used to only fire in each analyzer crate's own unit
     /// tests - it was never wired into the production detector pipeline the
     /// CLI actually calls. This proves it now fires end to end for the two
     /// chains whose semantic-model extractor needs no external tool (Solana's
@@ -338,7 +338,7 @@ mod detection {
             ("test_vulnerable_solana.rs", "solana"),
             ("test_vulnerable_move.move", "move"),
         ] {
-            let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+            let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
             cmd.arg("check")
                 .arg(fixture_path(fixture))
                 .arg("--chain")
@@ -365,7 +365,7 @@ mod detection {
 
     #[test]
     fn test_scan_respects_severity_and_fail_on_filters() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("scan")
             .arg(fixture_path("test_vulnerable_evm.sol"))
             .arg("--chain")
@@ -399,13 +399,13 @@ mod detection {
         );
     }
 
-    /// `sentri fuzz` used to be a pure stub that printed "0 violations found"
+    /// `truent fuzz` used to be a pure stub that printed "0 violations found"
     /// without doing any work. It now actually mutates the target file and
     /// runs the real detectors against each variant, so a run must complete
     /// successfully (exit 0, no crashes) rather than just no-op.
     #[test]
     fn test_fuzz_runs_against_real_detectors_without_crashing() {
-        let mut cmd = Command::cargo_bin("sentri").expect("Failed to find binary");
+        let mut cmd = Command::cargo_bin("truent").expect("Failed to find binary");
         cmd.arg("fuzz")
             .arg(fixture_path("test_vulnerable_evm.sol"))
             .arg("--chain")

@@ -1,13 +1,13 @@
-# Sentri CLI - Quick Start Guide
+# Truent CLI - Quick Start Guide
 
-Sentri is a production-grade multi-chain smart contract invariant checker with a beautiful, intuitive CLI.
+Truent is a production-grade multi-chain smart contract invariant checker with a beautiful, intuitive CLI.
 
 ## Installation
 
 Install from source:
 
 ```bash
-cargo install --path . --bin sentri
+cargo install --path . --bin truent
 ```
 
 ## Core Commands
@@ -17,8 +17,8 @@ cargo install --path . --bin sentri
 Analyze a contract or directory for violations:
 
 ```bash
-sentri check ./contracts --chain evm
-sentri check ./program.rs --chain solana
+truent check ./contracts --chain evm
+truent check ./program.rs --chain solana
 ```
 
 **Options:**
@@ -32,24 +32,24 @@ sentri check ./program.rs --chain solana
 
 ### Initialize Project
 
-Create a `.sentri.toml` configuration file:
+Create a `.truent.toml` configuration file:
 
 ```bash
-sentri init ./contracts
+truent init ./contracts
 ```
 
 This creates a minimal configuration ready for customization.
 
 ### Run Doctor
 
-Check that all Sentri components are working:
+Check that all Truent components are working:
 
 ```bash
-sentri doctor
+truent doctor
 ```
 
 Output shows health status of:
-- sentri-core
+- truent-core
 - EVM, Solana, Move analyzers
 - DSL parser
 - Invariant library
@@ -60,14 +60,14 @@ Output shows health status of:
 Create a report from previous analysis:
 
 ```bash
-sentri report --input results.json --format html --output report.html
+truent report --input results.json --format html --output report.html
 ```
 
 ## Understanding Output
 
 ### Banner
 
-On first run, you'll see the Sentri ASCII art logo and version. This only shows on interactive terminals.
+On first run, you'll see the Truent ASCII art logo and version. This only shows on interactive terminals.
 
 ### Violations
 
@@ -85,7 +85,7 @@ Each violation is displayed in a bordered panel showing:
 │                                                 │
 │ → [Recommendation for fixing]                  │
 │                                                 │
-│ Reference  https://docs.sentri.dev/...         │
+│ Reference  https://docs.truent.dev/...         │
 ╰─────────────────────────────────────────────────╯
 ```
 
@@ -151,7 +151,7 @@ Generates a styled report file perfect for sharing with teams.
 
 ## Configuration
 
-Create a `.sentri.toml` in your project:
+Create a `.truent.toml` in your project:
 
 ```toml
 [project]
@@ -173,8 +173,8 @@ enabled = ["evm"]
 
 ## Tips
 
-1. **CI Integration:** Use `sentri check ./contracts --fail-on high --quiet` in CI pipelines
-2. **Pre-commit hooks:** Run `sentri check` on staged contracts before commit
+1. **CI Integration:** Use `truent check ./contracts --fail-on high --quiet` in CI pipelines
+2. **Pre-commit hooks:** Run `truent check` on staged contracts before commit
 3. **Verbose debugging:** Add `--verbose` to see all checks including ones that passed
 4. **Quiet mode:** Use `--quiet` to suppress output in automated systems
 5. **Exit codes:** Check exit codes in scripts to decide next actions
@@ -183,23 +183,23 @@ enabled = ["evm"]
 
 ### Check EVM contract
 ```bash
-sentri check ./contracts/Token.sol --chain evm
+truent check ./contracts/Token.sol --chain evm
 ```
 
 ### Check Solana program with custom config
 ```bash
-sentri check ./programs --chain solana --config ./sentri.toml
+truent check ./programs --chain solana --config ./truent.toml
 ```
 
 ### Generate HTML report
 ```bash
-sentri check ./contracts && \
-sentri report --input results.json --format html --output report.html
+truent check ./contracts && \
+truent report --input results.json --format html --output report.html
 ```
 
 ### CI/CD integration
 ```bash
-sentri check ./contracts --chain evm --format json --output results.json
+truent check ./contracts --chain evm --format json --output results.json
 if [ $? -eq 1 ]; then
   echo "Contract violations found!"
   exit 1
@@ -209,9 +209,9 @@ fi
 ## Getting Help
 
 ```bash
-sentri --help              # Show all commands
-sentri check --help        # Show check command options
-sentri doctor              # Check component health
+truent --help              # Show all commands
+truent check --help        # Show check command options
+truent doctor              # Check component health
 ```
 
 ## Performance
@@ -228,6 +228,6 @@ Performance varies based on:
 ## Support
 
 For issues, questions, or feature requests, visit:
-- GitHub: https://github.com/geekstrancend/Sentri
-- Docs: https://docs.sentri.dev
-- Issues: https://github.com/geekstrancend/Sentri/issues
+- GitHub: https://github.com/geekstrancend/Truent
+- Docs: https://docs.truent.dev
+- Issues: https://github.com/geekstrancend/Truent/issues

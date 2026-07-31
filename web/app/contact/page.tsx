@@ -63,8 +63,8 @@ export default function ContactPage() {
                 {
                   icon: <Mail size={20} className="text-acc-text" />,
                   title: 'Email',
-                  value: 'sales@sentri.dev',
-                  link: 'mailto:sales@sentri.dev',
+                  value: 'sales@truent.dev',
+                  link: 'mailto:sales@truent.dev',
                 },
                 {
                   icon: <Building2 size={20} className="text-acc-text" />,
@@ -75,8 +75,8 @@ export default function ContactPage() {
                 {
                   icon: <ShieldCheck size={20} className="text-acc-text" />,
                   title: 'Security Disclosure',
-                  value: 'security@sentri.dev',
-                  link: 'mailto:security@sentri.dev',
+                  value: 'security@truent.dev',
+                  link: 'mailto:security@truent.dev',
                 },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
@@ -200,7 +200,7 @@ export default function ContactPage() {
                       rows={5}
                       value={form.message}
                       onChange={handleChange}
-                      placeholder="Tell us about your protocol, team size, and what you'd like to achieve with Sentri…"
+                      placeholder="Tell us about your protocol, team size, and what you'd like to achieve with Truent…"
                       className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors resize-none"
                     />
                   </div>

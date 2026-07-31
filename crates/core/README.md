@@ -1,28 +1,28 @@
-# sentri-core
+# truent-core
 
-Core types, traits, and shared utilities for the Sentri framework. Every
+Core types, traits, and shared utilities for the Truent framework. Every
 other crate in the workspace depends on this one.
 
 ## Usage
 
 ```toml
 [dependencies]
-sentri-core = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ## Key Types
 
 - `Finding` — a single detected violation (`invariant_id`, `severity`, `file`, `line`, `col`, `message`, `snippet`, plus optional metadata/source-fragment via the builder methods)
 - `Severity` — `Critical | High | Medium | Low | Info`
-- `Invariant`, `ProgramModel`, `FunctionModel`, `StateVar` — the program model chain analyzers produce (also re-exported from `sentri-ir`)
+- `Invariant`, `ProgramModel`, `FunctionModel`, `StateVar` — the program model chain analyzers produce (also re-exported from `truent-ir`)
 - `ChainAnalyzer`, `CodeGenerator`, `Simulator` — the traits each chain's analyzer/generator crate implements
-- `Config`, `ChainConfig`, `AlertConfig`, `InvariantConfig` — project configuration (`.sentri.toml`)
+- `Config`, `ChainConfig`, `AlertConfig`, `InvariantConfig` — project configuration (`.truent.toml`)
 - `CodeFuzzer`, `FuzzResult` — deterministic, seeded synthetic-pattern generation used by the fuzz-testing infrastructure
 
 ## Example
 
 ```rust
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 let finding = Finding::new(
     "evm_reentrancy_classic".to_string(),

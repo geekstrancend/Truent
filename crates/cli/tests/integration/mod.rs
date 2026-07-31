@@ -1,6 +1,6 @@
 //! Integration tests.
 //!
-//! These tests validate the complete Sentri system working end-to-end,
+//! These tests validate the complete Truent system working end-to-end,
 //! including parsing, analysis, code generation, and reporting.
 
 use std::fs;

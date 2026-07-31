@@ -1,5 +1,5 @@
 [package]
-name = "sentri-analyzer-solana"
+name = "truent-analyzer-solana"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Solana program analyzer with static analysis and invariant checking for Anchor and native Solana programs."
+description = "Truent: Solana program analyzer with static analysis and invariant checking for Anchor and native Solana programs."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-analyzer-solana"
+documentation = "https://docs.rs/truent-analyzer-solana"
 
 [dependencies]
 anyhow.workspace = true
@@ -20,9 +20,9 @@ thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
-sentri-ir.workspace = true
-sentri-utils.workspace = true
+truent-core.workspace = true
+truent-ir.workspace = true
+truent-utils.workspace = true
 regex.workspace = true
 lazy_static.workspace = true
 syn.workspace = true

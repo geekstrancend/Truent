@@ -1,6 +1,6 @@
 //! `syn`-based extraction of [`ContractFunction`] facts from Soroban source.
 //!
-//! Follows the same technique [`sentri_analyzer_solana`]'s `anchor_parser`
+//! Follows the same technique [`truent_analyzer_solana`]'s `anchor_parser`
 //! uses: parse real Rust syntax with `syn` to find the structural elements
 //! (here, `#[contractimpl]` blocks and their `pub fn`s), then re-stringify
 //! each function body via `quote!` and search the whitespace-stripped

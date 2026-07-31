@@ -1,6 +1,6 @@
-# sentri-dynamic-evm
+# truent-dynamic-evm
 
-`revm`-backed dynamic invariant fuzzing for EVM/Solidity contracts, implementing `sentri-dynamic-core`'s `ExecutionBackend` for real bytecode.
+`revm`-backed dynamic invariant fuzzing for EVM/Solidity contracts, implementing `truent-dynamic-core`'s `ExecutionBackend` for real bytecode.
 
 ## Feature flags
 
@@ -9,14 +9,14 @@
 ## Modules
 
 - `types.rs` — `CompiledContract` (init code + parsed function surface), dependency-free.
-- `solc_bridge.rs` — parses `sentri_utils::SolcManager`'s `--combined-json abi,bin` output into `sentri_dynamic_core::FunctionSpec`s and raw creation bytecode. Computes selectors via keccak256, matching Solidity's `name(type1,type2)` signature hashing.
+- `solc_bridge.rs` — parses `truent_utils::SolcManager`'s `--combined-json abi,bin` output into `truent_dynamic_core::FunctionSpec`s and raw creation bytecode. Computes selectors via keccak256, matching Solidity's `name(type1,type2)` signature hashing.
 - `backend.rs` (behind `revm-backend`) — deploys and calls into contracts via `revm`, with DB-clone-based snapshot/revert for the shrinker.
 - `lib.rs` — `auto_detect_invariants` (ERC20-shaped conservation, monotonic accumulator getters) and `fuzz_solidity_source` (compile via solc, auto-detect invariants, run the fuzzer).
 
 ## Usage
 
 ```rust,ignore
-use sentri_dynamic_core::FuzzConfig;
+use truent_dynamic_core::FuzzConfig;
 
 let config = FuzzConfig {
     seed: 0,
@@ -25,9 +25,9 @@ let config = FuzzConfig {
     actors: vec![[1u8; 20], [2u8; 20], [3u8; 20]],
 };
 
-if let Some(violation) = sentri_dynamic_evm::fuzz_solidity_source(source, config)? {
-    println!("{}", sentri_dynamic_core::format_poc(&violation));
+if let Some(violation) = truent_dynamic_evm::fuzz_solidity_source(source, config)? {
+    println!("{}", truent_dynamic_core::format_poc(&violation));
 }
 ```
 
-Or via the CLI: `sentri fuzz --dynamic --chain evm path/to/Contract.sol`.
+Or via the CLI: `truent fuzz --dynamic --chain evm path/to/Contract.sol`.

@@ -1,5 +1,5 @@
 [package]
-name = "sentri-dynamic-evm"
+name = "truent-dynamic-evm"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: revm-backed dynamic invariant fuzzing for EVM/Solidity contracts."
+description = "Truent: revm-backed dynamic invariant fuzzing for EVM/Solidity contracts."
 
-keywords = ["sentri", "evm", "fuzzing", "invariant", "security"]
+keywords = ["truent", "evm", "fuzzing", "invariant", "security"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-dynamic-evm"
+documentation = "https://docs.rs/truent-dynamic-evm"
 
 [features]
 # Not on by default: plain `cargo check`/`cargo metadata` (what IDE
@@ -24,9 +24,9 @@ default = []
 revm-backend = ["dep:revm"]
 
 [dependencies]
-sentri-dynamic-core.workspace = true
-sentri-core.workspace = true
-sentri-utils.workspace = true
+truent-dynamic-core.workspace = true
+truent-core.workspace = true
+truent-utils.workspace = true
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true

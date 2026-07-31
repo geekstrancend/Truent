@@ -5,7 +5,7 @@ import { CodeBlock } from '@/components/ui/CodeBlock'
 
 export default function CLIReferencePage() {
   const toc = [
-    { label: 'sentri check', href: '#sentri-check' },
+    { label: 'truent check', href: '#truent-check' },
     { label: 'Exit Codes', href: '#exit-codes' },
     { label: 'Examples', href: '#examples' },
   ]
@@ -18,14 +18,14 @@ export default function CLIReferencePage() {
             CLI Reference
           </h1>
           <p className="text-body-lg text-sec max-w-2xl">
-            Complete documentation for the Sentri command-line interface and all available commands.
+            Complete documentation for the Truent command-line interface and all available commands.
           </p>
         </div>
 
-        {/* sentri check */}
-        <section id="sentri-check">
+        {/* truent check */}
+        <section id="truent-check">
           <h2 className="font-display text-2xl font-[600] text-text mt-12 mb-4 scroll-mt-24">
-            sentri check
+            truent check
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
             Scan a smart contract directory or file for security vulnerabilities and invariant violations.
@@ -36,7 +36,7 @@ export default function CLIReferencePage() {
           </h3>
           <CodeBlock
             language="bash"
-            code={`sentri check [PATH] [OPTIONS]`}
+            code={`truent check [PATH] [OPTIONS]`}
           />
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -110,7 +110,7 @@ export default function CLIReferencePage() {
             Exit Codes
           </h2>
           <p className="text-body-md text-sec mb-4 leading-relaxed">
-            Sentri uses exit codes to indicate scan results. Use these in CI/CD pipelines to gate deployments.
+            Truent uses exit codes to indicate scan results. Use these in CI/CD pipelines to gate deployments.
           </p>
 
           <div className="overflow-x-auto mt-4">
@@ -154,7 +154,7 @@ export default function CLIReferencePage() {
           </h3>
           <CodeBlock
             language="bash"
-            code={`sentri check . --chain evm`}
+            code={`truent check . --chain evm`}
           />
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -162,7 +162,7 @@ export default function CLIReferencePage() {
           </h3>
           <CodeBlock
             language="bash"
-            code={`sentri check ./contracts --chain evm --format json --output security-report.json`}
+            code={`truent check ./contracts --chain evm --format json --output security-report.json`}
           />
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -170,7 +170,7 @@ export default function CLIReferencePage() {
           </h3>
           <CodeBlock
             language="bash"
-            code={`sentri check . --chain solana --seed 42`}
+            code={`truent check . --chain solana --seed 42`}
           />
 
           <h3 className="font-display text-lg font-[600] text-text mt-6 mb-3">
@@ -178,7 +178,7 @@ export default function CLIReferencePage() {
           </h3>
           <CodeBlock
             language="bash"
-            code={`sentri check . --chain evm --format json --output report.json
+            code={`truent check . --chain evm --format json --output report.json
 if [ $? -ge 2 ]; then
   echo "Critical or high findings detected"
   exit 1

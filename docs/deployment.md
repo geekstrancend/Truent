@@ -2,22 +2,22 @@
 
 ## Overview
 
-This guide covers deploying, configuring, and operating Sentri in production environments.
+This guide covers deploying, configuring, and operating Truent in production environments.
 
 **Quick Start:**
 
 ```bash
 # Install latest release
-curl -fsSL https://install.sentri.dev | bash
+curl -fsSL https://install.truent.dev | bash
 
 # Initialize project
-sentri init --project my-project
+truent init --project my-project
 
 # Run analysis
-sentri analyze --config my-project/sentri.toml
+truent analyze --config my-project/truent.toml
 
 # Monitor in CI/CD
-sentri check --strict --output json
+truent check --strict --output json
 ```
 
 ## Installation
@@ -27,62 +27,62 @@ sentri check --strict --output json
 **Latest Release:**
 ```bash
 # Linux
-curl -fsSL https://releases.github.com/geekstrancend/sentri/latest/linux-x86_64.tar.gz | tar xz
-sudo mv sentri /usr/local/bin/
+curl -fsSL https://releases.github.com/geekstrancend/truent/latest/linux-x86_64.tar.gz | tar xz
+sudo mv truent /usr/local/bin/
 
 # macOS
-curl -fsSL https://releases.github.com/geekstrancend/sentri/latest/macos-x86_64.tar.gz | tar xz
-sudo mv sentri /usr/local/bin/
+curl -fsSL https://releases.github.com/geekstrancend/truent/latest/macos-x86_64.tar.gz | tar xz
+sudo mv truent /usr/local/bin/
 
 # Windows
-curl -fsSL https://releases.github.com/geekstrancend/sentri/latest/windows-x86_64.zip -o sentri.zip
-unzip sentri.zip
+curl -fsSL https://releases.github.com/geekstrancend/truent/latest/windows-x86_64.zip -o truent.zip
+unzip truent.zip
 # Add to PATH
 ```
 
 **Verify Installation:**
 ```bash
-sentri --version
-sentri --help
+truent --version
+truent --help
 ```
 
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew tap geekstrancend/sentri
-brew install sentri
+brew tap geekstrancend/truent
+brew install truent
 ```
 
 Update:
 ```bash
-brew upgrade sentri
+brew upgrade truent
 ```
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/geekstrancend/Sentri.git
-cd Sentri
+git clone https://github.com/geekstrancend/Truent.git
+cd Truent
 
 # Build release binary
 cargo build --release
 
-# Binary at target/release/sentri
+# Binary at target/release/truent
 ```
 
 ### Docker
 
 ```bash
 # Pull image
-docker pull geekstrancend/sentri:latest
+docker pull geekstrancend/truent:latest
 
 # Run analysis
-docker run -v /path/to/project:/project geekstrancend/sentri:latest \
-  analyze --config /project/sentri.toml
+docker run -v /path/to/project:/project geekstrancend/truent:latest \
+  analyze --config /project/truent.toml
 
 # Tag and push to registry
-docker tag geekstrancend/sentri:latest myregistry/sentri:v0.1.0
-docker push myregistry/sentri:v0.1.0
+docker tag geekstrancend/truent:latest myregistry/truent:v0.1.0
+docker push myregistry/truent:v0.1.0
 ```
 
 Dockerfile:
@@ -93,8 +93,8 @@ COPY . .
 RUN cargo build --release
 
 FROM debian:bookworm-slim
-COPY --from=builder /app/target/release/sentri /usr/local/bin/
-ENTRYPOINT ["sentri"]
+COPY --from=builder /app/target/release/truent /usr/local/bin/
+ENTRYPOINT ["truent"]
 ```
 
 ## Configuration
@@ -102,15 +102,15 @@ ENTRYPOINT ["sentri"]
 ### Project initialization
 
 ```bash
-sentri init --project myproject
+truent init --project myproject
 
 # Creates:
-# myproject/sentri.toml
+# myproject/truent.toml
 # myproject/invariants.invar
 # myproject/.invarignore
 ```
 
-### Configuration File (sentri.toml)
+### Configuration File (truent.toml)
 
 ```toml
 [project]
@@ -151,10 +151,10 @@ export RUST_LOG=debug
 export RUST_LOG_STYLE=always
 
 # Temporary directory
-export TMPDIR=/tmp/sentri
+export TMPDIR=/tmp/truent
 
 # Security: Disable risky features (none available)
-export SENTRI_STRICT=1
+export TRUENT_STRICT=1
 ```
 
 ### Ignoring Files
@@ -184,48 +184,48 @@ Pattern syntax (gitignore-compatible):
 
 ```bash
 # Use config file
-sentri analyze --config sentri.toml
+truent analyze --config truent.toml
 
 # Specify directory
-sentri analyze --path /path/to/project
+truent analyze --path /path/to/project
 
 # Multiple paths
-sentri analyze --path ./src --path ./contracts
+truent analyze --path ./src --path ./contracts
 ```
 
 ### Output Formats
 
 ```bash
 # JSON (for parsing)
-sentri analyze --output json > report.json
+truent analyze --output json > report.json
 
 # Markdown (for reading)
-sentri analyze --output markdown > report.md
+truent analyze --output markdown > report.md
 
 # Text (for console)
-sentri analyze --output text
+truent analyze --output text
 
 # Pretty color output
-sentri analyze --pretty
+truent analyze --pretty
 ```
 
 ### Filtering
 
 ```bash
 # Analyze specific chain
-sentri analyze --chain solana
+truent analyze --chain solana
 
 # Analyze specific invariants
-sentri analyze --include vault_conservation
-sentri analyze --exclude experimental_*
+truent analyze --include vault_conservation
+truent analyze --exclude experimental_*
 
 # Severity threshold
-sentri analyze --min-severity warning
+truent analyze --min-severity warning
 ```
 
 ### Exit Codes
 
-Sentri uses exit codes for CI/CD integration:
+Truent uses exit codes for CI/CD integration:
 
 | Code | Meaning | Action |
 |------|---------|--------|
@@ -236,7 +236,7 @@ Sentri uses exit codes for CI/CD integration:
 
 **CI/CD Pattern:**
 ```bash
-sentri analyze --config sentri.toml
+truent analyze --config truent.toml
 case $? in
   0) echo "All invariants satisfied" ;;
   1) echo "Violation detected - halting deploy" && exit 1 ;;
@@ -254,34 +254,34 @@ name: Invariant Check
 on: [push, pull_request]
 
 jobs:
-  sentri:
+  truent:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
-      - name: Install Sentri
+      - name: Install Truent
         run: |
-          curl -fsSL https://install.sentri.dev | bash
-          echo "$HOME/.sentri/bin" >> $GITHUB_PATH
+          curl -fsSL https://install.truent.dev | bash
+          echo "$HOME/.truent/bin" >> $GITHUB_PATH
       
       - name: Run Analysis
-        run: sentri analyze --config sentri.toml --output json
+        run: truent analyze --config truent.toml --output json
       
       - name: Upload Report
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: sentri-report
-          path: sentri-report.json
+          name: truent-report
+          path: truent-report.json
 ```
 
 ### GitLab CI
 
 ```yaml
 check_invariants:
-  image: geekstrancend/sentri:latest
+  image: geekstrancend/truent:latest
   script:
-    - sentri analyze --config sentri.toml --output json --output-file report.json
+    - truent analyze --config truent.toml --output json --output-file report.json
   artifacts:
     reports:
       dotenv: report.json
@@ -294,13 +294,13 @@ check_invariants:
 stage('Check Invariants') {
     steps {
         sh '''
-            curl -fsSL https://install.sentri.dev | bash
-            ~/.sentri/bin/sentri analyze --config sentri.toml
+            curl -fsSL https://install.truent.dev | bash
+            ~/.truent/bin/truent analyze --config truent.toml
         '''
     }
     post {
         always {
-            archiveArtifacts artifacts: 'sentri-report.*'
+            archiveArtifacts artifacts: 'truent-report.*'
         }
         failure {
             currentBuild.result = 'FAILURE'
@@ -318,7 +318,7 @@ set -e
 
 echo "Checking invariants..."
 
-if ! sentri analyze --config sentri.toml --strict; then
+if ! truent analyze --config truent.toml --strict; then
     echo "Invariant violations detected"
     exit 1
 fi
@@ -337,18 +337,18 @@ chmod +x .git/hooks/pre-commit
 
 ```bash
 # Debug level logging
-RUST_LOG=debug sentri analyze --config sentri.toml
+RUST_LOG=debug truent analyze --config truent.toml
 
 # Specific module
-RUST_LOG=sentri_core=debug sentri analyze
+RUST_LOG=truent_core=debug truent analyze
 
 # Tracing with spans
-RUST_LOG=sentri=trace sentri analyze
+RUST_LOG=truent=trace truent analyze
 ```
 
 ### Metrics
 
-Sentri produces JSON output for monitoring:
+Truent produces JSON output for monitoring:
 
 ```json
 {
@@ -372,10 +372,10 @@ Sentri produces JSON output for monitoring:
 Parse for monitoring:
 ```bash
 # Extract pass rate
-sentri analyze --output json | jq '.summary | (.passed / .total_invariants) * 100'
+truent analyze --output json | jq '.summary | (.passed / .total_invariants) * 100'
 
 # Alert on violations
-if sentri analyze --output json | jq '.summary.failed > 0'; then
+if truent analyze --output json | jq '.summary.failed > 0'; then
   send_alert "Invariant violations detected"
 fi
 ```
@@ -387,15 +387,15 @@ fi
 # health_check.sh
 
 # Check installation
-sentri --version || exit 1
+truent --version || exit 1
 
 # Check config
-sentri analyze --config sentri.toml --dry-run || exit 1
+truent analyze --config truent.toml --dry-run || exit 1
 
 # Quick smoke test
-sentri analyze --chain solana --timeout 30s || exit 1
+truent analyze --chain solana --timeout 30s || exit 1
 
-echo "Sentri is healthy"
+echo "Truent is healthy"
 ```
 
 Run periodically:
@@ -410,7 +410,7 @@ Run periodically:
 
 ```bash
 # Validate config
-sentri validate-config --config sentri.toml
+truent validate-config --config truent.toml
 
 # Common issues:
 # - Missing [project] section
@@ -422,38 +422,38 @@ sentri validate-config --config sentri.toml
 
 ```bash
 # Profile analysis
-time sentri analyze --config sentri.toml
+time truent analyze --config truent.toml
 
 # Baseline metrics
-sentri analyze --config sentri.toml --benchmark
+truent analyze --config truent.toml --benchmark
 ```
 
 **Optimization:**
 - Skip non-critical invariants: `--exclude experimental_*`
 - Use specific chains: `--chain solana` (not all)
-- Cache results: `--cache /tmp/sentri`
+- Cache results: `--cache /tmp/truent`
 
 ### Memory Usage
 
 ```bash
 # Monitor memory
-/usr/bin/time -v sentri analyze --config sentri.toml
+/usr/bin/time -v truent analyze --config truent.toml
 
 # Reduce memory for large projects
-sentri analyze --streaming --max-buffer 256M
+truent analyze --streaming --max-buffer 256M
 ```
 
 ### Debugging
 
 ```bash
 # Verbose output
-sentri analyze --config sentri.toml -vv
+truent analyze --config truent.toml -vv
 
 # Generate debug info
-sentri analyze --config sentri.toml --debug-output debug.log
+truent analyze --config truent.toml --debug-output debug.log
 
 # Backtrace on error
-RUST_BACKTRACE=1 sentri analyze --config sentri.toml
+RUST_BACKTRACE=1 truent analyze --config truent.toml
 ```
 
 ## Upgrading
@@ -461,26 +461,26 @@ RUST_BACKTRACE=1 sentri analyze --config sentri.toml
 ### Check Current Version
 
 ```bash
-sentri --version
-# sentri 0.1.0
+truent --version
+# truent 0.1.0
 ```
 
 ### Update Process
 
 ```bash
 # Check for updates
-sentri update check
+truent update check
 
 # Install update
-sentri update --yes
+truent update --yes
 
 # Verify
-sentri --version
+truent --version
 ```
 
 ### Breaking Changes
 
-Sentri follows [semantic versioning](./versioning.md).
+Truent follows [semantic versioning](./versioning.md).
 
 **Migration Guide:**
 ```bash
@@ -488,13 +488,13 @@ Sentri follows [semantic versioning](./versioning.md).
 # Review MIGRATION.md before upgrading
 
 # Backup current config
-cp sentri.toml sentri.toml.v0.1.0
+cp truent.toml truent.toml.v0.1.0
 
 # Upgrade
-cargo install sentri@0.2.0
+cargo install truent@0.2.0
 
 # Test with dry-run
-sentri analyze --config sentri.toml --dry-run
+truent analyze --config truent.toml --dry-run
 ```
 
 ## Security Best Practices
@@ -503,11 +503,11 @@ sentri analyze --config sentri.toml --dry-run
 
 ```bash
 # Restrict binary permissions
-chmod 755 /usr/local/bin/sentri
+chmod 755 /usr/local/bin/truent
 
 # Only allow specific users
-chmod 700 /path/to/sentri.toml
-chown analyzer:analyzer /path/to/sentri.toml
+chmod 700 /path/to/truent.toml
+chown analyzer:analyzer /path/to/truent.toml
 ```
 
 ### Secret Management
@@ -530,17 +530,17 @@ Set in CI/CD:
 ```bash
 export SOLANA_RPC_URL="http://localhost:8899"
 export SOLANA_KEYPAIR="/secure/path/to/keypair.json"
-sentri analyze --config sentri.toml
+truent analyze --config truent.toml
 ```
 
 ### Audit Trail
 
 ```bash
 # Log all runs
-sentri analyze --config sentri.toml --audit-log /var/log/sentri.log
+truent analyze --config truent.toml --audit-log /var/log/truent.log
 
 # Parse logs
-grep "violation" /var/log/sentri.log | jq
+grep "violation" /var/log/truent.log | jq
 ```
 
 ## Production Checklist
@@ -562,7 +562,7 @@ Before deploying to production:
 
 - **Issues**: GitHub Issues with `[deployment]` tag
 - **Questions**: GitHub Discussions
-- **Security**: security@sentri.dev
+- **Security**: security@truent.dev
 - **Community**: Discord (link in README)
 
 ## Summary

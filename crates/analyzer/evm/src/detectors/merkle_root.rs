@@ -6,7 +6,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Regex to match merkle root mappings
@@ -51,7 +51,7 @@ pub fn detect_merkle_root_zero_default(source: &str, file_path: &str) -> Vec<Fin
             findings.push(
                 Finding::new(
                     "evm_merkle_root_zero_default".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     var_line_num + 1,
                     0,
@@ -100,7 +100,7 @@ pub fn detect_merkle_root_zero_default(source: &str, file_path: &str) -> Vec<Fin
             findings.push(
                 Finding::new(
                     "evm_merkle_root_zero_default".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     func_line_num + 1,
                     0,

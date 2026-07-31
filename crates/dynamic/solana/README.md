@@ -1,7 +1,7 @@
-# sentri-dynamic-solana
+# truent-dynamic-solana
 
 Dynamic invariant fuzzing for Solana programs — the account-model counterpart
-to `sentri-dynamic-evm`.
+to `truent-dynamic-evm`.
 
 Solana's execution model is account-based (an instruction is a program id, a
 list of `AccountMeta`s, and an opaque data blob), not the EVM's flat-calldata,
@@ -23,7 +23,7 @@ Both come with the minimal reproducing instruction sequence.
 ## Driving it from the CLI
 
 ```bash
-sentri fuzz path/to/idl.json --dynamic --chain solana --plan plan.json
+truent fuzz path/to/idl.json --dynamic --chain solana --plan plan.json
 ```
 
 Two inputs, because one is not enough:
@@ -74,6 +74,6 @@ proven against the mock's buggy airdrop; not-crying-wolf is proven against real
 code.
 
 ```bash
-cargo test  -p sentri-dynamic-solana                             # engine proof (mock)
-cargo test  -p sentri-dynamic-solana --features litesvm-backend  # + real SPL Token e2e
+cargo test  -p truent-dynamic-solana                             # engine proof (mock)
+cargo test  -p truent-dynamic-solana --features litesvm-backend  # + real SPL Token e2e
 ```

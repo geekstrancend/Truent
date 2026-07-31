@@ -1,5 +1,5 @@
 [package]
-name = "sentri-report"
+name = "truent-report"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Report generation for Sentri security analysis violations and findings."
+description = "Truent: Report generation for Truent security analysis violations and findings."
 
-keywords = ["sentri", "solana", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "solana", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-report"
+documentation = "https://docs.rs/truent-report"
 
 [dependencies]
 anyhow.workspace = true
@@ -20,7 +20,7 @@ serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
+truent-core.workspace = true
 chrono.workspace = true
 
 [dev-dependencies]

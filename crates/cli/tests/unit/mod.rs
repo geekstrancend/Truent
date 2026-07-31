@@ -4,7 +4,7 @@
 //! Coverage target: 95%+ for parser module.
 
 mod parser_tests {
-    use sentri_dsl_parser::InvariantParser;
+    use truent_dsl_parser::InvariantParser;
 
     #[test]
     fn test_parse_simple_invariant() {
@@ -97,9 +97,9 @@ mod parser_tests {
 // Coverage target: 95%+ for type_checker module.
 
 mod type_checker_tests {
-    use sentri_core::model::Expression;
+    use truent_core::model::Expression;
 
-    use sentri_core::TypeChecker;
+    use truent_core::TypeChecker;
 
     #[test]
     fn test_type_inference_number() {
@@ -129,7 +129,7 @@ mod type_checker_tests {
         let right = Box::new(Expression::Boolean(false));
         let expr = Expression::Logical {
             left,
-            op: sentri_core::model::LogicalOp::And,
+            op: truent_core::model::LogicalOp::And,
             right,
         };
 
@@ -170,7 +170,7 @@ mod type_checker_tests {
         let right = Box::new(Expression::Int(3));
         let expr = Expression::BinaryOp {
             left,
-            op: sentri_core::model::BinaryOp::Gt,
+            op: truent_core::model::BinaryOp::Gt,
             right,
         };
 
@@ -185,7 +185,7 @@ mod type_checker_tests {
 // Coverage target: 95%+ for evaluator module.
 
 mod evaluator_tests {
-    use sentri_core::{model::Expression, Evaluator, ExecutionContext};
+    use truent_core::{model::Expression, Evaluator, ExecutionContext};
 
     #[test]
     fn test_evaluate_literal() {
@@ -219,7 +219,7 @@ mod evaluator_tests {
         let right = Box::new(Expression::Int(3));
         let expr = Expression::BinaryOp {
             left,
-            op: sentri_core::model::BinaryOp::Gt,
+            op: truent_core::model::BinaryOp::Gt,
             right,
         };
         let result = evaluator.evaluate(&expr);
@@ -239,7 +239,7 @@ mod evaluator_tests {
         let right = Box::new(Expression::Boolean(false));
         let expr = Expression::Logical {
             left,
-            op: sentri_core::model::LogicalOp::And,
+            op: truent_core::model::LogicalOp::And,
             right,
         };
         let result = evaluator.evaluate(&expr);
@@ -259,7 +259,7 @@ mod evaluator_tests {
         let right = Box::new(Expression::Boolean(false));
         let expr = Expression::Logical {
             left,
-            op: sentri_core::model::LogicalOp::Or,
+            op: truent_core::model::LogicalOp::Or,
             right,
         };
         let result = evaluator.evaluate(&expr);
@@ -304,11 +304,11 @@ mod evaluator_tests {
 // Coverage target: 95%+ for AST module.
 //
 // NOTE: The following tests reference AstNode and LiteralNode which are not currently
-// defined in the sentri_ir::ast module. These tests are kept for reference but are
+// defined in the truent_ir::ast module. These tests are kept for reference but are
 // disabled. See ast_pattern_matching.rs for comprehensive Expression pattern matching tests.
 
 mod ast_tests {
-    // use sentri_ir::ast::*;
+    // use truent_ir::ast::*;
 
     // #[test]
     // fn test_ast_node_creation() {

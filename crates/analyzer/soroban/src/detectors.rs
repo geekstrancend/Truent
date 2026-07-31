@@ -7,7 +7,7 @@
 //! vs. storage-write ordering) that a single-line grep cannot express.
 
 use crate::soroban_model::ContractFunction;
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 
 /// Function-name substrings that indicate a privileged mutation requiring
 /// `require_auth`.

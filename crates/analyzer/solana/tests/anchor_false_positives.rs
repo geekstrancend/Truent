@@ -1,4 +1,4 @@
-use sentri_analyzer_solana::{parse_anchor_accounts, AccountSecurity, AnchorConstraint};
+use truent_analyzer_solana::{parse_anchor_accounts, AccountSecurity, AnchorConstraint};
 
 #[test]
 fn test_signer_type_not_flagged() {

@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref ACCOUNT_MUT: Regex =
@@ -44,7 +44,7 @@ pub fn detect_solana_rent_exemption(source: &str, file_path: &str) -> Vec<Findin
             findings.push(
                 Finding::new(
                     "sol_rent_exemption_check".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

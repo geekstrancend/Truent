@@ -6,7 +6,7 @@ import { Mail, BookOpen, Github, ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 const FAQS = [
-  { q: 'How do I integrate Sentri into GitHub Actions?', a: 'Add our official action to your workflow YAML. See the CI/CD Integration guide for a full example with blocking on critical findings.' },
+  { q: 'How do I integrate Truent into GitHub Actions?', a: 'Add our official action to your workflow YAML. See the CI/CD Integration guide for a full example with blocking on critical findings.' },
   { q: 'Why is my scan taking longer than expected?', a: 'Deep scans with symbolic execution on large contracts can take 5-15 minutes. Standard scans complete in under 5 minutes. Check the scan depth setting in your scan configuration.' },
   { q: 'Can I scan private repositories?', a: 'Yes. Pro and Enterprise plans support private repo scanning via our GitHub App installation. The app requests minimal read-only permissions.' },
   { q: 'How do I dispute a finding I believe is a false positive?', a: 'Open the finding in your report, click "Mark as False Positive", and add a note. Your feedback helps improve our detection engine.' },
@@ -23,8 +23,8 @@ export default function SupportPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           {[
             { icon: <BookOpen size={20} className="text-acc-text" />, title: 'Documentation', desc: 'Browse guides and the CLI reference', href: '/docs' },
-            { icon: <Mail size={20} className="text-acc-text" />, title: 'Email Support', desc: 'support@sentri.dev · 24h response', href: 'mailto:support@sentri.dev' },
-            { icon: <Github size={20} className="text-acc-text" />, title: 'GitHub Issues', desc: 'Report bugs or request features', href: 'https://github.com/geekstrancend/Sentri/issues' },
+            { icon: <Mail size={20} className="text-acc-text" />, title: 'Email Support', desc: 'support@truent.dev · 24h response', href: 'mailto:support@truent.dev' },
+            { icon: <Github size={20} className="text-acc-text" />, title: 'GitHub Issues', desc: 'Report bugs or request features', href: 'https://github.com/geekstrancend/Truent/issues' },
           ].map((card, i) => (
             <Link key={i} href={card.href}
               target={card.href.startsWith('http') ? '_blank' : undefined}

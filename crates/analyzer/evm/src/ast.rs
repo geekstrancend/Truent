@@ -671,7 +671,7 @@ mod tests {
     #[test]
     fn compile_to_ast_never_writes_outside_temp_dir_for_absolute_filename() {
         let real_file = std::env::temp_dir().join(format!(
-            "sentri_ast_rs_test_sentinel_{}.sol",
+            "truent_ast_rs_test_sentinel_{}.sol",
             std::process::id()
         ));
         let original_content = "// untouched sentinel file\ncontract C {}\n";

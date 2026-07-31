@@ -26,7 +26,7 @@ Examples of unacceptable behavior include:
 
 ## Enforcement
 
-Project maintainers are responsible for enforcing this Code of Conduct. Instances of abusive, harassing, or otherwise unacceptable behavior can be reported by contacting the project team at conduct@sentri.dev.
+Project maintainers are responsible for enforcing this Code of Conduct. Instances of abusive, harassing, or otherwise unacceptable behavior can be reported by contacting the project team at conduct@truent.dev.
 
 All complaints will be:
 - **Reviewed** - Thoroughly investigated
@@ -55,7 +55,7 @@ This Code of Conduct is adapted from the [Contributor Covenant](https://www.cont
 
 Have questions about this Code of Conduct?
 - Open a GitHub Discussion
-- Email: conduct@sentri.dev
+- Email: conduct@truent.dev
 - Join our Discord community
 
 ---

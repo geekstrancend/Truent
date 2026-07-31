@@ -1,4 +1,4 @@
-# sentri-generator-evm
+# truent-generator-evm
 
 Code generator for EVM (Solidity) invariant enforcement.
 
@@ -6,8 +6,8 @@ Code generator for EVM (Solidity) invariant enforcement.
 
 ```toml
 [dependencies]
-sentri-generator-evm = "0.3.0"
-sentri-core = "0.3.0"
+truent-generator-evm = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ## Current State
@@ -17,14 +17,14 @@ and a list of `Invariant`s, it emits one `require(<expression>, "Invariant:
 <name>");` assertion string per invariant. This is straightforward string
 templating, not a validating code generator - it doesn't check that the
 expression is well-formed Solidity, and it isn't currently invoked by the
-CLI (`cargo tree`-reachable from `sentri-cli`, but no command wires it up
+CLI (`cargo tree`-reachable from `truent-cli`, but no command wires it up
 yet).
 
 ## Example
 
 ```rust
-use sentri_core::traits::CodeGenerator;
-use sentri_generator_evm::EvmGenerator;
+use truent_core::traits::CodeGenerator;
+use truent_generator_evm::EvmGenerator;
 
 let generator = EvmGenerator;
 let output = generator.generate(&program_model, &invariants)?;

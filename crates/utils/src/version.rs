@@ -1,4 +1,4 @@
-//! Semantic versioning and release management for Sentri.
+//! Semantic versioning and release management for Truent.
 //!
 //! Provides:
 //! - Semantic versioning with validation
@@ -121,7 +121,7 @@ impl ReleaseArtifact {
 
     /// Compute expected artifact filename.
     pub fn filename(&self) -> String {
-        format!("sentri-{}-{}", self.version, self.target)
+        format!("truent-{}-{}", self.version, self.target)
     }
 
     /// Verify that artifact checksum matches expected value.
@@ -134,7 +134,7 @@ impl fmt::Display for ReleaseArtifact {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "sentri {} ({}) [{}]",
+            "truent {} ({}) [{}]",
             self.version, self.target, self.checksum
         )
     }
@@ -288,7 +288,7 @@ mod tests {
             "abc123".to_string(),
             true,
         );
-        assert_eq!(artifact.filename(), "sentri-0.1.0-linux-x86_64");
+        assert_eq!(artifact.filename(), "truent-0.1.0-linux-x86_64");
     }
 
     #[test]

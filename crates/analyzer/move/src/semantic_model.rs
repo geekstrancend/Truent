@@ -10,7 +10,7 @@
 //! regex heuristic rather than silently reporting nothing.
 
 use regex::Regex;
-use sentri_ir::{
+use truent_ir::{
     AuthCheckKind, AuthorizationCheck, MutationKind, PrivilegedMutation, SemanticModel,
 };
 
@@ -213,7 +213,7 @@ fn offset_to_line(source: &str, byte_offset: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sentri_ir::rules::find_unauthorized_privileged_mutations;
+    use truent_ir::rules::find_unauthorized_privileged_mutations;
 
     const FIXTURE: &str = r#"
 module vault::vault {

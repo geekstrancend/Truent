@@ -1,7 +1,7 @@
 //! A pure-Rust, in-memory [`ExecutionBackend`] simulating two tiny synthetic
 //! contracts. This exists so the fuzzing engine itself (generation,
 //! execution, shrinking, invariant checking) is provably correct without
-//! depending on any real VM — `sentri-dynamic-evm` provides the real
+//! depending on any real VM — `truent-dynamic-evm` provides the real
 //! `revm`-backed implementation for actual Solidity bytecode.
 //!
 //! Test-only (`cfg(test)`): shared by this crate's own unit tests

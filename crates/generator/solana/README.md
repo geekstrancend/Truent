@@ -1,4 +1,4 @@
-# sentri-generator-solana
+# truent-generator-solana
 
 Code generator for Solana (Anchor/native Rust) invariant enforcement.
 
@@ -6,8 +6,8 @@ Code generator for Solana (Anchor/native Rust) invariant enforcement.
 
 ```toml
 [dependencies]
-sentri-generator-solana = "0.3.0"
-sentri-core = "0.3.0"
+truent-generator-solana = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ## Current State
@@ -22,8 +22,8 @@ it isn't currently invoked by the CLI.
 ## Example
 
 ```rust
-use sentri_core::traits::CodeGenerator;
-use sentri_generator_solana::SolanaGenerator;
+use truent_core::traits::CodeGenerator;
+use truent_generator_solana::SolanaGenerator;
 
 let generator = SolanaGenerator;
 let output = generator.generate(&program_model, &invariants)?;

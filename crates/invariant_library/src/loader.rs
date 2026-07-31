@@ -1,8 +1,8 @@
 //! Library loader for TOML-based invariants.
 
-use sentri_core::model::Invariant;
-use sentri_core::Result;
-use sentri_dsl_parser::parse_invariant;
+use truent_core::model::Invariant;
+use truent_core::Result;
+use truent_dsl_parser::parse_invariant;
 use std::path::Path;
 use tracing::info;
 
@@ -22,11 +22,11 @@ impl LibraryLoader {
     pub fn load_from_toml(path: &Path) -> Result<Vec<Invariant>> {
         info!("Loading invariants from {:?}", path);
 
-        let content = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let content = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
 
         // Parse TOML
         let table: toml::Table = toml::from_str(&content)
-            .map_err(|e| sentri_core::InvarError::ConfigError(e.to_string()))?;
+            .map_err(|e| truent_core::InvarError::ConfigError(e.to_string()))?;
 
         let mut invariants = Vec::new();
 
@@ -58,10 +58,10 @@ impl LibraryLoader {
         let mut all_invariants = Vec::new();
 
         // Read all .toml files in directory
-        let entries = std::fs::read_dir(dir).map_err(sentri_core::InvarError::IoError)?;
+        let entries = std::fs::read_dir(dir).map_err(truent_core::InvarError::IoError)?;
 
         for entry in entries {
-            let entry = entry.map_err(sentri_core::InvarError::IoError)?;
+            let entry = entry.map_err(truent_core::InvarError::IoError)?;
             let path = entry.path();
 
             if path.extension().is_some_and(|ext| ext == "toml") {
@@ -79,14 +79,14 @@ impl LibraryLoader {
 /// Creates a complete invariant by parsing the expression string using the DSL parser.
 fn parse_invariant_table(table: &toml::Value) -> Result<Invariant> {
     let table = table.as_table().ok_or_else(|| {
-        sentri_core::InvarError::ConfigError("Invariant must be a table".to_string())
+        truent_core::InvarError::ConfigError("Invariant must be a table".to_string())
     })?;
 
     let name = table
         .get("name")
         .and_then(|v| v.as_str())
         .ok_or_else(|| {
-            sentri_core::InvarError::ConfigError("Invariant must have a 'name' field".to_string())
+            truent_core::InvarError::ConfigError("Invariant must have a 'name' field".to_string())
         })?
         .to_string();
 
@@ -94,7 +94,7 @@ fn parse_invariant_table(table: &toml::Value) -> Result<Invariant> {
         .get("expression")
         .and_then(|v| v.as_str())
         .ok_or_else(|| {
-            sentri_core::InvarError::ConfigError(
+            truent_core::InvarError::ConfigError(
                 "Invariant must have an 'expression' field".to_string(),
             )
         })?;

@@ -1,5 +1,5 @@
-// Example Solana program for Sentri analysis
-// This demonstrates how Sentri analyzes Rust-based Solana programs
+// Example Solana program for Truent analysis
+// This demonstrates how Truent analyzes Rust-based Solana programs
 
 use solana_program::{
     account_info::{next_account_info, AccountInfo},

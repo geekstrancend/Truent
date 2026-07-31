@@ -1,14 +1,14 @@
 //! Chain-agnostic semantic-model extraction for Soroban contracts.
 //!
-//! Builds a [`sentri_ir::SemanticModel`] from the same
+//! Builds a [`truent_ir::SemanticModel`] from the same
 //! [`crate::soroban_parser::parse_contract_functions`] facts the detectors
 //! use, so this feeds the shared
-//! [`sentri_ir::rules::find_unauthorized_privileged_mutations`] rule the
-//! same way `sentri_analyzer_solana`/`_evm`/`_move` do — a `require_auth()`
+//! [`truent_ir::rules::find_unauthorized_privileged_mutations`] rule the
+//! same way `truent_analyzer_solana`/`_evm`/`_move` do — a `require_auth()`
 //! call is Soroban's analogue of Solana's `Signer<'info>`/Move's `&signer`.
 
 use crate::soroban_parser::parse_contract_functions;
-use sentri_ir::{
+use truent_ir::{
     AuthCheckKind, AuthorizationCheck, MutationKind, PrivilegedMutation, SemanticModel,
 };
 
@@ -64,7 +64,7 @@ pub fn build_semantic_model(source: &str, file_path: &str) -> anyhow::Result<Sem
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sentri_ir::rules::find_unauthorized_privileged_mutations;
+    use truent_ir::rules::find_unauthorized_privileged_mutations;
 
     const FIXTURE: &str = r#"
 #[contract]

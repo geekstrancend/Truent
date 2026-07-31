@@ -1,6 +1,6 @@
-# sentri-analyzer-move
+# truent-analyzer-move
 
-Move language analyzer for the Sentri framework (Aptos, Sui, and other
+Move language analyzer for the Truent framework (Aptos, Sui, and other
 Move-based networks).
 
 Performs static analysis on Move module *source* (not compiled bytecode) to
@@ -10,22 +10,22 @@ detect security invariant violations and unsafe patterns.
 
 ```toml
 [dependencies]
-sentri-analyzer-move = "0.3.0"
-sentri-core = "0.3.0"
-sentri-ir = "0.3.0"
+truent-analyzer-move = "0.3.0"
+truent-core = "0.3.0"
+truent-ir = "0.3.0"
 ```
 
 ## Key Components
 
 - `MoveAnalyzer` — implements the `ChainAnalyzer` trait (`analyze(&self, path: &Path) -> Result<ProgramModel>`), the same interface every chain analyzer in the workspace shares
 - `run_all_detectors(source, file_path)` — the entry point the CLI actually calls; runs all 7 pattern detectors plus the shared cross-chain `unauthorized_privileged_mutation` rule
-- `build_semantic_model(source, file_path)` — builds the chain-agnostic `sentri_ir::SemanticModel` consumed by that shared rule
+- `build_semantic_model(source, file_path)` — builds the chain-agnostic `truent_ir::SemanticModel` consumed by that shared rule
 - `tree_sitter_grammar` — a vendored Sui Move tree-sitter grammar (see `vendor/tree-sitter-move-sui/PROVENANCE.md`) backs `build_semantic_model`'s real AST parsing; falls back to a regex heuristic if a file doesn't parse cleanly (the upstream grammar is itself still work-in-progress)
 
 ## Example
 
 ```rust
-use sentri_analyzer_move::run_all_detectors;
+use truent_analyzer_move::run_all_detectors;
 
 let source = std::fs::read_to_string("Vault.move")?;
 let findings = run_all_detectors(&source, "Vault.move");

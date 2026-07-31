@@ -1,5 +1,5 @@
 [package]
-name = "sentri-generator-move"
+name = "truent-generator-move"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: Code generator for Move modules using Sentri invariants and security constraints."
+description = "Truent: Code generator for Move modules using Truent invariants and security constraints."
 
-keywords = ["sentri", "move", "security", "smart-contracts", "codegen"]
+keywords = ["truent", "move", "security", "smart-contracts", "codegen"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-generator-move"
+documentation = "https://docs.rs/truent-generator-move"
 
 [dependencies]
 anyhow.workspace = true
@@ -20,9 +20,9 @@ thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
-sentri-ir.workspace = true
-sentri-utils.workspace = true
-sentri-analyzer-move.workspace = true
+truent-core.workspace = true
+truent-ir.workspace = true
+truent-utils.workspace = true
+truent-analyzer-move.workspace = true
 
 [dev-dependencies]

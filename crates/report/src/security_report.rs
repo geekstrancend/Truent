@@ -2,7 +2,7 @@
 ///
 /// Generates multi-format security analysis reports with severity aggregation,
 /// remediation guidance, and industry-standard formatting.
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 use std::collections::HashMap;
 
 /// Report format enumeration

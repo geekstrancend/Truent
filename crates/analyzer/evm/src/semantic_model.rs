@@ -1,12 +1,12 @@
 //! Chain-agnostic semantic-model extraction for EVM/Solidity contracts.
 //!
-//! Builds a [`sentri_ir::SemanticModel`] from the real solc-JSON-AST-derived
+//! Builds a [`truent_ir::SemanticModel`] from the real solc-JSON-AST-derived
 //! [`AstContract`] (see [`crate::ast::SolidityParser`]) — modifiers and
 //! function bodies come from the parsed contract, not from re-scanning
 //! source text with a second, weaker heuristic.
 
 use crate::ast::{AstContract, AstFunction, Visibility};
-use sentri_ir::{
+use truent_ir::{
     AuthCheckKind, AuthorizationCheck, MutationKind, PrivilegedMutation, SemanticModel,
 };
 
@@ -120,7 +120,7 @@ fn find_line(source: &str, func_name: &str) -> usize {
 mod tests {
     use super::*;
     use crate::ast::{AstParam, Visibility};
-    use sentri_ir::rules::find_unauthorized_privileged_mutations;
+    use truent_ir::rules::find_unauthorized_privileged_mutations;
 
     /// solc's JSON AST isn't available in this environment (no `solc`
     /// binary), so this hand-builds the `AstContract` the real

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Sentri framework now supports **execution phase-qualified invariants** for Account Abstraction (AA) systems. This extension addresses a critical gap in AA security modeling: most subtle failures in AA systems come from **phase misalignment** rather than contract-level state violations.
+The Truent framework now supports **execution phase-qualified invariants** for Account Abstraction (AA) systems. This extension addresses a critical gap in AA security modeling: most subtle failures in AA systems come from **phase misalignment** rather than contract-level state violations.
 
 ## The Problem: Actor Boundaries vs. Execution Phases
 
@@ -290,7 +290,7 @@ invariant NonceExhaustionPrevention {
 
 ## Integration with Analyzers
 
-Phase-qualified invariants integrate with all Sentri analyzers:
+Phase-qualified invariants integrate with all Truent analyzers:
 
 - **DSL Parser** (`dsl_parser`): Parses phase syntax `phase::layer::var`
 - **Type Checker** (`type_checker`): Validates phase expression types
@@ -315,7 +315,7 @@ fn test_phase_tracking() {
 
 Run tests:
 ```bash
-cargo test -p sentri-core test_phase_tracking -- --nocapture
+cargo test -p truent-core test_phase_tracking -- --nocapture
 ```
 
 ## Migration from Actor-Only to Phase-Based Invariants

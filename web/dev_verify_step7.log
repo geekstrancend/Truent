@@ -1,5 +1,5 @@
 
-> sentri-web@0.1.0 dev
+> truent-web@0.1.0 dev
 > next dev
 
  ⚠ Port 3000 is in use, trying 3001 instead.
@@ -28,11 +28,11 @@
  ✓ Compiled in 10.4s (589 modules)
  ✓ Compiled in 2.8s (589 modules)
  ✓ Compiled in 3.7s (589 modules)
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/geekstrancend/Sentri/web/.next/cache/webpack/client-development/0.pack.gz_' -> '/home/geekstrancend/Sentri/web/.next/cache/webpack/client-development/0.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/geekstrancend/Truent/web/.next/cache/webpack/client-development/0.pack.gz_' -> '/home/geekstrancend/Truent/web/.next/cache/webpack/client-development/0.pack.gz'
  ⨯ ./components/layout/DocsShell.tsx
 Error: 
   [31mx[0m Expression expected
-     ,-[[36;1;4m/home/geekstrancend/Sentri/web/components/layout/DocsShell.tsx[0m:193:1]
+     ,-[[36;1;4m/home/geekstrancend/Truent/web/components/layout/DocsShell.tsx[0m:193:1]
  [2m193[0m |   )
  [2m194[0m | }
  [2m195[0m | 
@@ -44,7 +44,7 @@ Error:
      `----
 
   [31mx[0m Expression expected
-     ,-[[36;1;4m/home/geekstrancend/Sentri/web/components/layout/DocsShell.tsx[0m:193:1]
+     ,-[[36;1;4m/home/geekstrancend/Truent/web/components/layout/DocsShell.tsx[0m:193:1]
  [2m193[0m |   )
  [2m194[0m | }
  [2m195[0m | 
@@ -84,4 +84,4 @@ Import trace for requested module:
  ✓ Compiled in 13.2s (580 modules)
  ✓ Compiled in 3.8s (303 modules)
  ✓ Compiled in 2.4s (303 modules)
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/geekstrancend/Sentri/web/.next/cache/webpack/client-development/0.pack.gz_' -> '/home/geekstrancend/Sentri/web/.next/cache/webpack/client-development/0.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/geekstrancend/Truent/web/.next/cache/webpack/client-development/0.pack.gz_' -> '/home/geekstrancend/Truent/web/.next/cache/webpack/client-development/0.pack.gz'

@@ -6,10 +6,10 @@
 //! - Bytecode disassembly for compiled code analysis
 //! - Pattern-based vulnerability detection
 
-use sentri_core::model::{FunctionModel, ProgramModel};
-use sentri_core::traits::ChainAnalyzer;
-use sentri_core::Finding;
-use sentri_core::{AnalysisContext, Result};
+use truent_core::model::{FunctionModel, ProgramModel};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::Finding;
+use truent_core::{AnalysisContext, Result};
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::{debug, info, warn};
@@ -22,7 +22,7 @@ use crate::cfg::ControlFlowGraph;
 //     AccessControlDetector, FlashLoanDetector, OverflowDetector, ReentrancyDetector,
 // };
 use crate::errors::AnalysisError;
-use sentri_utils::SolcManager;
+use truent_utils::SolcManager;
 
 /// Analyzer for EVM (Solidity) smart contracts.
 ///
@@ -136,7 +136,7 @@ impl ChainAnalyzer for EvmAnalyzer {
 
         // Step 1: Parse using Solc JSON AST for accurate analysis
         let ast_contract = self.parse_contract(path).map_err(|e| {
-            sentri_core::InvarError::Custom(format!("Failed to parse contract with solc: {}", e))
+            truent_core::InvarError::Custom(format!("Failed to parse contract with solc: {}", e))
         })?;
 
         // Step 2: Build control flow graph
@@ -159,7 +159,7 @@ impl ChainAnalyzer for EvmAnalyzer {
 
         // Add state variables
         for var in &ast_contract.state_vars {
-            use sentri_core::model::StateVar;
+            use truent_core::model::StateVar;
             program.add_state_var(StateVar {
                 name: var.name.clone(),
                 type_name: var.type_name.clone(),
@@ -284,7 +284,7 @@ impl EvmAnalyzer {
 
     fn run_ast_detectors(
         &self,
-        output: &sentri_utils::SolcOutput,
+        output: &truent_utils::SolcOutput,
         _source: &str,
         _file_name: &str,
         _path: &Path,
@@ -343,7 +343,7 @@ impl EvmAnalyzer {
 
     /// Fallback to basic heuristic vulnerability detection when AST parsing fails.
     fn basic_vulnerability_check(&self, path: &Path, context: &mut AnalysisContext) -> Result<()> {
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
         let lines: Vec<&str> = source.lines().collect();
 
         for (line_idx, line) in lines.iter().enumerate() {

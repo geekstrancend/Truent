@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// Matches generic type parameters: <T>, <Token>, <T:, <Token:, or generic type keyword
@@ -42,7 +42,7 @@ pub fn detect_move_type_safety_violation(source: &str, file_path: &str) -> Vec<F
             findings.push(
                 Finding::new(
                     "move_type_safety_violation".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

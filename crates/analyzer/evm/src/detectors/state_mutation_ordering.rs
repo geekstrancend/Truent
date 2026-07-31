@@ -10,7 +10,7 @@
 ///
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     static ref EXTERNAL_CALL: Regex = Regex::new(
@@ -45,7 +45,7 @@ pub fn detect_state_mutation_ordering(source: &str, file_path: &str) -> Vec<Find
             findings.push(
                 Finding::new(
                     "evm_state_mutation_ordering".to_string(),
-                    sentri_core::Severity::Medium,
+                    truent_core::Severity::Medium,
                     file_path.to_string(),
                     line_num + 1,
                     0,

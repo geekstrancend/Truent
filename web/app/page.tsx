@@ -35,7 +35,7 @@ export default function HomePage() {
       <MarketingNav />
 
       <ParticleHero
-        wordmark="SENTRI"
+        wordmark="TRUENT"
         eyebrow="Smart contract security intelligence"
         headline="Don't get Hacked!"
         subline={<>Findings a fuzzer <span className="text-acc-text">proved by execution</span> — not a model&apos;s opinion. <span className="text-acc-text">71 detectors</span> across EVM, Solana, Move and Soroban.</>}
@@ -67,7 +67,7 @@ export default function HomePage() {
 
       {/* ─── Stats ───
           Every figure here is checkable against the tool itself
-          (`sentri registry list`, `sentri scan --chain <c>`) rather than
+          (`truent registry list`, `truent scan --chain <c>`) rather than
           being a marketing number. Keep it that way. */}
       <section className="mx-auto max-w-site px-7 py-20">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
@@ -98,7 +98,7 @@ export default function HomePage() {
         </div>
         <p className="mt-10 text-center font-mono text-xs text-sec">
           Verify any of these yourself:{' '}
-          <span className="text-acc-text">sentri registry list</span>
+          <span className="text-acc-text">truent registry list</span>
         </p>
       </section>
 
@@ -111,7 +111,7 @@ export default function HomePage() {
               One command. Every invariant.
             </h2>
             <p className="mt-4 text-body-md leading-relaxed text-sec">
-              Point Sentri at a contract and it deploys, drives adversarial call sequences,
+              Point Truent at a contract and it deploys, drives adversarial call sequences,
               and checks every invariant after every call — then shrinks any violation to a
               minimal proof-of-concept you can run.
             </p>
@@ -150,7 +150,7 @@ export default function HomePage() {
             An engine that can prove it.
           </h2>
           <p className="mx-auto mt-4 max-w-narrow text-body-md leading-relaxed text-sec">
-            Static analysis finds patterns. Language models find suspicions. Sentri runs the
+            Static analysis finds patterns. Language models find suspicions. Truent runs the
             code and settles it.
           </p>
         </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
             </div>
             <h3 className="font-display text-xl font-[600] text-text mb-3 relative z-10">Every finding is proved, not guessed</h3>
             <p className="text-body-md text-sec leading-6 mb-4 max-w-xl relative z-10">
-              A prompt-only auditor stops at &ldquo;this looks like a bug.&rdquo; Sentri deploys your
+              A prompt-only auditor stops at &ldquo;this looks like a bug.&rdquo; Truent deploys your
               contract in a real VM, drives adversarial sequences against it, and only reports a
               finding once it has made the bug actually fire — then shrinks the trace to the
               shortest sequence that reproduces it.
@@ -262,7 +262,7 @@ export default function HomePage() {
             We study every major hack so you don&apos;t have to
           </h2>
           <p className="text-body-lg text-sec max-w-2xl mx-auto">
-            Every invariant maps directly to a real-world exploit pattern. Sentri would have flagged these before deployment.
+            Every invariant maps directly to a real-world exploit pattern. Truent would have flagged these before deployment.
           </p>
         </div>
         <div ref={exploitsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
@@ -287,7 +287,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-1.5 text-low text-xs font-[600]">
                 <Check size={13} />
-                <span>Sentri detects this pattern</span>
+                <span>Truent detects this pattern</span>
               </div>
             </div>
           ))}
@@ -449,7 +449,7 @@ export default function HomePage() {
                 Ready to audit smarter?
               </h2>
               <p className="text-body-lg text-sec max-w-xl mx-auto mb-10">
-                Join teams securing billions in on-chain value with Sentri&apos;s invariant-driven security platform.
+                Join teams securing billions in on-chain value with Truent&apos;s invariant-driven security platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="primary" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" onClick={() => { setAuthTab('signup'); setAuthOpen(true) }}>

@@ -3,7 +3,7 @@
 //! The fuzzing engine in this crate (sequence generation, shrinking,
 //! invariant checking) never touches a VM directly. It only knows how to
 //! drive an [`ExecutionBackend`]. Each chain gets its own implementation:
-//! `sentri-dynamic-evm` provides one backed by `revm` for real Solidity
+//! `truent-dynamic-evm` provides one backed by `revm` for real Solidity
 //! bytecode, and this crate's test suite provides an in-memory
 //! `MockBackend` so the engine logic itself is provable without any VM.
 

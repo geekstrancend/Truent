@@ -113,7 +113,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
       }
 
       const address = accounts[0]
-      const message = `Sign this message to authenticate with Sentri. Timestamp: ${Date.now()}`
+      const message = `Sign this message to authenticate with Truent. Timestamp: ${Date.now()}`
 
       // Request signature
       const signature = await window.ethereum.request({
@@ -161,7 +161,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
 
         {/* Logo / Header */}
         <div className="px-6 pt-6 pb-2">
-          <h2 id="auth-modal-title" className="text-2xl font-bold text-text mb-1">Sentri</h2>
+          <h2 id="auth-modal-title" className="text-2xl font-bold text-text mb-1">Truent</h2>
           <p className="text-sm text-sec">Smart contract invariant checking</p>
         </div>
 

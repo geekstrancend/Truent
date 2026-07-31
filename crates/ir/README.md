@@ -1,8 +1,8 @@
-# sentri-ir
+# truent-ir
 
-Chain-agnostic intermediate representation for Sentri.
+Chain-agnostic intermediate representation for Truent.
 
-Re-exports the core program/invariant model types from `sentri-core`, and
+Re-exports the core program/invariant model types from `truent-core`, and
 defines the shared semantic IR that lets a detection rule be written once
 and apply unmodified to every chain.
 
@@ -10,13 +10,13 @@ and apply unmodified to every chain.
 
 ```toml
 [dependencies]
-sentri-ir = "0.3.0"
-sentri-core = "0.3.0"
+truent-ir = "0.3.0"
+truent-core = "0.3.0"
 ```
 
 ## Key Types
 
-Re-exported from `sentri-core::model`:
+Re-exported from `truent-core::model`:
 - `Expression`, `BinaryOp`, `LogicalOp` — invariant expression AST
 - `Invariant`, `ProgramModel`, `FunctionModel`, `StateVar` — the program model chain analyzers produce
 - `GenerationOutput`, `SimulationReport`
@@ -30,7 +30,7 @@ Defined in this crate:
 
 ## Shared cross-chain rule
 
-`sentri_ir::rules::find_unauthorized_privileged_mutations` is the first rule
+`truent_ir::rules::find_unauthorized_privileged_mutations` is the first rule
 built on this pattern: it flags any `PrivilegedMutation` with no guard, and
 is written once in `crates/ir/src/rules.rs`. Each chain analyzer (EVM,
 Solana, Move) builds its own `SemanticModel` from its own native syntax —
@@ -43,8 +43,8 @@ have each analyzer populate it.
 ## Example
 
 ```rust
-use sentri_ir::{SemanticModel, PrivilegedMutation, MutationKind};
-use sentri_ir::rules::find_unauthorized_privileged_mutations;
+use truent_ir::{SemanticModel, PrivilegedMutation, MutationKind};
+use truent_ir::rules::find_unauthorized_privileged_mutations;
 
 let mut model = SemanticModel::new("evm", "Vault.sol");
 model.mutations.push(PrivilegedMutation {

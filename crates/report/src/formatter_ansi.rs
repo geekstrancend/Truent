@@ -2,7 +2,7 @@
 //!
 //! Formats findings for terminal (with colors), JSON (NDJSON), and SARIF 2.1.0.
 
-use sentri_core::{Finding, Severity};
+use truent_core::{Finding, Severity};
 use serde_json::{json, Value};
 use std::fmt::Write;
 
@@ -41,7 +41,7 @@ pub fn format_terminal(findings: &[Finding], use_color: bool) -> String {
     .unwrap();
     writeln!(
         &mut output,
-        "{}║{}  Sentri Security Analysis Results{}",
+        "{}║{}  Truent Security Analysis Results{}",
         if use_color { ANSI_BOLD } else { "" },
         if use_color { ANSI_RESET } else { "" },
         if use_color { ANSI_BOLD } else { "" }
@@ -389,9 +389,9 @@ pub fn format_sarif(findings: &[Finding], tool_version: &str) -> Value {
             {
                 "tool": {
                     "driver": {
-                        "name": "Sentri",
+                        "name": "Truent",
                         "version": tool_version,
-                        "informationUri": "https://github.com/geekstrancend/Sentri",
+                        "informationUri": "https://github.com/geekstrancend/Truent",
                         "rules": rules
                     }
                 },

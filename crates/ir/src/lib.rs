@@ -6,11 +6,11 @@
 //! This module re-exports core types and extends them with additional
 //! IR-specific utilities while remaining chain-agnostic.
 
-pub use sentri_core::model::{
+pub use truent_core::model::{
     BinaryOp, Expression, FunctionModel, GenerationOutput, Invariant, LogicalOp, ProgramModel,
     SimulationReport, StateVar,
 };
-pub use sentri_core::{InvarError, Result};
+pub use truent_core::{InvarError, Result};
 
 pub mod analyzer_result;
 pub mod ast;

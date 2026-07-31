@@ -117,7 +117,7 @@ impl ChangelogGenerator {
     /// Generate complete changelog
     pub fn generate(&self) -> String {
         let mut changelog = "# Changelog\n\n".to_string();
-        changelog.push_str("All notable changes to Sentri are documented in this file.\n\n");
+        changelog.push_str("All notable changes to Truent are documented in this file.\n\n");
 
         for release in &self.releases {
             changelog.push_str(&release.to_release_notes());
@@ -175,7 +175,7 @@ impl APIDocGenerator {
 
     /// Generate API documentation
     pub fn generate(&self) -> String {
-        let mut doc = "# Sentri API Reference\n\n".to_string();
+        let mut doc = "# Truent API Reference\n\n".to_string();
 
         for module in self.modules.values() {
             doc.push_str(&format!("## {}\n\n", module.name));

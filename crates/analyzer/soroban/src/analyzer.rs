@@ -1,9 +1,9 @@
 //! Soroban analyzer implementation.
 
 use crate::soroban_parser::parse_contract_functions;
-use sentri_core::model::{FunctionModel, ProgramModel, StateVar};
-use sentri_core::traits::ChainAnalyzer;
-use sentri_core::Result;
+use truent_core::model::{FunctionModel, ProgramModel, StateVar};
+use truent_core::traits::ChainAnalyzer;
+use truent_core::Result;
 use std::collections::BTreeSet;
 use std::path::Path;
 use tracing::info;
@@ -12,17 +12,17 @@ use tracing::info;
 ///
 /// Performs static analysis on `#[contract]`/`#[contractimpl]` source to
 /// extract entry points and the facts the Soroban detectors need,
-/// following the same `syn`-based approach `sentri-analyzer-solana` uses.
+/// following the same `syn`-based approach `truent-analyzer-solana` uses.
 pub struct SorobanAnalyzer;
 
 impl ChainAnalyzer for SorobanAnalyzer {
     fn analyze(&self, path: &Path) -> Result<ProgramModel> {
         info!("Analyzing Soroban contract at {:?}", path);
 
-        let source = std::fs::read_to_string(path).map_err(sentri_core::InvarError::IoError)?;
+        let source = std::fs::read_to_string(path).map_err(truent_core::InvarError::IoError)?;
 
         let file = syn::parse_file(&source).map_err(|e| {
-            sentri_core::InvarError::AnalysisFailed(format!("Failed to parse Rust: {}", e))
+            truent_core::InvarError::AnalysisFailed(format!("Failed to parse Rust: {}", e))
         })?;
 
         let mut program = ProgramModel::new(
@@ -49,7 +49,7 @@ impl ChainAnalyzer for SorobanAnalyzer {
         }
 
         let functions = parse_contract_functions(&source).map_err(|e| {
-            sentri_core::InvarError::AnalysisFailed(format!(
+            truent_core::InvarError::AnalysisFailed(format!(
                 "Failed to parse Soroban contract functions: {}",
                 e
             ))

@@ -6,12 +6,12 @@ CLI tests validate that the command-line interface behaves correctly, produces c
 
 ## Exit Code Semantics
 
-Sentri uses standard Unix exit codes:
+Truent uses standard Unix exit codes:
 
 | Code | Meaning | When Used |
 |------|---------|-----------|
-| **0** | Success | Sentriiants passed, no violations |
-| **1** | Sentriiant Violation | One or more invariants failed |
+| **0** | Success | Invariants passed, no violations |
+| **1** | Invariant Violation | One or more invariants failed |
 | **2** | Configuration Error | Invalid arguments, missing files, bad config |
 | **3** | Internal Error | Parser panic, internal inconsistency, unrecoverable state |
 
@@ -32,16 +32,16 @@ tests/cli/
 ```rust
 #[test]
 fn test_cli_help_output() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("--help");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("Sentri"));
+        .stdout(predicate::str::contains("Truent"));
 }
 
 #[test]
 fn test_cli_version_output() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("--version");
     cmd.assert().success();
 }
@@ -52,7 +52,7 @@ fn test_cli_version_output() {
 ```rust
 #[test]
 fn test_exit_code_success_is_zero() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("--help");
     let output = cmd.output()?;
     
@@ -65,7 +65,7 @@ fn test_exit_code_success_is_zero() {
 
 #[test]
 fn test_exit_code_error_is_nonzero() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("nonexistent_command");
     let output = cmd.output()?;
     
@@ -83,7 +83,7 @@ fn test_exit_code_error_is_nonzero() {
 ```rust
 #[test]
 fn test_json_output_is_valid() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("report")
         .arg("--format").arg("json");
     
@@ -101,7 +101,7 @@ fn test_json_output_is_valid() {
 ```rust
 #[test]
 fn test_markdown_output_format() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("report")
         .arg("--format").arg("markdown");
     
@@ -118,7 +118,7 @@ fn test_markdown_output_format() {
 ```rust
 #[test]
 fn test_missing_required_file() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("build")
         .arg("--source").arg("/nonexistent/file.rs");
     
@@ -127,7 +127,7 @@ fn test_missing_required_file() {
 
 #[test]
 fn test_invalid_argument_value() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("--log-level").arg("invalid_level");
     
     cmd.assert().failure();
@@ -135,7 +135,7 @@ fn test_invalid_argument_value() {
 
 #[test]
 fn test_invalid_subcommand() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("nonexistent_command");
     
     cmd.assert().failure();
@@ -148,12 +148,12 @@ fn test_invalid_subcommand() {
 #[test]
 fn test_same_input_produces_same_output() {
     // Run 1
-    let mut cmd1 = Command::cargo_bin("sentri")?;
+    let mut cmd1 = Command::cargo_bin("truent")?;
     cmd1.arg("list");
     let output1 = cmd1.output()?;
 
     // Run 2
-    let mut cmd2 = Command::cargo_bin("sentri")?;
+    let mut cmd2 = Command::cargo_bin("truent")?;
     cmd2.arg("list");
     let output2 = cmd2.output()?;
 
@@ -186,7 +186,7 @@ use insta::assert_snapshot;
 
 #[test]
 fn test_report_output() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("report")
         .arg("--format").arg("json");
     
@@ -221,7 +221,7 @@ fn test_init_creates_project() {
     let temp = TempDir::new()?;
     let project_path = temp.path().join("new_project");
 
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("init")
         .arg(&project_path);
     
@@ -234,7 +234,7 @@ fn test_init_creates_project() {
 ```rust
 #[test]
 fn test_build_with_valid_args() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("build")
         .arg("--source").arg("test.rs")
         .arg("--chain").arg("solana");
@@ -251,7 +251,7 @@ fn test_check_invariant_file() {
     let invariant_file = temp.path().join("test.invar");
     // Write test file...
 
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("check")
         .arg(&invariant_file);
     
@@ -277,7 +277,7 @@ fn test_with_temp_files() {
 ```rust
 #[test]
 fn test_comprehensive() {
-    let mut cmd = Command::cargo_bin("sentri")?;
+    let mut cmd = Command::cargo_bin("truent")?;
     cmd.arg("check").arg("test.invar");
     
     let assert = cmd.assert();

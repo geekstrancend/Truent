@@ -1,4 +1,4 @@
-//! UI component library for Sentri CLI.
+//! UI component library for Truent CLI.
 //!
 //! This module provides a comprehensive design system and component library
 //! for building beautiful, consistent terminal interfaces. All components are
@@ -16,7 +16,7 @@
 //!
 //! - `constants`: Color codes, icons, and typography tokens
 //! - `utils`: Terminal utilities (width detection, text wrapping, boxes)
-//! - `banner`: Sentri splash screen
+//! - `banner`: Truent splash screen
 //! - `progress`: Spinner for long operations
 //! - `violation`: Bordered violation panels
 //! - `summary`: Analysis dashboard with charts

@@ -1,5 +1,5 @@
 [package]
-name = "sentri-analyzer-evm"
+name = "truent-analyzer-evm"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,12 +7,12 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-description = "Sentri: EVM smart contract analyzer with static analysis and invariant checking for Ethereum, Polygon, and other EVM chains."
+description = "Truent: EVM smart contract analyzer with static analysis and invariant checking for Ethereum, Polygon, and other EVM chains."
 
-keywords = ["sentri", "evm", "security", "smart-contracts", "static-analysis"]
+keywords = ["truent", "evm", "security", "smart-contracts", "static-analysis"]
 categories = ["development-tools", "development-tools::testing"]
 readme = "README.md"
-documentation = "https://docs.rs/sentri-analyzer-evm"
+documentation = "https://docs.rs/truent-analyzer-evm"
 
 [dependencies]
 anyhow.workspace = true
@@ -20,9 +20,9 @@ thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-sentri-core.workspace = true
-sentri-ir.workspace = true
-sentri-utils.workspace = true
+truent-core.workspace = true
+truent-ir.workspace = true
+truent-utils.workspace = true
 regex.workspace = true
 lazy_static.workspace = true
 solc.workspace = true

@@ -1,7 +1,7 @@
 #![deny(unsafe_code)]
 #![allow(missing_docs)]
 
-//! Utilities for Sentri: logging, path handling, version management, and Solidity compiler integration.
+//! Utilities for Truent: logging, path handling, version management, and Solidity compiler integration.
 
 pub mod logging;
 pub mod path_utils;

@@ -6,7 +6,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use sentri_core::Finding;
+use truent_core::Finding;
 
 lazy_static! {
     /// List of known liquid staking tokens
@@ -67,7 +67,7 @@ pub fn detect_lst_depeg_collateral_risk(source: &str, file_path: &str) -> Vec<Fi
             findings.push(
                 Finding::new(
                     "evm_lst_depeg".to_string(),
-                    sentri_core::Severity::Critical,
+                    truent_core::Severity::Critical,
                     file_path.to_string(),
                     line_num + 1,
                     0,
