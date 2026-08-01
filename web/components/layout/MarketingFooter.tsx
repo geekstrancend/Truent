@@ -1,133 +1,128 @@
 import Link from 'next/link'
-import { ShieldCheck, Github, Twitter, ExternalLink } from 'lucide-react'
+import { AsciiLogo } from '../ui/AsciiLogo'
+
+const columns = [
+  {
+    heading: 'Product',
+    links: [
+      { label: 'Features', href: '/#features' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Security Library', href: '/library' },
+      { label: 'Dashboard', href: '/dashboard' },
+    ],
+  },
+  {
+    heading: 'Resources',
+    links: [
+      { label: 'Documentation', href: '/docs' },
+      { label: 'Getting Started', href: '/docs#getting-started' },
+      { label: 'CLI Reference', href: '/docs#cli' },
+      { label: 'CI/CD Guide', href: '/docs#ci-cd' },
+      { label: 'GitHub ↗', href: 'https://github.com/geekstrancend/Truent', external: true },
+    ],
+  },
+  {
+    heading: 'Company',
+    links: [
+      { label: 'Contact Sales', href: '/contact' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
+      // The design pointed this at its 404 mock; sent to the real policy instead.
+      { label: 'Security Disclosure', href: 'https://github.com/geekstrancend/Truent/security/policy', external: true },
+    ],
+  },
+]
+
+const socials = [
+  { label: 'GH', href: 'https://github.com/geekstrancend/Truent', name: 'GitHub' },
+  { label: '𝕏', href: 'https://twitter.com/truentsec', name: 'X' },
+]
 
 export function MarketingFooter() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-hair bg-surface-2">
-      <div className="max-w-site mx-auto px-7 pt-16 pb-8">
-
-        {/* Top grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-16">
-          {/* Brand column */}
-          <div className="col-span-2 md:col-span-2 pr-8">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <ShieldCheck size={20} className="text-acc-text" />
-              <span className="font-mono font-[600] text-text text-base">Truent</span>
-            </Link>
-            <p className="text-sec text-body-md mb-6 leading-6">
-              The invariant-driven smart contract security platform. Don&apos;t get Hacked.
+    <footer className="border-t border-hair bg-white/[0.012] px-6 pb-8 pt-16">
+      <div className="mx-auto max-w-[1100px]">
+        <div className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div className="col-span-2 md:col-span-1">
+            <div className="mb-4 flex items-center gap-[9px]">
+              <span className="flex h-[26px] w-[26px] items-center justify-center rounded-lg bg-gradient-to-br from-acc to-acc-text text-[14px] font-bold text-on-acc">
+                T
+              </span>
+              <span className="text-[15px] font-semibold text-text">truent</span>
+            </div>
+            <p className="mb-5 max-w-[280px] text-[13px] leading-[1.7] text-[#748078]">
+              The invariant-driven smart contract security platform. Don&apos;t get hacked.
             </p>
-            <div className="flex items-center gap-3">
-              <a
-                href="https://github.com/geekstrancend/Truent"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-panel border border-hair text-sec hover:text-text hover:border-indigo transition-colors"
-                aria-label="GitHub"
-              >
-                <Github size={16} />
-              </a>
-              <a
-                href="https://twitter.com/truentsec"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-panel border border-hair text-sec hover:text-text hover:border-indigo transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={16} />
-              </a>
+            <div className="flex gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.name}
+                  className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] border border-white/10 text-[13px] text-sec transition-colors hover:border-acc-text/50 hover:text-text"
+                >
+                  {s.label}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Product */}
-          <div>
-            <h3 className="text-label-sm text-text mb-5">Product</h3>
-            <ul className="space-y-3">
-              {[
-                { label: 'Features', href: '/#features' },
-                { label: 'Pricing', href: '/pricing' },
-                { label: 'Security Library', href: '/library' },
-                { label: 'Changelog', href: '/docs' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="block text-sec hover:text-text text-body-md transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h3 className="text-label-sm text-text mb-5">Resources</h3>
-            <ul className="space-y-3">
-              {[
-                { label: 'Documentation', href: '/docs' },
-                { label: 'Getting Started', href: '/docs/getting-started' },
-                { label: 'CLI Reference', href: '/docs/cli' },
-                { label: 'CI/CD Guide', href: '/docs/ci-cd' },
-                { label: 'GitHub', href: 'https://github.com/geekstrancend/Truent', external: true },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    target={link.external ? '_blank' : undefined}
-                    rel={link.external ? 'noopener noreferrer' : undefined}
-                    className="inline-flex items-center gap-1 text-sec hover:text-text text-body-md transition-colors"
-                  >
-                    {link.label}
-                    {link.external && <ExternalLink size={10} className="opacity-60" />}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-label-sm text-text mb-5">Company</h3>
-            <ul className="space-y-3">
-              {[
-                { label: 'Contact Sales', href: '/contact' },
-                { label: 'Privacy Policy', href: '/privacy' },
-                { label: 'Terms of Service', href: '/terms' },
-                { label: 'Security Disclosure', href: 'https://github.com/geekstrancend/Truent/security/policy', external: true },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    target={link.external ? '_blank' : undefined}
-                    rel={link.external ? 'noopener noreferrer' : undefined}
-                    className="inline-flex items-center gap-1 text-sec hover:text-text text-body-md transition-colors"
-                  >
-                    {link.label}
-                    {link.external && <ExternalLink size={10} className="opacity-60" />}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {columns.map((col) => (
+            <div key={col.heading}>
+              <div className="mb-5 text-[25px] font-normal tracking-[-0.02em] text-text">
+                {col.heading}
+              </div>
+              <div className="flex flex-col gap-[11px]">
+                {col.links.map((link) =>
+                  'external' in link && link.external ? (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[13px] text-sec transition-colors hover:text-text"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="text-[13px] text-sec transition-colors hover:text-text"
+                    >
+                      {link.label}
+                    </Link>
+                  ),
+                )}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Divider */}
-        <div className="section-divider mb-8" />
+        {/* Oversized watermark of the wordmark, sized to the viewport. */}
+        <div className="mb-6 overflow-hidden opacity-[0.16]">
+          <AsciiLogo className="text-[clamp(4px,1.1vw,13px)] !leading-[1.08]" />
+        </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sec text-xs">
+        <div className="mb-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="m-0 text-[11.5px] text-[#5c665f]">
             © {currentYear} Truent Security, Inc. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-xs text-sec">
-            <Link href="/privacy" className="hover:text-text transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-text transition-colors">Terms</Link>
-            <a href="mailto:contact@truent.dev" className="hover:text-text transition-colors">contact@truent.dev</a>
+          <div className="flex gap-[22px] text-[11.5px]">
+            <Link href="/privacy" className="text-[#5c665f] transition-colors hover:text-text">Privacy</Link>
+            <Link href="/terms" className="text-[#5c665f] transition-colors hover:text-text">Terms</Link>
+            <a href="mailto:contact@truent.dev" className="text-[#5c665f] transition-colors hover:text-text">
+              contact@truent.dev
+            </a>
           </div>
         </div>
       </div>
     </footer>
   )
 }
-

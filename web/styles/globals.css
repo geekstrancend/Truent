@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    /* Type faces: the original serif-display / mono-body pairing. System
-       stacks, so there is no webfont request. The font-display/-body/-mono
-       utilities are the single place to retune this. */
-    --font-display: Georgia, 'Times New Roman', serif;
-    --font-body: 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
-    --font-mono: 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+    /* Type faces: Space Grotesk for display and body, IBM Plex Mono for code
+       and labels. Loaded via <link> in the root layout. The
+       font-display/-body/-mono utilities are the single place to retune this. */
+    --font-display: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Menlo', 'Consolas', monospace;
 
     /* Legacy aliases — older components still reference these. */
     --font-fraunces: var(--font-display);
@@ -20,41 +20,41 @@
        borders rather than shadows, so panels read as inked areas on one
        sheet instead of floating cards. Accent is Truent green: emerald-500
        for fills, emerald-400 for foreground/text. */
-    --bg: #08090c;
-    --surface-2: #101218;
-    --panel: #171a22;
-    --hair: #23262f;
-    --hair-strong: #313542;
-    --text: #f2f3f7;
-    --sec: #9b9fae;
+    --bg: #030504;
+    --surface-2: #060908;
+    --panel: #0a0f0c;
+    --hair: rgba(255, 255, 255, 0.07);
+    --hair-strong: rgba(255, 255, 255, 0.14);
+    --text: #eef2ef;
+    --sec: #96a19a;
     --acc: #10b981;
     --acc-text: #34d399;
-    --on-acc: #08090c;
+    --on-acc: #052012;
 
     /* Material Design 3 Base Colors */
-    --surface: #131314;
-    --surface-dim: #131314;
-    --surface-bright: #39393a;
-    --surface-container-lowest: #0e0e0f;
-    --surface-container-low: #1c1b1d;
-    --surface-container: #201f21;
-    --surface-container-high: #2a2a2b;
-    --surface-container-highest: #353436;
-    --on-surface: #e5e2e3;
-    --on-surface-variant: #c7c6cd;
-    --outline: #909097;
-    --outline-variant: #46464c;
+    --surface: #060908;
+    --surface-dim: #030504;
+    --surface-bright: #1c2420;
+    --surface-container-lowest: #020403;
+    --surface-container-low: #080c0a;
+    --surface-container: #0a0f0c;
+    --surface-container-high: #111815;
+    --surface-container-highest: #1c2420;
+    --on-surface: #eef2ef;
+    --on-surface-variant: #c5cec8;
+    --outline: #8a948d;
+    --outline-variant: #3a443e;
     --primary: #c6dbd2;
     --primary-container: #04140e;
     --secondary: #a7f3d0;
     --secondary-container: #065f46;
     --on-secondary: #003d2b;
     --on-secondary-container: #34d399;
-    --error: #ffb4ab;
-    --error-container: #93000a;
-    --background: #131314;
-    --on-background: #e5e2e3;
-    --surface-variant: #353436;
+    --error: #f87171;
+    --error-container: #7f1d1d;
+    --background: #030504;
+    --on-background: #eef2ef;
+    --surface-variant: #1c2420;
 
     /* Severity System */
     --critical: #EF4444;
@@ -105,6 +105,10 @@
   /* Smooth transitions handled per-component */
   button, a {
     @apply transition-colors duration-150 ease-out;
+  }
+
+  ::selection {
+    background: rgba(52, 211, 153, 0.25);
   }
 
   /* Remove default scrollbar styling for cleaner look */
@@ -502,4 +506,35 @@
 .section-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--hair), transparent);
+}
+
+/* ── Redesign motion primitives ──
+   Used by the particle hero's drift gutters, ambient sparkles, the terminal
+   cursor and the registry chart's glow. Kept here rather than in the Tailwind
+   config because the hero applies them via inline `animation` shorthand with
+   per-element randomised delays. */
+
+@keyframes driftUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes driftDown {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.1; transform: scale(0.7); }
+  50% { opacity: 0.9; transform: scale(1.2); }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes glowpulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
 }

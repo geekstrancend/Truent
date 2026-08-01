@@ -5,22 +5,20 @@ import { useEffect, useRef } from 'react'
 /**
  * Scroll-scrubbed particle hero.
  *
- * One `progress` value (0 → 1, driven by scroll through the pinned section)
- * choreographs the whole thing:
+ * One `progress` value (0 → 1, driven by scroll through the pinned runway)
+ * choreographs everything:
  *
- * - **0** — particles are scattered across the full viewport as ambient dust,
- *   and the headline is set huge, fit to the measure.
- * - **→1** — the dust converges into the wordmark while the headline shrinks
- *   and rises out of its way.
+ * - **0** — dust scattered across the viewport, headline set large.
+ * - **→1** — the dust converges into the ASCII wordmark while the headline
+ *   shrinks and lifts clear of it.
  * - **1** — the wordmark is resolved and the supporting copy has faded in.
  *
  * Everything animates imperatively inside a single rAF loop — the headline is
- * written via `style`, never React state, so scrolling never triggers a
- * re-render.
+ * written via `style`, never React state — so scrolling never re-renders.
  *
- * The headline is a real `<h1>`, scaled rather than drawn, so it stays
- * selectable and legible to crawlers and screen readers; the canvas is purely
- * decorative and marked `aria-hidden`.
+ * The headline stays a real `<h1>` and the wordmark a real `<pre>`, so both
+ * remain selectable and legible to crawlers; the canvas is decorative and
+ * `aria-hidden`.
  */
 
 type Particle = {
@@ -37,15 +35,22 @@ type Particle = {
   twSpeed: number
 }
 
+type DriftLine = { text: string; kind: 'cmd' | 'expr' | 'tag' }
+
 interface ParticleHeroProps {
-  /** Word the particles resolve into. */
+  /** ASCII block art the particles resolve into. */
+  ascii: string
+  /** Accessible name for the ASCII art. */
   wordmark?: string
-  eyebrow?: string
-  headline: string
-  /** Mono line revealed once the wordmark resolves. */
+  eyebrow?: React.ReactNode
+  headline: React.ReactNode
+  /** Revealed once the wordmark resolves. */
   subline?: React.ReactNode
-  /** Revealed alongside the subline. */
+  bullets?: React.ReactNode
   actions?: React.ReactNode
+  hint?: string
+  driftLeft?: DriftLine[]
+  driftRight?: DriftLine[]
   accent?: string
   base?: string
 }
@@ -55,12 +60,71 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 /** power3.out — quick departure, long settle. */
 const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3)
 
+const driftStyle = (kind: DriftLine['kind']): React.CSSProperties => ({
+  fontFamily: 'var(--font-mono)',
+  fontSize: kind === 'tag' ? 10 : 11,
+  whiteSpace: 'nowrap',
+  ...(kind === 'tag'
+    ? { letterSpacing: '0.16em', color: 'rgba(52,211,153,0.5)' }
+    : kind === 'cmd'
+      ? { color: 'rgba(143,220,178,0.42)' }
+      : { color: 'rgba(160,180,168,0.3)' }),
+})
+
+/** Gutter column of audit vocabulary, duplicated so the loop is seamless. */
+function DriftColumn({
+  lines,
+  side,
+}: {
+  lines: DriftLine[]
+  side: 'left' | 'right'
+}) {
+  const mask =
+    `linear-gradient(to bottom,transparent,#000 20%,#000 80%,transparent),` +
+    `linear-gradient(to ${side === 'left' ? 'right' : 'left'},#000 55%,transparent)`
+
+  return (
+    <div
+      className="relative hidden self-stretch justify-self-stretch overflow-hidden lg:block"
+      style={{
+        gridColumn: side === 'left' ? 1 : 3,
+        gridRow: 1,
+        pointerEvents: 'none',
+        maskImage: mask,
+        WebkitMaskImage: mask,
+        maskComposite: 'intersect',
+        WebkitMaskComposite: 'source-in',
+      }}
+    >
+      <div
+        className="flex flex-col gap-5"
+        style={{
+          animation: `${side === 'left' ? 'driftUp 34s' : 'driftDown 40s'} linear infinite`,
+          alignItems: side === 'left' ? 'flex-start' : 'flex-end',
+          padding: side === 'left' ? '24px 0 24px 22px' : '24px 22px 24px 0',
+        }}
+      >
+        {[...lines, ...lines].map((line, i) => (
+          <span key={`${line.text}-${i}`} style={driftStyle(line.kind)}>
+            {line.text}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function ParticleHero({
+  ascii,
   wordmark = 'TRUENT',
   eyebrow,
   headline,
   subline,
+  bullets,
   actions,
+  hint = 'Scroll to explore ↓',
+  driftLeft = [],
+  driftRight = [],
   accent = '#34D399',
   base = '#9ab4a9',
 }: ParticleHeroProps) {
@@ -70,6 +134,9 @@ export function ParticleHero({
   const headlineRef = useRef<HTMLHeadingElement | null>(null)
   const copyRef = useRef<HTMLDivElement | null>(null)
   const revealRef = useRef<HTMLDivElement | null>(null)
+  const hintRef = useRef<HTMLDivElement | null>(null)
+  const markRef = useRef<HTMLPreElement | null>(null)
+  const sparkleRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -78,11 +145,15 @@ export function ParticleHero({
     const h1 = headlineRef.current
     const copy = copyRef.current
     const reveal = revealRef.current
+    const hintEl = hintRef.current
+    const mark = markRef.current
     const ctx = canvas?.getContext('2d')
-    if (!section || !stage || !canvas || !ctx || !h1 || !copy || !reveal) return
+    if (!section || !stage || !canvas || !ctx || !h1 || !copy || !reveal || !mark) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const rows = mark.textContent?.split('\n') ?? []
+    if (!rows.length) return
 
     let width = 0
     let height = 0
@@ -90,41 +161,28 @@ export function ParticleHero({
     let sparks: Particle[] = []
     let raf = 0
     let visible = true
-    let disposed = false
     /** Headline size at each end of the tween. */
     let bigSize = 0
     let smallSize = 0
 
-    const displayFont = () =>
-      getComputedStyle(document.documentElement).getPropertyValue('--font-display').trim() ||
-      'serif'
-
-    /** Fit the headline to the measure, and record both tween endpoints. */
+    /** Fit the headline to the centre track, and record both tween endpoints. */
     const measureHeadline = () => {
       const probe = document.createElement('canvas').getContext('2d')
       if (!probe) return
-      const font = displayFont()
-      const trial = 100
-      probe.font = `700 ${trial}px ${font}`
-      const w = probe.measureText(headline).width
+      const text = h1.textContent?.trim() ?? ''
+      probe.font = `400 100px ${getComputedStyle(document.documentElement).getPropertyValue('--font-display').trim() || 'sans-serif'}`
+      const w = probe.measureText(text).width
       if (w <= 0) return
-      const maxWidth = Math.min(width * 0.92, 1240)
-      // Cap so a short headline doesn't become absurd on a wide screen.
-      bigSize = Math.min((maxWidth / w) * trial, height * 0.3, 190)
-      smallSize = clamp(width * 0.038, 30, 56)
+      // Fit against the centre grid track, not the full stage — the gutters
+      // either side carry the drift columns and must stay clear.
+      const track = Math.max(copy.clientWidth - 48, 240)
+      // Two lines at this measure, so allow twice the track before capping.
+      bigSize = Math.min(((track * 2) / w) * 100, height * 0.19, 96)
+      smallSize = clamp(track * 0.05, 22, 38)
     }
 
-    /** Rasterise the wordmark and sample it into particle targets. */
+    /** Rasterise the ASCII wordmark and sample its lit pixels into targets. */
     const build = () => {
-      // The nav is sticky and in-flow, so it occupies the top of the viewport
-      // in both states. Fit the stage to what is actually visible beneath it,
-      // measured rather than hardcoded, or the hero overflows the fold and its
-      // contents sit low by the nav's height.
-      const nav = document.querySelector('nav')
-      const navH = nav ? Math.round(nav.getBoundingClientRect().height) : 0
-      stage.style.height = `calc(100vh - ${navH}px)`
-      stage.style.top = `${navH}px`
-
       const rect = stage.getBoundingClientRect()
       width = rect.width
       height = rect.height
@@ -132,10 +190,7 @@ export function ParticleHero({
 
       canvas.width = Math.floor(width * dpr)
       canvas.height = Math.floor(height * dpr)
-      canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-
       measureHeadline()
 
       const off = document.createElement('canvas')
@@ -144,42 +199,18 @@ export function ParticleHero({
       const octx = off.getContext('2d', { willReadFrequently: true })
       if (!octx) return
 
-      // Place the wordmark in the gap actually left between the resolved
-      // headline and the supporting copy, measured rather than assumed: on a
-      // narrow screen the copy wraps to several lines and a fixed fraction
-      // would drive the word straight through it.
-      const prevSize = h1.style.fontSize
-      h1.style.fontSize = `${smallSize}px`
-      const copyHeight = copy.offsetHeight
-      h1.style.fontSize = prevSize
-
-      const gap = Math.max(height * 0.03, 16)
-      // At rest the headline block is centred, then lifted by 17% of height.
-      const headlineBottom = height * 0.33 + copyHeight / 2
-      const revealTop = height - height * 0.12 - reveal.offsetHeight
-      const bandTop = headlineBottom + gap
-      const bandBottom = Math.max(revealTop - gap, bandTop + 40)
-      const bandHeight = bandBottom - bandTop
-      const centreY = (bandTop + bandBottom) / 2
-
-      const font = displayFont()
-      // Font size bounds neither rendered width nor height, so fit both.
-      let size = Math.min(bandHeight * 0.92, height * 0.3, 300)
-      octx.font = `700 ${size}px ${font}`
-      const measured = octx.measureText(wordmark).width
-      const maxWordmark = width * (width < 640 ? 0.84 : 0.56)
-      if (measured > maxWordmark && measured > 0) {
-        size = Math.max((maxWordmark / measured) * size, 12)
-      }
+      const cols = Math.max(...rows.map((s) => s.length))
+      // Monospace advance ≈ 0.6em, so size follows the target band width.
+      const size = Math.min((width * (width < 720 ? 0.92 : 0.62)) / (cols * 0.6), height * 0.13)
+      const lh = size * 1.06
       octx.fillStyle = '#fff'
-      octx.font = `700 ${size}px ${font}`
+      octx.font = `500 ${size}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-mono').trim() || 'monospace'}`
       octx.textAlign = 'center'
       octx.textBaseline = 'middle'
-      octx.fillText(wordmark, width / 2, centreY)
+      const top = height * 0.5 - ((rows.length - 1) * lh) / 2
+      rows.forEach((line, i) => octx.fillText(line, width / 2, top + i * lh))
 
       const data = octx.getImageData(0, 0, off.width, off.height).data
-      // 3px sampling: a serif face has thin strokes that sample too sparsely
-      // at 4px, leaving the resolved word looking dotted-out rather than set.
       const hits: Array<[number, number]> = []
       for (let y = 0; y < off.height; y += 3) {
         for (let x = 0; x < off.width; x += 3) {
@@ -187,7 +218,7 @@ export function ParticleHero({
         }
       }
 
-      const cap = window.innerWidth < 768 ? 2000 : 5400
+      const cap = window.innerWidth < 768 ? 2000 : 5200
       const stride = hits.length > cap ? hits.length / cap : 1
       const count = Math.min(hits.length, cap)
 
@@ -196,8 +227,6 @@ export function ParticleHero({
       for (let i = 0; i < count; i++) {
         const [tx, ty] = hits[Math.floor(i * stride)]
         const p: Particle = {
-          // Scattered across the whole stage: at rest this reads as ambient
-          // dust filling the viewport, not a cloud waiting to become a word.
           hx: Math.random() * width,
           hy: Math.random() * height,
           tx,
@@ -208,8 +237,7 @@ export function ParticleHero({
           twPhase: rand(0, Math.PI * 2),
           twSpeed: rand(1, 3),
         }
-        if (i % 7 === 0) sparks.push(p)
-        else dust.push(p)
+        ;(i % 7 === 0 ? sparks : dust).push(p)
       }
     }
 
@@ -218,7 +246,6 @@ export function ParticleHero({
       const inv = 1 - p
       for (let i = 0; i < list.length; i++) {
         const s = list[i]
-        // Drift dies away as the word resolves.
         const dx = s.hx + s.amp * Math.sin(t * s.driftSpeed + s.driftPhase) * inv
         const dy = s.hy + s.amp * Math.cos(t * s.driftSpeed * 0.85 + s.driftPhase) * inv
         const x = dx + (s.tx - dx) * p
@@ -238,36 +265,57 @@ export function ParticleHero({
       ctx.globalAlpha = 1
     }
 
-    /** Drive the DOM copy from the same progress value. */
+    // The headline shrinks from a fitted display size to a supporting one and
+    // lifts clear of the wordmark — it never fades. The subline and CTAs are a
+    // separate block that fades in at 0.72.
     const layout = (p: number) => {
-      const size = bigSize + (smallSize - bigSize) * p
-      h1.style.fontSize = `${size}px`
-      // The block is centred by a -50% translate, and the lift rides on top of
-      // it. Both have to live in this one declaration: writing only the lift
-      // would replace the centring and drop the headline half its own height.
-      copy.style.transform = `translateY(calc(-50% - ${p * height * 0.17}px))`
-      // Supporting copy arrives only once the word is legible.
+      if (bigSize && smallSize) {
+        h1.style.fontSize = `${(bigSize + (smallSize - bigSize) * p).toFixed(1)}px`
+      }
+      copy.style.transform = `translateY(-${(p * height * 0.27).toFixed(1)}px)`
       reveal.style.opacity = String(clamp((p - 0.72) / 0.28, 0, 1))
+      if (hintEl) hintEl.style.opacity = String(clamp(1 - p * 1.8, 0, 1))
     }
 
-    /** Scroll progress through the pinned section. */
+    // The rounded page wrapper uses overflow:clip, which makes it the sticky
+    // scrollport and defeats position:sticky. Pin manually with position:fixed
+    // instead — overflow:clip only clips a fixed child outside the wrapper box,
+    // and that box spans the whole page.
+    let pinned: string | null = null
+    const pin = () => {
+      const r = section.getBoundingClientRect()
+      const runway = Math.max(r.height - window.innerHeight, 1)
+      const past = -r.top
+      const mode = past <= 0 ? 'top' : past >= runway ? 'bottom' : 'fixed'
+      if (mode === 'fixed') {
+        stage.style.position = 'fixed'
+        stage.style.top = '0px'
+        stage.style.left = `${r.left}px`
+        stage.style.width = `${r.width}px`
+      } else if (mode !== pinned) {
+        stage.style.position = 'absolute'
+        stage.style.left = '0px'
+        stage.style.width = '100%'
+        stage.style.top = mode === 'bottom' ? `${runway}px` : '0px'
+      }
+      pinned = mode
+    }
+
     const progressAt = () => {
-      const rect = section.getBoundingClientRect()
-      const runway = Math.max(rect.height - window.innerHeight, 1)
-      const scrolled = clamp(-rect.top, 0, runway)
-      // Resolve before the runway ends, so the formed state gets a beat.
-      return easeOutCubic(clamp(scrolled / (runway * 0.7), 0, 1))
+      const r = section.getBoundingClientRect()
+      const runway = Math.max(r.height - window.innerHeight, 1)
+      return easeOutCubic(clamp(clamp(-r.top, 0, runway) / (runway * 0.7), 0, 1))
     }
 
     build()
-
     if (reduced) {
-      // No motion: present the resolved state.
       layout(1)
       render(0, 1)
     } else {
       layout(0)
+      pin()
       const loop = (now: number) => {
+        pin()
         if (visible) {
           const p = progressAt()
           render(now, p)
@@ -278,87 +326,137 @@ export function ParticleHero({
       raf = requestAnimationFrame(loop)
     }
 
-    let resizeTimer = 0
-    const onResize = () => {
-      window.clearTimeout(resizeTimer)
-      resizeTimer = window.setTimeout(() => {
-        if (disposed) return
-        build()
-        const p = reduced ? 1 : progressAt()
-        layout(p)
-        if (reduced) render(0, 1)
-      }, 150)
-    }
-    window.addEventListener('resize', onResize)
-    window.addEventListener('orientationchange', onResize)
-
-    // A late-loading face would otherwise leave a stale raster and a
-    // mis-measured headline.
-    document.fonts?.ready.then(() => {
-      if (disposed) return
+    let timer: ReturnType<typeof setTimeout>
+    const settle = () => {
       build()
       const p = reduced ? 1 : progressAt()
       layout(p)
       if (reduced) render(0, 1)
-    })
+    }
+    const onResize = () => {
+      clearTimeout(timer)
+      timer = setTimeout(settle, 150)
+    }
+    window.addEventListener('resize', onResize)
+    // Metrics shift once the webfonts land, so re-fit when they do.
+    document.fonts?.ready.then(settle).catch(() => {})
 
-    const io = new IntersectionObserver(([entry]) => {
-      visible = entry?.isIntersecting ?? true
+    const io = new IntersectionObserver(([e]) => {
+      visible = e ? e.isIntersecting : true
     })
     io.observe(stage)
 
     return () => {
-      disposed = true
       cancelAnimationFrame(raf)
-      window.clearTimeout(resizeTimer)
+      clearTimeout(timer)
       window.removeEventListener('resize', onResize)
-      window.removeEventListener('orientationchange', onResize)
       io.disconnect()
     }
-  }, [wordmark, headline, accent, base])
+  }, [ascii, accent, base])
+
+  // Ambient sparkles, seeded once on the client to keep SSR output stable.
+  useEffect(() => {
+    const host = sparkleRef.current
+    if (!host || host.childElementCount) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    for (let i = 0; i < 34; i++) {
+      const d = document.createElement('div')
+      const sz = 1 + Math.random() * 2.2
+      d.style.cssText =
+        `position:absolute;left:${Math.random() * 100}%;top:${8 + Math.random() * 84}%;` +
+        `width:${sz}px;height:${sz}px;border-radius:50%;` +
+        `background:rgba(134,239,172,${0.3 + Math.random() * 0.5});` +
+        `animation:sparkle ${2.5 + Math.random() * 4}s ease-in-out ${Math.random() * 4}s infinite;`
+      host.appendChild(d)
+    }
+  }, [])
 
   return (
-    // The tall section is the scroll runway; the stage inside it pins.
-    <section ref={sectionRef} className="relative h-[240vh]">
-      <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden bg-bg will-change-transform">
-        <div className="absolute inset-0 bg-grid-pattern opacity-25 pointer-events-none" />
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
+    <header ref={sectionRef} className="relative h-[230vh]">
+      <div
+        ref={stageRef}
+        className="absolute left-0 top-0 grid h-screen w-full items-center justify-items-center overflow-hidden text-center"
+        style={{ gridTemplateColumns: 'minmax(0,1fr) minmax(0,720px) minmax(0,1fr)' }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(700px 420px at 50% 8%, rgba(52,211,153,0.14), transparent 65%)',
+          }}
+        />
+        <canvas
+          ref={canvasRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+        />
+        <div ref={sparkleRef} className="pointer-events-none absolute inset-0" />
 
-        {/* Headline block, lifted as the wordmark resolves. */}
+        <DriftColumn lines={driftLeft} side="left" />
+        <DriftColumn lines={driftRight} side="right" />
+
+        {/* Headline block: shrinks and lifts clear of the resolving wordmark. */}
         <div
           ref={copyRef}
-          className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-7 will-change-transform"
+          className="relative flex w-full flex-col items-center px-6 will-change-transform"
+          style={{ gridColumn: 2, gridRow: 1 }}
         >
-          {eyebrow && (
-            <p className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.3em] text-sec sm:text-xs">
-              {eyebrow}
-            </p>
-          )}
+          {eyebrow && <div className="mb-[26px] flex items-center gap-2.5">{eyebrow}</div>}
+
+          {/* Particle target: rasterised, then visually hidden. Kept in the DOM
+              so the wordmark stays selectable and legible to crawlers. */}
+          <pre
+            ref={markRef}
+            aria-label={wordmark}
+            className="absolute m-0 h-px w-px overflow-hidden whitespace-pre font-mono"
+            style={{ clipPath: 'inset(50%)' }}
+          >
+            {ascii}
+          </pre>
+
           <h1
             ref={headlineRef}
-            className="mx-auto max-w-site text-center font-display font-[700] leading-[0.95] tracking-[-0.03em] text-text"
-            style={{ fontSize: '9vw' }}
+            className="m-0 max-w-[1180px] text-[clamp(34px,7vw,96px)] font-normal leading-[0.98] tracking-[-0.03em]"
+            style={{ color: '#f2f6f2', textWrap: 'balance' } as React.CSSProperties}
           >
             {headline}
           </h1>
         </div>
 
-        {/* Revealed once the word is legible. */}
+        {/* Scroll hint, inside the centre track so the gutters stay clear. */}
+        {hint && (
+          <div
+            ref={hintRef}
+            className="relative mb-[14vh] self-end justify-self-center font-mono text-[11px] tracking-[0.08em] text-[#5c665f]"
+            style={{ gridColumn: 2, gridRow: 1 }}
+          >
+            {hint}
+          </div>
+        )}
+
+        {/* Revealed once the wordmark is legible. */}
         <div
           ref={revealRef}
-          className="absolute inset-x-0 bottom-[12vh] flex flex-col items-center gap-7 px-7 opacity-0"
-          style={{ transition: 'opacity 120ms linear' }}
+          className="absolute bottom-[9vh] left-0 right-0 flex flex-col items-center gap-5 px-6 opacity-0"
         >
           {subline && (
-            <p className="max-w-narrow text-center font-mono text-sm leading-relaxed text-sec">
+            <p className="m-0 max-w-[560px] text-[15px] leading-[1.65] text-sec" style={{ textWrap: 'pretty' } as React.CSSProperties}>
               {subline}
             </p>
           )}
-          {actions && <div className="flex flex-col gap-3 sm:flex-row">{actions}</div>}
+          {bullets && (
+            <div className="flex flex-wrap justify-center gap-5 font-mono text-[11.5px] text-[#748078]">
+              {bullets}
+            </div>
+          )}
+          {actions && <div className="flex flex-wrap justify-center gap-3">{actions}</div>}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-bg" />
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 right-0 h-[120px]"
+          style={{ background: 'linear-gradient(to bottom,transparent,#060908)' }}
+        />
       </div>
-    </section>
+    </header>
   )
 }

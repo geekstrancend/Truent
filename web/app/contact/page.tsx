@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { MarketingNav } from '@/components/layout/MarketingNav'
-import { MarketingFooter } from '@/components/layout/MarketingFooter'
-import { Button } from '@/components/ui/Button'
-import { Mail, MessageSquare, Building2, CheckCircle2, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react'
+import { PageShell } from '@/components/layout/PageShell'
+import { SlimFooter } from '@/components/layout/SlimFooter'
+import { AsciiLogo } from '@/components/ui/AsciiLogo'
 
-const CONTACT_REASONS = [
+const REASONS = [
   'Enterprise plan inquiry',
   'On-premises deployment',
   'Custom invariant library',
@@ -15,220 +16,202 @@ const CONTACT_REASONS = [
   'Other',
 ]
 
+const channels = [
+  { icon: '✉', label: 'Email', href: 'mailto:sales@truent.dev', value: 'sales@truent.dev' },
+  { icon: '▤', label: 'Enterprise', text: 'Custom contracts & SLAs available' },
+  { icon: '⬡', label: 'Security disclosure', href: 'mailto:security@truent.dev', value: 'security@truent.dev' },
+]
+
+const nextSteps = [
+  'We’ll reply within 1 business day',
+  'A security engineer will join the call',
+  'We’ll provide a custom proof-of-concept scan',
+]
+
+const fieldClass =
+  'w-full rounded-xl border border-white/[0.09] bg-white/[0.03] px-4 py-3 font-[inherit] text-[13.5px] text-text outline-none transition-colors placeholder:text-[#4d564f] focus:border-acc-text/50'
+
+const labelClass = 'mb-2 block text-[12.5px] font-medium text-[#d7e2da]'
+
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', company: '', reason: '', message: '' })
-  const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }))
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (loading) return
+    setLoading(true)
+    // The design mocks the round-trip; wire this to the real endpoint when it exists.
+    setTimeout(() => {
+      setLoading(false)
+      setSubmitted(true)
+    }, 1000)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1200))
-    setLoading(false)
-    setSubmitted(true)
+  const reset = () => {
+    setForm({ name: '', email: '', company: '', reason: '', message: '' })
+    setSubmitted(false)
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col">
+    <PageShell glow="radial-gradient(1100px 560px at 50% -110px, rgba(52,211,153,0.14), rgba(6,9,8,0) 60%)">
       <MarketingNav />
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="px-6 py-20 border-b border-hair bg-surface-2">
-          <div className="max-w-5xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo/8 border border-indigo/20 mb-6">
-              <MessageSquare size={14} className="text-acc-text" />
-              <span className="text-label-sm text-acc-text">CONTACT SALES</span>
-            </div>
-            <h1 className="font-display text-5xl font-[700] text-text mb-4 leading-[64px]">
-              Let&apos;s secure your protocol
-            </h1>
-            <p className="text-body-lg text-sec max-w-xl">
-              Reach out to discuss Enterprise plans, custom deployments, or research partnerships. Our team responds within 24 hours.
-            </p>
-          </div>
-        </section>
+      <header className="mx-auto max-w-[1100px] border-b border-white/[0.06] px-6 pb-12 pt-[84px]">
+        <span className="inline-flex items-center gap-2 rounded-full border border-acc-text/20 bg-acc-text/[0.07] px-4 py-[7px] font-mono text-[11px] uppercase tracking-[0.18em] text-[#8fdcb2]">
+          <span className="inline-block h-[5px] w-[5px] rounded-full bg-acc-text" />
+          Contact sales
+        </span>
+        <h1 className="m-0 mt-6 text-[clamp(36px,5.5vw,60px)] font-normal tracking-[-0.03em] text-[#f2f6f2]">
+          Let&apos;s{' '}
+          <span
+            className="bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(100deg,#d7ffe9,#34d399)' }}
+          >
+            secure your protocol
+          </span>
+        </h1>
+        <p className="m-0 mt-[18px] max-w-[520px] text-[14.5px] leading-[1.75] text-sec">
+          Reach out to discuss Enterprise plans, custom deployments, or research partnerships. Our team
+          responds within 24 hours.
+        </p>
+      </header>
 
-        <section className="px-6 py-16 max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-
-            {/* Left: info */}
-            <div className="space-y-8">
-              {[
-                {
-                  icon: <Mail size={20} className="text-acc-text" />,
-                  title: 'Email',
-                  value: 'sales@truent.dev',
-                  link: 'mailto:sales@truent.dev',
-                },
-                {
-                  icon: <Building2 size={20} className="text-acc-text" />,
-                  title: 'Enterprise',
-                  value: 'Custom contracts & SLAs available',
-                  link: null,
-                },
-                {
-                  icon: <ShieldCheck size={20} className="text-acc-text" />,
-                  title: 'Security Disclosure',
-                  value: 'security@truent.dev',
-                  link: 'mailto:security@truent.dev',
-                },
-              ].map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-indigo/10 border border-indigo/20 flex items-center justify-center flex-shrink-0">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <p className="text-label-sm text-sec mb-1">{item.title}</p>
-                    {item.link ? (
-                      <a href={item.link} className="text-body-md text-text hover:text-acc-text transition-colors">
-                        {item.value}
-                      </a>
-                    ) : (
-                      <p className="text-body-md text-sec">{item.value}</p>
-                    )}
-                  </div>
+      <section className="mx-auto grid max-w-[1100px] items-start gap-14 px-6 pb-[100px] pt-14 md:grid-cols-[0.85fr_1.6fr]">
+        {/* ─── Channels ─── */}
+        <div className="flex flex-col gap-[26px]">
+          {channels.map((c) => (
+            <div key={c.label} className="flex gap-3.5">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-acc-text/20 bg-acc-text/[0.08] text-[15px]">
+                {c.icon}
+              </span>
+              <div>
+                <div className="mb-[5px] font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#5c665f]">
+                  {c.label}
                 </div>
-              ))}
-
-              {/* Expectation list */}
-              <div className="bg-panel border border-hair rounded-card p-6 space-y-3">
-                <p className="text-label-sm text-sec mb-4">WHAT HAPPENS NEXT</p>
-                {[
-                  'We\'ll reply within 1 business day',
-                  'A security engineer will join the call',
-                  'We\'ll provide a custom proof-of-concept scan',
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <span className="text-acc-text font-[700] flex-shrink-0 text-sm mt-0.5">{String(i + 1).padStart(2, '0')}</span>
-                    <p className="text-body-md text-sec">{item}</p>
-                  </div>
-                ))}
+                {c.href ? (
+                  <a href={c.href} className="text-[13.5px] text-[#d7e2da] transition-colors hover:text-acc-text">
+                    {c.value}
+                  </a>
+                ) : (
+                  <p className="m-0 text-[13.5px] text-sec">{c.text}</p>
+                )}
               </div>
             </div>
+          ))}
 
-            {/* Right: form */}
-            <div className="lg:col-span-2">
-              {submitted ? (
-                <div className="flex flex-col items-center justify-center text-center py-16 bg-panel border border-hair rounded-card">
-                  <div className="w-16 h-16 rounded-full bg-low/10 border border-low/20 flex items-center justify-center mb-5">
-                    <CheckCircle2 size={32} className="text-low" />
-                  </div>
-                  <h2 className="font-display text-2xl font-[600] text-text mb-3">Message sent!</h2>
-                  <p className="text-body-lg text-sec max-w-sm">
-                    Thanks for reaching out. A member of our team will get back to you within 24 hours.
-                  </p>
-                  <button
-                    onClick={() => { setSubmitted(false); setForm({ name: '', email: '', company: '', reason: '', message: '' }) }}
-                    className="mt-6 text-acc-text text-sm font-[600] hover:text-acc-text/80 transition-colors"
-                  >
-                    Send another message
-                  </button>
+          <div className="relative mt-2 overflow-hidden rounded-2xl border border-hair bg-white/[0.02] p-6">
+            <div className="pointer-events-none absolute -bottom-1.5 -right-2.5 opacity-[0.14]">
+              <AsciiLogo className="text-[4.4px] !leading-[1.08]" />
+            </div>
+            <div className="relative mb-4 font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#5c665f]">
+              What happens next
+            </div>
+            <div className="flex flex-col gap-3">
+              {nextSteps.map((s, i) => (
+                <div key={s} className="flex gap-3 text-[13px] leading-[1.6] text-sec">
+                  <span className="flex-shrink-0 font-mono text-acc-text">0{i + 1}</span>
+                  {s}
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                      <label htmlFor="contact-name" className="block text-body-md text-text font-[500] mb-2">Full Name *</label>
-                      <input
-                        id="contact-name"
-                        type="text"
-                        name="name"
-                        required
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="Jane Smith"
-                        className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="contact-email" className="block text-body-md text-text font-[500] mb-2">Work Email *</label>
-                      <input
-                        id="contact-email"
-                        type="email"
-                        name="email"
-                        required
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="jane@protocol.io"
-                        className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="contact-company" className="block text-body-md text-text font-[500] mb-2">Company / Protocol</label>
-                    <input
-                      id="contact-company"
-                      type="text"
-                      name="company"
-                      value={form.company}
-                      onChange={handleChange}
-                      placeholder="Acme Protocol"
-                      className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="contact-reason" className="block text-body-md text-text font-[500] mb-2">Reason for Inquiry</label>
-                    <div className="relative">
-                      <select
-                        id="contact-reason"
-                        name="reason"
-                        value={form.reason}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text focus:outline-none focus:border-indigo transition-colors appearance-none"
-                      >
-                        <option value="">Select a reason…</option>
-                        {CONTACT_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
-                      </select>
-                      <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-sec pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="contact-message" className="block text-body-md text-text font-[500] mb-2">Message *</label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      required
-                      rows={5}
-                      value={form.message}
-                      onChange={handleChange}
-                      placeholder="Tell us about your protocol, team size, and what you'd like to achieve with Truent…"
-                      className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-body-md text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors resize-none"
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    icon={loading ? undefined : <ArrowRight size={16} />}
-                    iconPosition="right"
-                    disabled={loading}
-                  >
-                    {loading ? 'Sending…' : 'Send Message'}
-                  </Button>
-
-                  <p className="text-xs text-sec text-center">
-                    By submitting, you agree to our{' '}
-                    <a href="/privacy" className="hover:text-sec transition-colors underline">Privacy Policy</a>.
-                  </p>
-                </form>
-              )}
+              ))}
             </div>
           </div>
-        </section>
-      </main>
+        </div>
 
-      <MarketingFooter />
-    </div>
+        {/* ─── Form ─── */}
+        <div>
+          {submitted ? (
+            <div className="flex flex-col items-center rounded-[20px] border border-acc-text/[0.22] bg-acc-text/[0.04] px-10 py-[76px] text-center">
+              <div className="mb-[22px] flex h-[62px] w-[62px] items-center justify-center rounded-full border border-acc-text/30 bg-acc-text/10 text-[26px] text-acc-text">
+                ✓
+              </div>
+              <h2 className="m-0 text-[26px] font-normal tracking-[-0.02em] text-[#f2f6f2]">Message sent</h2>
+              <p className="mx-auto mt-3.5 max-w-[340px] text-[13.5px] leading-[1.7] text-sec">
+                Thanks for reaching out. A member of our team will get back to you within 24 hours.
+              </p>
+              <button
+                onClick={reset}
+                className="mt-[26px] text-[13px] font-semibold text-acc-text"
+              >
+                Send another message
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="flex flex-col gap-[18px]">
+              <div className="grid gap-[18px] sm:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className={labelClass}>Full name *</label>
+                  <input id="name" required value={form.name} onChange={set('name')} placeholder="Jane Smith" className={fieldClass} />
+                </div>
+                <div>
+                  <label htmlFor="email" className={labelClass}>Work email *</label>
+                  <input id="email" type="email" required value={form.email} onChange={set('email')} placeholder="jane@protocol.io" className={fieldClass} />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="company" className={labelClass}>Company / protocol</label>
+                <input id="company" value={form.company} onChange={set('company')} placeholder="Acme Protocol" className={fieldClass} />
+              </div>
+
+              <div>
+                <span className="mb-2.5 block text-[12.5px] font-medium text-[#d7e2da]">Reason for inquiry</span>
+                <div className="flex flex-wrap gap-[7px]">
+                  {REASONS.map((r) => {
+                    const active = form.reason === r
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setForm((f) => ({ ...f, reason: r }))}
+                        className={`rounded-full border px-3.5 py-2 text-[12px] transition-colors ${
+                          active
+                            ? 'border-acc-text/50 bg-acc-text/[0.08] text-acc-text'
+                            : 'border-white/[0.09] text-[#8a948d] hover:text-text'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="message" className={labelClass}>Message *</label>
+                <textarea
+                  id="message"
+                  required
+                  rows={6}
+                  value={form.message}
+                  onChange={set('message')}
+                  placeholder="Tell us about your protocol, team size, and what you'd like to achieve with Truent…"
+                  className={`${fieldClass} resize-y leading-[1.6]`}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-1.5 w-full rounded-full bg-[#eef2ef] py-[15px] text-[14px] font-semibold text-[#0a0d0b] transition-opacity disabled:cursor-default disabled:opacity-50"
+              >
+                {loading ? 'Sending…' : 'Send message  →'}
+              </button>
+              <p className="m-0 text-center text-[11.5px] text-[#5c665f]">
+                By submitting, you agree to our{' '}
+                <Link href="/privacy" className="text-[#748078] underline">Privacy Policy</Link>.
+              </p>
+            </form>
+          )}
+        </div>
+      </section>
+
+      <SlimFooter omit={['Contact']} />
+    </PageShell>
   )
 }
