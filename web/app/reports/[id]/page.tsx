@@ -25,7 +25,7 @@ interface Finding {
 
 const FINDINGS: Finding[] = [
   {
-    id: 'SENT-001',
+    id: 'TRU-001',
     severity: 'critical',
     title: 'Reentrancy vulnerability in withdrawAll()',
     description: 'The withdrawAll() function transfers Ether to msg.sender before updating the internal balance mapping. An attacker can deploy a contract that calls back into withdrawAll() on receipt, draining the vault before the balance is zeroed.',
@@ -52,7 +52,7 @@ function withdrawAll() external nonReentrant {
 }`,
   },
   {
-    id: 'SENT-002',
+    id: 'TRU-002',
     severity: 'high',
     title: 'Unchecked return value on ERC-20 transfer()',
     description: 'The transferFunds() function calls token.transfer() without checking the boolean return value. Some tokens (USDT, BNB) return false on failure instead of reverting, meaning silent failures can leave the contract in an inconsistent state.',
@@ -68,7 +68,7 @@ using SafeERC20 for IERC20;
 token.safeTransfer(recipient, amount);`,
   },
   {
-    id: 'SENT-003',
+    id: 'TRU-003',
     severity: 'high',
     title: 'Missing oracle price staleness check',
     description: 'The price feed from Chainlink is fetched without validating the updatedAt timestamp. If the oracle heartbeat fails or the feed becomes stale, the protocol will continue operating on outdated prices.',
@@ -87,7 +87,7 @@ require(price > 0, "Invalid price");
 return uint256(price);`,
   },
   {
-    id: 'SENT-004',
+    id: 'TRU-004',
     severity: 'medium',
     title: 'setFee() accepts unbounded values',
     description: 'The setFee() function allows the owner to set the protocol fee to any value including 100% or more. There is no upper bound check.',
@@ -109,7 +109,7 @@ function setFee(uint256 newFee) external onlyOwner {
 }`,
   },
   {
-    id: 'SENT-005',
+    id: 'TRU-005',
     severity: 'low',
     title: 'Missing event emission in setFee()',
     description: 'State-changing governance functions should emit events so that off-chain monitors and users can track changes.',

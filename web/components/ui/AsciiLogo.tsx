@@ -3,12 +3,15 @@ interface AsciiLogoProps {
   glow?: boolean
 }
 
-const LOGO = `  ███████╗███████╗███╗   ██╗████████╗██████╗ ██╗
-  ██╔════╝██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██║
-  ███████╗█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║
-  ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║
-  ███████║███████╗██║ ╚████║   ██║   ██║  ██║██║
-  ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚═╝`
+const LOGO = `████████╗██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗
+╚══██╔══╝██╔══██╗██║   ██║██╔════╝████╗  ██║╚══██╔══╝
+   ██║   ██████╔╝██║   ██║█████╗  ██╔██╗ ██║   ██║   
+   ██║   ██╔══██╗██║   ██║██╔══╝  ██║╚██╗██║   ██║   
+   ██║   ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   
+   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   `
+
+/** Shared so the particle hero rasterises exactly what the footer renders. */
+export const TRUENT_ASCII = LOGO
 
 export function AsciiLogo({ className, glow = false }: AsciiLogoProps) {
   const baseClasses = 'font-mono leading-[1.05] whitespace-pre select-none'

@@ -72,12 +72,12 @@ export function Terminal({ title = 'truent-cli --scan ./contracts/Vault.sol', sh
         {showBanner && (
           <pre className="font-mono text-[8px] sm:text-[10px] leading-tight
                            text-acc-text mb-3 select-none whitespace-pre">
-{`  ███████╗███████╗███╗   ██╗████████╗██████╗ ██╗
-  ██╔════╝██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██║
-  ███████╗█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║
-  ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║
-  ███████║███████╗██║ ╚████║   ██║   ██║  ██║██║
-  ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝╚═╝`}
+{`████████╗██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗
+╚══██╔══╝██╔══██╗██║   ██║██╔════╝████╗  ██║╚══██╔══╝
+   ██║   ██████╔╝██║   ██║█████╗  ██╔██╗ ██║   ██║   
+   ██║   ██╔══██╗██║   ██║██╔══╝  ██║╚██╗██║   ██║   
+   ██║   ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   
+   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   `}
             <span className="block text-sec text-[9px] sm:text-[11px] mt-1
                               normal-case font-normal">
               Multi-chain Smart Contract Invariant Checker · v0.2.1
