@@ -1,6 +1,6 @@
 {
   "name": "@dextonicx/cli",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Multi-chain smart contract invariant checker for EVM, Solana, and Move",
   "license": "MIT",
   "repository": {

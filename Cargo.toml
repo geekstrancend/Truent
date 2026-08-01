@@ -23,7 +23,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.4.1"
+version = "0.5.0"
 edition = "2021"
 rust-version = "1.75"
 authors = ["Truent Contributors"]
@@ -34,23 +34,23 @@ documentation = "https://docs.rs/truent-cli"
 
 [workspace.dependencies]
 # Internal crates
-truent-core = { path = "crates/core", version = "0.4.1" }
-truent-utils = { path = "crates/utils", version = "0.4.1" }
-truent-ir = { path = "crates/ir", version = "0.4.1" }
-truent-dsl-parser = { path = "crates/dsl_parser", version = "0.4.1" }
-truent-analyzer-solana = { path = "crates/analyzer/solana", version = "0.4.1" }
-truent-analyzer-evm = { path = "crates/analyzer/evm", version = "0.4.1" }
-truent-analyzer-move = { path = "crates/analyzer/move", version = "0.4.1" }
-truent-analyzer-soroban = { path = "crates/analyzer/soroban", version = "0.4.1" }
-truent-dynamic-core = { path = "crates/dynamic/core", version = "0.4.1" }
-truent-dynamic-evm = { path = "crates/dynamic/evm", version = "0.4.1" }
-truent-dynamic-solana = { path = "crates/dynamic/solana", version = "0.4.1" }
-truent-generator-solana = { path = "crates/generator/solana", version = "0.4.1" }
-truent-solana-macro = { path = "crates/generator/solana_macro", version = "0.4.1" }
-truent-generator-evm = { path = "crates/generator/evm", version = "0.4.1" }
-truent-generator-move = { path = "crates/generator/move", version = "0.4.1" }
-truent-library = { path = "crates/invariant_library", version = "0.4.1" }
-truent-report = { path = "crates/report", version = "0.4.1" }
+truent-core = { path = "crates/core", version = "0.5.0" }
+truent-utils = { path = "crates/utils", version = "0.5.0" }
+truent-ir = { path = "crates/ir", version = "0.5.0" }
+truent-dsl-parser = { path = "crates/dsl_parser", version = "0.5.0" }
+truent-analyzer-solana = { path = "crates/analyzer/solana", version = "0.5.0" }
+truent-analyzer-evm = { path = "crates/analyzer/evm", version = "0.5.0" }
+truent-analyzer-move = { path = "crates/analyzer/move", version = "0.5.0" }
+truent-analyzer-soroban = { path = "crates/analyzer/soroban", version = "0.5.0" }
+truent-dynamic-core = { path = "crates/dynamic/core", version = "0.5.0" }
+truent-dynamic-evm = { path = "crates/dynamic/evm", version = "0.5.0" }
+truent-dynamic-solana = { path = "crates/dynamic/solana", version = "0.5.0" }
+truent-generator-solana = { path = "crates/generator/solana", version = "0.5.0" }
+truent-solana-macro = { path = "crates/generator/solana_macro", version = "0.5.0" }
+truent-generator-evm = { path = "crates/generator/evm", version = "0.5.0" }
+truent-generator-move = { path = "crates/generator/move", version = "0.5.0" }
+truent-library = { path = "crates/invariant_library", version = "0.5.0" }
+truent-report = { path = "crates/report", version = "0.5.0" }
 
 # Core dependencies
 anyhow = "1.0"

@@ -30,11 +30,23 @@ update_cargo_toml() {
     return
   fi
   
-  # Use sed to replace version = "X.Y.Z" with new version
+  # [workspace.package] / [package] version — anchored, so it only matches the
+  # crate's own version line.
   if grep -q '^version = "' "$file"; then
     sed -i.bak 's/^version = "[^"]*"/version = "'$NEW_VERSION'"/' "$file"
     rm -f "$file.bak"
     echo "✓ Updated $file"
+  fi
+
+  # Internal [workspace.dependencies] pins, e.g.
+  #   truent-core = { path = "crates/core", version = "0.4.1" }
+  # These are not anchored to the start of the line, so the check above misses
+  # them. Leaving them stale makes every internal dep require the *previous*
+  # version and the workspace stops resolving.
+  if grep -q 'path = "crates/.*version = "' "$file"; then
+    sed -i.bak 's/\(path = "crates\/[^"]*", version = \)"[^"]*"/\1"'$NEW_VERSION'"/g' "$file"
+    rm -f "$file.bak"
+    echo "✓ Updated internal dependency pins in $file"
   fi
 }
 
