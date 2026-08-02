@@ -2,7 +2,7 @@
 
 use crate::grammar::{Grammar, Rule};
 use pest::Parser;
-use truent_core::model::{BinaryOp, Expression, Invariant};
+use truent_core::model::{ArithOp, BinaryOp, Expression, Invariant};
 use truent_core::Result;
 
 /// Parser for invariant DSL.
@@ -78,6 +78,8 @@ impl InvariantParser {
                 | Rule::logical_or
                 | Rule::logical_and
                 | Rule::comparison
+                | Rule::sum
+                | Rule::term
                 | Rule::unary => {
                     let items: Vec<_> = pair.into_inner().collect();
                     if items.is_empty() {
@@ -159,7 +161,43 @@ impl InvariantParser {
                                     right: Box::new(right),
                                 };
                             }
-                            _ => {}
+                            Rule::add => {
+                                left = Expression::Arithmetic {
+                                    left: Box::new(left),
+                                    op: ArithOp::Add,
+                                    right: Box::new(right),
+                                };
+                            }
+                            Rule::sub => {
+                                left = Expression::Arithmetic {
+                                    left: Box::new(left),
+                                    op: ArithOp::Sub,
+                                    right: Box::new(right),
+                                };
+                            }
+                            Rule::mul => {
+                                left = Expression::Arithmetic {
+                                    left: Box::new(left),
+                                    op: ArithOp::Mul,
+                                    right: Box::new(right),
+                                };
+                            }
+                            Rule::div => {
+                                left = Expression::Arithmetic {
+                                    left: Box::new(left),
+                                    op: ArithOp::Div,
+                                    right: Box::new(right),
+                                };
+                            }
+                            // Previously a silent no-op, which dropped the
+                            // operand and produced a wrong expression rather
+                            // than reporting the problem.
+                            other => {
+                                return Err(truent_core::InvarError::ConfigError(format!(
+                                    "Unsupported operator in expression: {:?}",
+                                    other
+                                )));
+                            }
                         }
                     }
                     Ok(left)

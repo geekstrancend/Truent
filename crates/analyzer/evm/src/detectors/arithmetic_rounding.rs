@@ -19,8 +19,24 @@ lazy_static! {
         Regex::new(r"(?i)(mulDiv|FixedPointMathLib|PRBMath|Math\.(mul|div))").unwrap();
     static ref ROUNDING_UP: Regex =
         Regex::new(r"(?i)(\+\s*\w+\s*-\s*1\)|ceil|roundUp|-\s*1\)\s*/)").unwrap();
-    static ref SHARES_CALCULATION: Regex =
-        Regex::new(r"(?i)(shares|amount)\s*=.*?(\*|/|totalSupply|totalAssets)").unwrap();
+    /// A proportional/pro-rata computation, which is where truncation costs
+    /// real value.
+    ///
+    /// This used to require the assigned variable to be literally named
+    /// `shares` or `amount`, so `ratioYes = (addYes * rYes) / poolValue * 2`
+    /// — a textbook divide-then-multiply in an LP-share calculation — could
+    /// never match. The signal is the *shape* of the expression, not the
+    /// name a developer happened to choose.
+    static ref SHARES_CALCULATION: Regex = Regex::new(concat!(
+        r"(?i)(\w+\s*=[^=].*?(\*|/).*?(\*|/)",
+        r"|(shares?|amount|balance|reserve|liquidity|lp|stake|deposit|withdraw",
+        r"|payout|fee|ratio|portion|pro_?rata)\w*\s*=.*?(\*|/)",
+        r"|\w+\s*=.*?(totalSupply|totalAssets|totalLp|totalShares))"
+    )).unwrap();
+
+    /// Division that happens before a multiplication on the same line —
+    /// `(a * b) / c * d` — which truncates twice as hard as `a * b * d / c`.
+    static ref DIV_BEFORE_MUL: Regex = Regex::new(r"/\s*[\w.()]+\s*\*").unwrap();
 }
 
 pub fn detect_arithmetic_rounding(source: &str, file_path: &str) -> Vec<Finding> {
@@ -38,8 +54,11 @@ pub fn detect_arithmetic_rounding(source: &str, file_path: &str) -> Vec<Finding>
 
         let has_safe_math = MULDIV_SAFE.is_match(line);
         let has_rounding_up = ROUNDING_UP.is_match(line);
+        // Dividing before multiplying compounds the truncation, so it is worth
+        // reporting even where a rounding guard is present.
+        let divides_before_multiplying = DIV_BEFORE_MUL.is_match(line);
 
-        if !has_safe_math && !has_rounding_up {
+        if divides_before_multiplying || (!has_safe_math && !has_rounding_up) {
             findings.push(
                 Finding::new(
                     "evm_arithmetic_rounding".to_string(),

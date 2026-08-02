@@ -559,6 +559,13 @@ contract Attacker {
         let eoa = [0x11u8; 20];
         backend.fund_actors(&[eoa]);
 
+        // Seed the bank with other depositors' ETH. A reentrancy drain takes
+        // *someone else's* money: with only the attacker's own deposit in the
+        // pool, the re-entrant withdraw finds an empty contract, the inner
+        // `send failed` require trips, and the whole attack reverts — so there
+        // is nothing to detect.
+        backend.credit(bank_addr, revm::primitives::U256::from(10_000_000u128));
+
         // attack() is payable: the value funds the initial deposit that the
         // attacker then re-entrantly over-withdraws.
         let attack_selector = solc_bridge::selector_for("attack", &[]);

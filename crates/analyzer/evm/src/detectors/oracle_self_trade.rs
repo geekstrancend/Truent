@@ -13,9 +13,30 @@ lazy_static! {
     static ref EXTERNAL_FUNC_REGEX: Regex =
         Regex::new(r"(?i)function\s+\w+\s*\([^)]*\)\s*(external|public)").unwrap();
 
-    /// Regex to match oracle price retrieval
-    static ref ORACLE_PRICE_REGEX: Regex =
-        Regex::new(r"(?i)(getPrice|price|exchange|rate|twap|spot)").unwrap();
+    /// Regex to match an actual read from an external price source.
+    ///
+    /// This previously matched the bare words `price|exchange|rate|twap|spot`
+    /// anywhere in the function window, so any contract with a `priceOf()`
+    /// getter — or merely the word "price" in a comment — was reported as a
+    /// CRITICAL oracle manipulation. The vulnerability requires reading a
+    /// price from a *manipulable external source*; a price derived from the
+    /// contract's own state is a different thing entirely. Matching the call
+    /// shapes of the real oracle interfaces keeps that distinction.
+    static ref ORACLE_PRICE_REGEX: Regex = Regex::new(concat!(
+        // External feeds.
+        r"(?i)(latestRoundData|latestAnswer|getRoundData|\bAggregatorV\d|\bIAggregator",
+        r"|getPriceUnsafe|getPriceNoOlderThan|getEmaPrice|\bIPyth",
+        r"|\bconsult\s*\(|\bobserve\s*\(|getReserves\s*\(\s*\)",
+        r"|\boracle\s*\.|\bpriceFeed\s*\.|\bpriceOracle\s*\.|IPriceOracle|IPriceFeed",
+        // A price *acquired* in the body: a call to a price getter, or a read
+        // from a price mapping. Both are manipulable within a transaction.
+        r"|\bget\w*[Pp]rice\w*\s*\(|\b\w*[Pp]rice\w*\s*\[|\b\w*[Rr]ate\w*\s*\[)"
+    )).unwrap();
+
+    /// Strips comments so prose about prices cannot trigger the detector.
+    /// The original matched the bare word `price`, so a doc comment was
+    /// enough to raise a CRITICAL on a contract with no oracle at all.
+    static ref COMMENT_REGEX: Regex = Regex::new(r"(?s)//[^\n]*|/\*.*?\*/").unwrap();
 
     /// Regex to match user trade/swap functions
     static ref TRADE_REGEX: Regex =
@@ -50,7 +71,8 @@ pub fn detect_oracle_self_trade(source: &str, file_path: &str) -> Vec<Finding> {
             || func_body.to_lowercase().contains("mint")
             || func_body.to_lowercase().contains("burn");
 
-        let uses_oracle = ORACLE_PRICE_REGEX.is_match(&func_body);
+        let code_only = COMMENT_REGEX.replace_all(&func_body, " ");
+        let uses_oracle = ORACLE_PRICE_REGEX.is_match(&code_only);
 
         if modifies_state && uses_oracle {
             // Pattern 3: Check if oracle price is validated
@@ -265,5 +287,65 @@ mod tests {
 
         let findings = detect_oracle_self_trade(code, "safe.sol");
         assert!(findings.is_empty(), "Should not flag with circuit breaker");
+    }
+}
+
+#[cfg(test)]
+mod regression_tests {
+    use super::*;
+
+    /// A contract that prices from its own reserves has no external oracle to
+    /// manipulate. The detector used to match the bare word "price" anywhere in
+    /// a 50-line window, so a CPMM prediction market with a `priceYes()` view
+    /// and the word "price" in its comments raised six CRITICALs.
+    #[test]
+    fn internal_price_view_is_not_an_oracle() {
+        let code = r#"
+            /// @notice YES price in 1e6. NO price = 1e6 - this.
+            /// A constant-product AMM prices the shares; there is no oracle.
+            function priceYes(uint256 marketId) external view returns (uint256) {
+                Market storage m = markets[marketId];
+                uint256 denom = m.rYes + m.rNo;
+                if (denom == 0) return 0;
+                return (m.rNo * 1e6) / denom;
+            }
+
+            function buy(uint256 marketId, uint8 side, uint256 usdcIn) external returns (uint256) {
+                // Complete set mint: the price moves with the reserves.
+                _mintShares(marketId, side, msg.sender, sharesOut);
+                usdc.transferFrom(msg.sender, address(this), usdcIn);
+                return sharesOut;
+            }
+        "#;
+        assert!(
+            detect_oracle_self_trade(code, "market.sol").is_empty(),
+            "a price derived from internal reserves is not an oracle read"
+        );
+    }
+
+    /// Comments must never be enough on their own.
+    #[test]
+    fn prose_about_prices_does_not_trigger() {
+        let code = r#"
+            // This function does not use any oracle, price feed, spot price,
+            // exchange rate or twap. It just moves tokens.
+            function send(address to, uint256 amount) external {
+                token.transfer(to, amount);
+            }
+        "#;
+        assert!(detect_oracle_self_trade(code, "t.sol").is_empty());
+    }
+
+    /// The true positives must survive the tightening.
+    #[test]
+    fn real_external_feed_still_detected() {
+        let code = r#"
+            function swapAtOraclePrice(uint256 amt) external {
+                (, int256 answer,,,) = priceFeed.latestRoundData();
+                uint256 out = amt * uint256(answer);
+                token.transfer(msg.sender, out);
+            }
+        "#;
+        assert!(!detect_oracle_self_trade(code, "t.sol").is_empty());
     }
 }

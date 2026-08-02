@@ -25,6 +25,10 @@ gte = { ">=" }
 and = { "&&" }
 or = { "||" }
 not = { "!" }
+add = { "+" }
+sub = { "-" }
+mul = { "*" }
+div = { "/" }
 
 // Literals
 boolean = @{ "true" | "false" }
@@ -46,8 +50,16 @@ primary = { "(" ~ expr ~ ")" | atom }
 // Unary operators
 unary = { not* ~ primary }
 
+// Arithmetic. Sits between `unary` and `comparison` so that
+// `a * b >= c + d` parses as `(a*b) >= (c+d)`. Without these layers no
+// conservation property — the core use case for an invariant language — can
+// be written at all.
+// `mul`/`div` bind tighter than `add`/`sub`.
+term = { unary ~ ((mul | div) ~ unary)* }
+sum = { term ~ ((add | sub) ~ term)* }
+
 // Comparison operators
-comparison = { unary ~ ((eq | neq | lte | gte | lt | gt) ~ unary)* }
+comparison = { sum ~ ((eq | neq | lte | gte | lt | gt) ~ sum)* }
 
 // Logical AND
 logical_and = { comparison ~ (and ~ comparison)* }

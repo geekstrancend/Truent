@@ -2443,6 +2443,11 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
     }
 
     let mut found_violation = false;
+    // A contract the engine could not analyse is not a contract that passed.
+    // These used to be printed as "skipped" and then exit 0, so a broken
+    // toolchain — an unavailable solc, say — looked exactly like a clean run
+    // and sailed through CI.
+    let mut skipped: Vec<(String, String)> = Vec::new();
     for file in &files {
         let source = std::fs::read_to_string(file)
             .map_err(|e| anyhow::anyhow!("failed to read {}: {e}", file.display()))?;
@@ -2468,11 +2473,15 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
                 }
             }
             Err(e) => {
-                if verbose {
-                    eprintln!("  ⚠ skipped: {e:#}");
-                } else if !quiet {
-                    eprintln!("  ⚠ skipped: {e}");
+                let detail = if verbose {
+                    format!("{e:#}")
+                } else {
+                    format!("{e}")
+                };
+                if !quiet {
+                    eprintln!("  ⚠ not analysed: {detail}");
                 }
+                skipped.push((file.display().to_string(), detail));
             }
         }
     }
@@ -2480,6 +2489,26 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
     if found_violation {
         std::process::exit(1);
     }
+
+    if !skipped.is_empty() {
+        eprintln!(
+            "\n✗ {} of {} contract(s) could not be analysed — this is not a pass:",
+            skipped.len(),
+            files.len()
+        );
+        for (file, err) in &skipped {
+            eprintln!("    {file}: {err}");
+        }
+        eprintln!(
+            "\nThe dynamic engine proves findings by execution; when it cannot run, nothing\n\
+             was verified. Re-run with --verbose for detail, or set SOLC_PATH / \n\
+             TRUENT_SOLC_VERSION if this is a compiler problem."
+        );
+        // Distinct from 1 (violation found) so CI can tell "insecure" apart
+        // from "inconclusive".
+        std::process::exit(2);
+    }
+
     Ok(())
 }
 

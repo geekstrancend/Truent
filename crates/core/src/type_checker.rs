@@ -135,6 +135,27 @@ impl TypeChecker {
 
             Expression::BinaryOp { left, op, right } => self.check_binary_op(left, op, right),
 
+            // Arithmetic yields a number, not a boolean. Both operands must be
+            // numeric; the result widens to the larger of the two so that
+            // `u64 * u64` is allowed to be compared against a u128 bound.
+            Expression::Arithmetic { left, op, right } => {
+                let lt = self.infer_type(left)?;
+                let rt = self.infer_type(right)?;
+                let numeric = |t: Type| matches!(t, Type::U64 | Type::U128 | Type::I64);
+                if !numeric(lt) || !numeric(rt) {
+                    return Err(TypeError::BinaryOpTypeMismatch {
+                        op: op.to_string(),
+                        left: lt,
+                        right: rt,
+                    });
+                }
+                Ok(match (lt, rt) {
+                    (Type::U128, _) | (_, Type::U128) => Type::U128,
+                    (Type::I64, _) | (_, Type::I64) => Type::I64,
+                    _ => Type::U64,
+                })
+            }
+
             Expression::Logical { left, op, right } => self.check_logical_op(left, op, right),
 
             Expression::Not(expr) => {

@@ -267,6 +267,12 @@ impl Evaluator {
                 self.eval_binary_op(&left_val, op, &right_val)
             }
 
+            Expression::Arithmetic { left, op, right } => {
+                let left_val = self.evaluate(left)?;
+                let right_val = self.evaluate(right)?;
+                Self::eval_arith_op(&left_val, op, &right_val)
+            }
+
             Expression::Logical { left, op, right } => {
                 use crate::model::LogicalOp;
 
@@ -321,6 +327,76 @@ impl Evaluator {
     }
 
     /// Evaluate a binary operation with checked arithmetic.
+    /// Evaluate `+ - * /` over numeric values.
+    ///
+    /// Every operation is checked. A conservation invariant like
+    /// `reserve_a * reserve_b >= k` multiplies two token balances, which
+    /// overflows `u64` at realistic magnitudes — and a wrapped product would
+    /// silently satisfy the comparison, reporting a violated invariant as
+    /// holding. Unsigned operands are widened to `u128` and the result is
+    /// narrowed back only when it fits.
+    fn eval_arith_op(left: &Value, op: &crate::model::ArithOp, right: &Value) -> EvalResult<Value> {
+        use crate::model::ArithOp;
+
+        // Signed operands evaluate in i128; everything else in u128.
+        let signed = matches!(left, Value::I64(_)) || matches!(right, Value::I64(_));
+
+        if signed {
+            let to_i = |v: &Value| -> EvalResult<i128> {
+                match v {
+                    Value::I64(x) => Ok(*x as i128),
+                    Value::U64(x) => Ok(*x as i128),
+                    Value::U128(x) => {
+                        i128::try_from(*x).map_err(|_| EvaluationError::ConversionOverflow)
+                    }
+                    _ => Err(EvaluationError::TypeError),
+                }
+            };
+            let (l, r) = (to_i(left)?, to_i(right)?);
+            let out = match op {
+                ArithOp::Add => l.checked_add(r).ok_or(EvaluationError::Overflow)?,
+                ArithOp::Sub => l.checked_sub(r).ok_or(EvaluationError::Underflow)?,
+                ArithOp::Mul => l.checked_mul(r).ok_or(EvaluationError::Overflow)?,
+                ArithOp::Div => {
+                    if r == 0 {
+                        return Err(EvaluationError::DivisionByZero);
+                    }
+                    l.checked_div(r).ok_or(EvaluationError::Overflow)?
+                }
+            };
+            let narrowed = i64::try_from(out).map_err(|_| EvaluationError::ConversionOverflow)?;
+            return Ok(Value::I64(narrowed));
+        }
+
+        let to_u = |v: &Value| -> EvalResult<u128> {
+            match v {
+                Value::U64(x) => Ok(*x as u128),
+                Value::U128(x) => Ok(*x),
+                _ => Err(EvaluationError::TypeError),
+            }
+        };
+        let (l, r) = (to_u(left)?, to_u(right)?);
+        let out = match op {
+            ArithOp::Add => l.checked_add(r).ok_or(EvaluationError::Overflow)?,
+            // Unsigned: a negative result is an underflow, not a wrap. EVM
+            // arithmetic reverts here, so surfacing it is the honest behaviour.
+            ArithOp::Sub => l.checked_sub(r).ok_or(EvaluationError::Underflow)?,
+            ArithOp::Mul => l.checked_mul(r).ok_or(EvaluationError::Overflow)?,
+            ArithOp::Div => {
+                if r == 0 {
+                    return Err(EvaluationError::DivisionByZero);
+                }
+                l / r
+            }
+        };
+
+        if out <= u64::MAX as u128 {
+            Ok(Value::U64(out as u64))
+        } else {
+            Ok(Value::U128(out))
+        }
+    }
+
     fn eval_binary_op(
         &self,
         left: &Value,
@@ -329,38 +405,44 @@ impl Evaluator {
     ) -> EvalResult<Value> {
         use crate::model::BinaryOp;
 
+        // Numeric operands are compared by value, not by representation.
+        // Previously each arm required both sides to be the *same* variant, so
+        // `U64(5) < U128(6)` was a TypeError and `U64(5) == U128(5)` was false.
+        // Arithmetic makes mixed widths routine — `a * b` widens to U128 while
+        // the bound it is compared against is often U64 — so a width mismatch
+        // must not decide the result.
+        if let (Some(l), Some(r)) = (Self::as_i256(left), Self::as_i256(right)) {
+            return Ok(Value::Bool(match op {
+                BinaryOp::Eq => l == r,
+                BinaryOp::Neq => l != r,
+                BinaryOp::Lt => l < r,
+                BinaryOp::Gt => l > r,
+                BinaryOp::Lte => l <= r,
+                BinaryOp::Gte => l >= r,
+            }));
+        }
+
         match op {
+            // Non-numeric (Bool, Address): equality still well-defined.
             BinaryOp::Eq => Ok(Value::Bool(left == right)),
-
             BinaryOp::Neq => Ok(Value::Bool(left != right)),
+            // Ordering is not.
+            _ => Err(EvaluationError::TypeError),
+        }
+    }
 
-            BinaryOp::Lt => match (left, right) {
-                (Value::U64(l), Value::U64(r)) => Ok(Value::Bool(l < r)),
-                (Value::I64(l), Value::I64(r)) => Ok(Value::Bool(l < r)),
-                (Value::U128(l), Value::U128(r)) => Ok(Value::Bool(l < r)),
-                _ => Err(EvaluationError::TypeError),
-            },
-
-            BinaryOp::Gt => match (left, right) {
-                (Value::U64(l), Value::U64(r)) => Ok(Value::Bool(l > r)),
-                (Value::I64(l), Value::I64(r)) => Ok(Value::Bool(l > r)),
-                (Value::U128(l), Value::U128(r)) => Ok(Value::Bool(l > r)),
-                _ => Err(EvaluationError::TypeError),
-            },
-
-            BinaryOp::Lte => match (left, right) {
-                (Value::U64(l), Value::U64(r)) => Ok(Value::Bool(l <= r)),
-                (Value::I64(l), Value::I64(r)) => Ok(Value::Bool(l <= r)),
-                (Value::U128(l), Value::U128(r)) => Ok(Value::Bool(l <= r)),
-                _ => Err(EvaluationError::TypeError),
-            },
-
-            BinaryOp::Gte => match (left, right) {
-                (Value::U64(l), Value::U64(r)) => Ok(Value::Bool(l >= r)),
-                (Value::I64(l), Value::I64(r)) => Ok(Value::Bool(l >= r)),
-                (Value::U128(l), Value::U128(r)) => Ok(Value::Bool(l >= r)),
-                _ => Err(EvaluationError::TypeError),
-            },
+    /// Widen any numeric value to a common signed type for comparison.
+    ///
+    /// `i128` cannot hold all of `u128`, so unsigned values above `i128::MAX`
+    /// would be lost. Returning `None` for those keeps them out of the fast
+    /// path rather than silently comparing a wrong number; in practice token
+    /// balances never reach that magnitude.
+    fn as_i256(v: &Value) -> Option<i128> {
+        match v {
+            Value::U64(x) => Some(*x as i128),
+            Value::I64(x) => Some(*x as i128),
+            Value::U128(x) => i128::try_from(*x).ok(),
+            _ => None,
         }
     }
 }

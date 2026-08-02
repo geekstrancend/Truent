@@ -12,6 +12,13 @@ use tracing::info;
 /// Minimum supported solc version
 pub const MIN_SOLC_VERSION: &str = "0.6.0";
 
+/// Version fetched when no solc is present on the system.
+///
+/// Was pinned at 0.8.21, which cannot compile the `pragma ^0.8.24` that
+/// current contracts declare. Override with `TRUENT_SOLC_VERSION` when a
+/// project needs a specific release.
+pub const DEFAULT_SOLC_VERSION: &str = "0.8.28";
+
 /// Represents the solc compiler manager
 #[derive(Debug, Clone)]
 pub struct SolcManager {
@@ -95,15 +102,61 @@ impl SolcManager {
         Self::download_solc()
     }
 
-    /// Get the full AST JSON output for a Solidity file
+    /// Get the full AST JSON output for a Solidity file.
+    ///
+    /// Compiled with the optimizer on, and retried through the IR pipeline if
+    /// the legacy code generator runs out of stack slots. Without either,
+    /// "Stack too deep" rejects any contract with a moderately wide function —
+    /// a routine shape, not an exotic one — and the whole dynamic analysis is
+    /// lost for that file.
     pub fn get_ast_json(&self, source_path: &Path) -> Result<SolcOutput> {
-        let output = Command::new(&self.solc_path)
-            .args([
-                "--combined-json",
-                "ast,abi,bin,bin-runtime,srcmap,srcmap-runtime",
-                "--allow-paths",
-                ".",
-            ])
+        match self.run_solc(source_path, false) {
+            Ok(out) => Ok(out),
+            Err(e) => {
+                let msg = e.to_string();
+                if Self::is_stack_too_deep(&msg) {
+                    info!(
+                        "solc hit 'stack too deep' on {}; retrying with --via-ir",
+                        source_path.display()
+                    );
+                    self.run_solc(source_path, true).map_err(|via_ir_err| {
+                        anyhow!(
+                            "solc failed on {} with and without --via-ir.\n\
+                             legacy: {}\n--via-ir: {}",
+                            source_path.display(),
+                            msg,
+                            via_ir_err
+                        )
+                    })
+                } else {
+                    Err(e)
+                }
+            }
+        }
+    }
+
+    /// True when solc rejected the source only because the legacy code
+    /// generator ran out of stack slots — recoverable via the IR pipeline.
+    fn is_stack_too_deep(stderr: &str) -> bool {
+        stderr.contains("Stack too deep")
+    }
+
+    fn run_solc(&self, source_path: &Path, via_ir: bool) -> Result<SolcOutput> {
+        let mut cmd = Command::new(&self.solc_path);
+        cmd.args([
+            "--combined-json",
+            "ast,abi,bin,bin-runtime,srcmap,srcmap-runtime",
+            "--allow-paths",
+            ".",
+            // The optimizer is what frees up stack slots; without it even
+            // ordinary contracts fail to compile.
+            "--optimize",
+        ]);
+        if via_ir {
+            cmd.arg("--via-ir");
+        }
+
+        let output = cmd
             .arg(source_path)
             .output()
             .with_context(|| format!("Failed to run solc on: {}", source_path.display()))?;
@@ -175,11 +228,21 @@ impl SolcManager {
             "linux-amd64"
         };
 
-        let version = "0.8.21";
-        let url =
-            format!("https://binaries.soliditylang.org/{platform}/solc-{platform}-v{version}");
+        let version_owned = std::env::var("TRUENT_SOLC_VERSION")
+            .unwrap_or_else(|_| DEFAULT_SOLC_VERSION.to_string());
+        let version = version_owned.as_str();
 
-        info!("Downloading solc v{} for {}...", version, platform);
+        // Every published solc binary is named with a build suffix —
+        // `solc-linux-amd64-v0.8.21+commit.d9974bed`, not `...-v0.8.21`. The
+        // bare form 404s, which took the whole dynamic engine offline on any
+        // machine without a system solc. The suffix is not derivable, so it is
+        // resolved from the official manifest.
+        let url = Self::resolve_download_url(platform, version)?;
+
+        info!(
+            "Downloading solc v{} for {} from {}",
+            version, platform, url
+        );
 
         let response = ureq::get(&url)
             .call()
@@ -203,6 +266,58 @@ impl SolcManager {
             solc_path: cache_path,
             version: version.to_string(),
         })
+    }
+
+    /// Resolve the real download URL for `version` on `platform`.
+    ///
+    /// Reads `list.json`, the manifest solc publishes alongside the binaries,
+    /// and takes the `path` recorded for the requested release. Falls back to
+    /// the longest-standing naming convention only if the manifest cannot be
+    /// fetched, so an offline failure still produces a usable error rather
+    /// than a silent 404.
+    fn resolve_download_url(platform: &str, version: &str) -> Result<String> {
+        let list_url = format!("https://binaries.soliditylang.org/{platform}/list.json");
+
+        let manifest: serde_json::Value = ureq::get(&list_url)
+            .call()
+            .map_err(|e| anyhow!("Failed to fetch solc manifest {}: {}", list_url, e))?
+            .into_json()
+            .map_err(|e| anyhow!("Malformed solc manifest at {}: {}", list_url, e))?;
+
+        // `releases` maps a bare version to its exact filename.
+        if let Some(path) = manifest
+            .get("releases")
+            .and_then(|r| r.get(version))
+            .and_then(|p| p.as_str())
+        {
+            return Ok(format!(
+                "https://binaries.soliditylang.org/{platform}/{path}"
+            ));
+        }
+
+        // Fall back to scanning `builds` for the same version.
+        if let Some(path) = manifest
+            .get("builds")
+            .and_then(|b| b.as_array())
+            .and_then(|builds| {
+                builds
+                    .iter()
+                    .find(|b| b.get("version").and_then(|v| v.as_str()) == Some(version))
+                    .and_then(|b| b.get("path"))
+                    .and_then(|p| p.as_str())
+            })
+        {
+            return Ok(format!(
+                "https://binaries.soliditylang.org/{platform}/{path}"
+            ));
+        }
+
+        Err(anyhow!(
+            "solc v{} is not published for {} (checked {})",
+            version,
+            platform,
+            list_url
+        ))
     }
 
     /// Get the version of the managed solc binary

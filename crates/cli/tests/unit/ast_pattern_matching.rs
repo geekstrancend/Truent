@@ -506,6 +506,7 @@ mod expression_pattern_tests {
             Expression::CrossPhaseRelation { .. } => "CrossPhaseRelation",
             Expression::Int(_) => "Int",
             Expression::BinaryOp { .. } => "BinaryOp",
+            Expression::Arithmetic { .. } => "Arithmetic",
             Expression::Logical { .. } => "Logical",
             Expression::Not(_) => "Not",
             Expression::FunctionCall { .. } => "FunctionCall",

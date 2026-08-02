@@ -146,6 +146,10 @@ impl ExpressionContext {
                 self.validate_expression(left)?;
                 self.validate_expression(right)
             }
+            Expression::Arithmetic { left, right, .. } => {
+                self.validate_expression(left)?;
+                self.validate_expression(right)
+            }
             Expression::Logical { left, right, .. } => {
                 self.validate_expression(left)?;
                 self.validate_expression(right)

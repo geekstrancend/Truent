@@ -99,6 +99,20 @@ pub enum Expression {
         right: Box<Expression>,
     },
 
+    /// Arithmetic: left op right, yielding a number rather than a boolean.
+    ///
+    /// Conservation properties — `sum(balances) == totalSupply`,
+    /// `reserve_a * reserve_b >= k` — are the whole point of an invariant
+    /// language, and none of them are expressible without this.
+    Arithmetic {
+        /// Left operand.
+        left: Box<Expression>,
+        /// Operator: +, -, *, /.
+        op: ArithOp,
+        /// Right operand.
+        right: Box<Expression>,
+    },
+
     /// Logical operation: &&, ||.
     Logical {
         /// Left operand.
@@ -149,6 +163,9 @@ impl std::fmt::Display for Expression {
             Self::BinaryOp { left, op, right } => {
                 write!(f, "({} {} {})", left, op, right)
             }
+            Self::Arithmetic { left, op, right } => {
+                write!(f, "({} {} {})", left, op, right)
+            }
             Self::Logical { left, op, right } => {
                 write!(f, "({} {} {})", left, op, right)
             }
@@ -177,7 +194,31 @@ impl std::fmt::Display for Expression {
     }
 }
 
-/// Binary operators for expressions.
+/// Arithmetic operators for numeric expressions.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ArithOp {
+    /// Addition.
+    Add,
+    /// Subtraction.
+    Sub,
+    /// Multiplication.
+    Mul,
+    /// Division (integer, truncating — matches EVM semantics).
+    Div,
+}
+
+impl std::fmt::Display for ArithOp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Add => write!(f, "+"),
+            Self::Sub => write!(f, "-"),
+            Self::Mul => write!(f, "*"),
+            Self::Div => write!(f, "/"),
+        }
+    }
+}
+
+/// Binary (comparison) operators for expressions.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum BinaryOp {
     /// Equality.

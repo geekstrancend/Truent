@@ -257,6 +257,12 @@ impl DSLSandbox {
                 Ok(())
             }
 
+            Expression::Arithmetic { left, op: _, right } => {
+                Self::check_expression_recursive(left, forbidden_prefixes)?;
+                Self::check_expression_recursive(right, forbidden_prefixes)?;
+                Ok(())
+            }
+
             Expression::Logical { left, op: _, right } => {
                 Self::check_expression_recursive(left, forbidden_prefixes)?;
                 Self::check_expression_recursive(right, forbidden_prefixes)?;

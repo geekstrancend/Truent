@@ -118,14 +118,26 @@ impl RevmBackend {
     /// senders without running out of ETH mid-fuzz.
     pub fn fund_actors(&mut self, actors: &[[u8; 20]]) {
         for actor in actors {
-            self.db.insert_account_info(
-                Address::from(*actor),
-                AccountInfo {
-                    balance: U256::from(u128::MAX),
-                    ..Default::default()
-                },
-            );
+            self.credit(*actor, U256::from(u128::MAX));
         }
+    }
+
+    /// Set an address's balance while preserving everything else about the
+    /// account.
+    ///
+    /// Writing a fresh `AccountInfo` also clears the nonce *and the code hash*,
+    /// so funding an address that holds a contract silently deleted that
+    /// contract. Any scenario needing a pre-funded contract — a bank holding
+    /// other depositors' ETH, which is what makes a reentrancy drain possible
+    /// — was unstageable as a result.
+    pub fn credit(&mut self, address: [u8; 20], balance: U256) {
+        let addr = Address::from(address);
+        let mut info = revm::DatabaseRef::basic_ref(&self.db, addr)
+            .ok()
+            .flatten()
+            .unwrap_or_default();
+        info.balance = balance;
+        self.db.insert_account_info(addr, info);
     }
 
     pub fn contract_address(&self) -> [u8; 20] {
@@ -142,10 +154,24 @@ impl RevmBackend {
         deployer: [u8; 20],
     ) -> anyhow::Result<[u8; 20]> {
         let deployer_addr = Address::from(deployer);
+
+        // Top up the balance but keep the existing nonce. Overwriting the whole
+        // account reset the nonce to 0, and CREATE derives the new address from
+        // (deployer, nonce) — so deploying a second contract from the same
+        // deployer landed on the address the first one already occupied and
+        // halted with CreateCollision. That made every multi-contract scenario
+        // — victim plus attacker, which is exactly the reentrancy setup —
+        // impossible to stage.
+        let existing_nonce = revm::DatabaseRef::basic_ref(&self.db, deployer_addr)
+            .ok()
+            .flatten()
+            .map(|acc| acc.nonce)
+            .unwrap_or(0);
         self.db.insert_account_info(
             deployer_addr,
             AccountInfo {
                 balance: U256::from(u128::MAX),
+                nonce: existing_nonce,
                 ..Default::default()
             },
         );
