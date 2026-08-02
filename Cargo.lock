@@ -3183,7 +3183,7 @@ dependencies = [
 
 [[package]]
 name = "truent-analyzer-evm"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "criterion",
@@ -3206,7 +3206,7 @@ dependencies = [
 
 [[package]]
 name = "truent-analyzer-move"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "cc",
@@ -3225,7 +3225,7 @@ dependencies = [
 
 [[package]]
 name = "truent-analyzer-solana"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "lazy_static",
@@ -3245,7 +3245,7 @@ dependencies = [
 
 [[package]]
 name = "truent-analyzer-soroban"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "lazy_static",
@@ -3265,7 +3265,7 @@ dependencies = [
 
 [[package]]
 name = "truent-cli"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -3303,7 +3303,7 @@ dependencies = [
 
 [[package]]
 name = "truent-core"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -3318,7 +3318,7 @@ dependencies = [
 
 [[package]]
 name = "truent-dsl-parser"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "pest",
@@ -3331,7 +3331,7 @@ dependencies = [
 
 [[package]]
 name = "truent-dynamic-core"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "rand 0.8.6",
  "serde",
@@ -3340,7 +3340,7 @@ dependencies = [
 
 [[package]]
 name = "truent-dynamic-evm"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "hex",
@@ -3358,7 +3358,7 @@ dependencies = [
 
 [[package]]
 name = "truent-dynamic-solana"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bs58",
  "rand 0.8.6",
@@ -3371,7 +3371,7 @@ dependencies = [
 
 [[package]]
 name = "truent-generator-evm"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -3386,7 +3386,7 @@ dependencies = [
 
 [[package]]
 name = "truent-generator-move"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -3401,7 +3401,7 @@ dependencies = [
 
 [[package]]
 name = "truent-generator-solana"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "proc-macro2",
@@ -3420,7 +3420,7 @@ dependencies = [
 
 [[package]]
 name = "truent-ir"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -3430,7 +3430,7 @@ dependencies = [
 
 [[package]]
 name = "truent-library"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -3444,7 +3444,7 @@ dependencies = [
 
 [[package]]
 name = "truent-report"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -3457,7 +3457,7 @@ dependencies = [
 
 [[package]]
 name = "truent-solana-macro"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3466,7 +3466,7 @@ dependencies = [
 
 [[package]]
 name = "truent-utils"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "chrono",
