@@ -219,6 +219,7 @@ impl SolcManager {
     fn download_solc() -> Result<Self> {
         let cache_path = Self::cache_path();
         std::fs::create_dir_all(cache_path.parent().unwrap())?;
+        Self::clean_stale_downloads(cache_path.parent().unwrap());
 
         let platform = if cfg!(target_os = "macos") {
             "macosx-amd64"
@@ -248,17 +249,41 @@ impl SolcManager {
             .call()
             .map_err(|e| anyhow!("Failed to download solc from {}: {}", url, e))?;
 
-        let mut file = std::fs::File::create(&cache_path)?;
-        std::io::copy(&mut response.into_reader(), &mut file)?;
+        // Download to a private temporary file, then rename it into place.
+        //
+        // Writing straight to the shared cache path meant that when several
+        // processes started at once on a machine with no solc — a test suite
+        // running in parallel, or several scans in a CI matrix — one would
+        // still be writing the binary while another tried to execute it, and
+        // the second failed with ETXTBSY ("Text file busy"). Each writer now
+        // has its own file, and `rename` is atomic on the same filesystem, so
+        // a reader ever only sees a complete binary.
+        let unique = format!(
+            "solc.{}.{}.part",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_nanos())
+                .unwrap_or(0)
+        );
+        let staging = cache_path.with_file_name(unique);
 
-        // Make executable on Unix
+        {
+            let mut file = std::fs::File::create(&staging)?;
+            std::io::copy(&mut response.into_reader(), &mut file)?;
+            file.sync_all()?;
+        }
+
+        // Make executable on Unix, before it is visible under the real name.
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            let mut perms = std::fs::metadata(&cache_path)?.permissions();
+            let mut perms = std::fs::metadata(&staging)?.permissions();
             perms.set_mode(0o755);
-            std::fs::set_permissions(&cache_path, perms)?;
+            std::fs::set_permissions(&staging, perms)?;
         }
+
+        Self::install_binary(&staging, &cache_path)?;
 
         info!("Downloaded solc to {}", cache_path.display());
 
@@ -266,6 +291,46 @@ impl SolcManager {
             solc_path: cache_path,
             version: version.to_string(),
         })
+    }
+
+    /// Move a freshly downloaded binary into its final location atomically.
+    ///
+    /// Separate from the download so the concurrency behaviour can be tested
+    /// without fetching 15MB: the rename is what prevents a half-written file
+    /// from ever being executed, and losing the race to another process is
+    /// success as long as a usable binary ends up in place.
+    fn install_binary(staging: &Path, dest: &Path) -> Result<()> {
+        match std::fs::rename(staging, dest) {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                let _ = std::fs::remove_file(staging);
+                if dest.exists() {
+                    // Another process installed it first. Nothing to do.
+                    Ok(())
+                } else {
+                    Err(anyhow!(
+                        "failed to install solc into {}: {e}",
+                        dest.display()
+                    ))
+                }
+            }
+        }
+    }
+
+    /// Delete leftover `.part` files from downloads that never finished.
+    ///
+    /// A process killed mid-download leaves its staging file behind; without
+    /// this they accumulate in the cache directory forever.
+    fn clean_stale_downloads(dir: &Path) {
+        let Ok(entries) = std::fs::read_dir(dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().and_then(|e| e.to_str()) == Some("part") {
+                let _ = std::fs::remove_file(path);
+            }
+        }
     }
 
     /// Resolve the real download URL for `version` on `platform`.
@@ -349,5 +414,49 @@ mod tests {
         assert!(SolcManager::has_fatal_errors(
             "Warning: Be careful\nError: Failed"
         ));
+    }
+}
+
+#[cfg(test)]
+mod download_concurrency_tests {
+    use super::*;
+
+    /// Regression: the downloader wrote straight to the shared cache path, so
+    /// a second process could execute a half-written binary and fail with
+    /// ETXTBSY ("Text file busy"). Reproduced by a parallel test run on a
+    /// machine with no solc — which is every CI runner.
+    #[test]
+    fn install_is_atomic_and_tolerates_losing_the_race() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let dest = dir.path().join("solc");
+
+        let staging = dir.path().join("solc.1.part");
+        std::fs::write(&staging, b"binary-a").expect("write");
+        SolcManager::install_binary(&staging, &dest).expect("first install");
+        assert_eq!(std::fs::read(&dest).expect("read"), b"binary-a");
+        assert!(!staging.exists(), "staging file should be consumed");
+
+        // A second writer arriving later must still end with a usable binary
+        // in place and no staging file left behind.
+        let staging2 = dir.path().join("solc.2.part");
+        std::fs::write(&staging2, b"binary-b").expect("write");
+        SolcManager::install_binary(&staging2, &dest).expect("second install");
+        assert!(dest.exists());
+        assert!(!staging2.exists());
+    }
+
+    #[test]
+    fn stale_part_files_are_cleaned_up() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        std::fs::write(dir.path().join("solc.999.part"), b"abandoned").expect("write");
+        std::fs::write(dir.path().join("solc"), b"real").expect("write");
+
+        SolcManager::clean_stale_downloads(dir.path());
+
+        assert!(
+            !dir.path().join("solc.999.part").exists(),
+            "stale part removed"
+        );
+        assert!(dir.path().join("solc").exists(), "real binary kept");
     }
 }
