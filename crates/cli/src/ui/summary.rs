@@ -23,6 +23,10 @@ pub struct AnalysisSummary {
     pub duration_secs: f64,
     /// Breakdown of violations by severity
     pub severity_breakdown: SeverityBreakdown,
+    /// Results demonstrated by execution, with a reproduction.
+    pub proven: usize,
+    /// Pattern matches that were never executed and remain unconfirmed.
+    pub leads: usize,
 }
 
 /// Breakdown of violations by severity level.
@@ -81,13 +85,13 @@ pub fn render_summary(summary: &AnalysisSummary) -> String {
 
     // Checks summary line
     let checks_line = format!(
-        "{}  {} total  {}  {} violations  {}  {} passed  {}  {} suppressed",
+        "{}  {} total  {}  {} proven  {}  {} leads  {}  {} suppressed",
         color_label("Checks"),
         color_value(&summary.total_checks.to_string()),
         color_dim("·"),
-        color_value(&summary.violations.to_string()),
+        color_value(&summary.proven.to_string()),
         color_dim("·"),
-        color_value(&summary.passed.to_string()),
+        color_value(&summary.leads.to_string()),
         color_dim("·"),
         color_value(&summary.suppressed.to_string()),
     );
@@ -169,14 +173,27 @@ pub fn render_summary(summary: &AnalysisSummary) -> String {
     // Empty line
     output.push_str(&format!("{}\n", empty_box_line(width)));
 
-    // Status line
-    let (status_icon, status_color_text) = if summary.violations == 0 {
-        (ICON_PASS, color_success("PASS — all checks passed"))
-    } else {
+    // Status line.
+    //
+    // A lead is a pattern match that was never executed, so it cannot be
+    // reported as a failure — saying "FAIL" on unproven results is what makes
+    // a tool's output unactionable. Only a result the engine actually
+    // reproduced fails the run.
+    let (status_icon, status_color_text) = if summary.proven > 0 {
         (
             ICON_CRITICAL,
-            color_failure("FAIL — violations found at or above 'low' threshold"),
+            color_failure("FAIL — violations reproduced by execution"),
         )
+    } else if summary.leads > 0 {
+        (
+            ICON_ARROW,
+            color_medium(&format!(
+                "REVIEW — {} unproven lead(s), 0 reproduced",
+                summary.leads
+            )),
+        )
+    } else {
+        (ICON_PASS, color_success("PASS — nothing found"))
     };
 
     let status_line = format!(
@@ -234,6 +251,8 @@ mod tests {
             total_checks: 47,
             violations: 3,
             passed: 44,
+            proven: 3,
+            leads: 0,
             suppressed: 0,
             duration_secs: 1.24,
             severity_breakdown: SeverityBreakdown {
@@ -249,9 +268,14 @@ mod tests {
         assert!(rendered.contains("./contracts/Token.sol"));
         assert!(rendered.contains("EVM"));
         assert!(rendered.contains("47"));
+        // The summary reports evidence, not a "passed" count: every check that
+        // did not fire is not a check that passed, and claiming otherwise was
+        // the most misleading number in the report.
         assert!(rendered.contains("3"));
-        assert!(rendered.contains("44"));
+        assert!(rendered.contains("proven"));
+        assert!(rendered.contains("leads"));
         assert!(rendered.contains("1.24"));
+        // Reproduced violations still fail the run.
         assert!(rendered.contains("FAIL"));
     }
 
@@ -263,6 +287,8 @@ mod tests {
             total_checks: 100,
             violations: 0,
             passed: 100,
+            proven: 0,
+            leads: 0,
             suppressed: 0,
             duration_secs: 2.5,
             severity_breakdown: SeverityBreakdown {
@@ -284,5 +310,51 @@ mod tests {
         let msg = render_no_violations();
         assert!(msg.contains("No violations found"));
         assert!(msg.contains("All checks passed"));
+    }
+}
+
+#[cfg(test)]
+mod evidence_status_tests {
+    use super::*;
+
+    fn summary(proven: usize, leads: usize) -> AnalysisSummary {
+        AnalysisSummary {
+            target: "t.sol".to_string(),
+            chain: "EVM".to_string(),
+            total_checks: 10,
+            violations: proven + leads,
+            passed: 0,
+            proven,
+            leads,
+            suppressed: 0,
+            duration_secs: 0.1,
+            severity_breakdown: SeverityBreakdown {
+                critical: 0,
+                high: 0,
+                medium: proven + leads,
+                low: 0,
+            },
+        }
+    }
+
+    /// Unproven pattern matches must not be presented as a failure. Telling a
+    /// team their build failed on a guess is how a scanner gets switched off.
+    #[test]
+    fn leads_alone_are_a_review_not_a_failure() {
+        let rendered = render_summary(&summary(0, 12));
+        assert!(rendered.contains("REVIEW"), "{rendered}");
+        assert!(!rendered.contains("FAIL"), "{rendered}");
+    }
+
+    #[test]
+    fn a_reproduced_violation_fails() {
+        let rendered = render_summary(&summary(1, 0));
+        assert!(rendered.contains("FAIL"), "{rendered}");
+    }
+
+    #[test]
+    fn nothing_found_passes() {
+        let rendered = render_summary(&summary(0, 0));
+        assert!(rendered.contains("PASS"), "{rendered}");
     }
 }

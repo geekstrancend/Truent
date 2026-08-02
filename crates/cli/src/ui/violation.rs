@@ -29,6 +29,9 @@ pub struct Violation {
     pub reference: String,
     /// The actual code snippet where the vulnerability was found
     pub code_snippet: String,
+    /// How strongly this result is supported: proven by execution, or a
+    /// heuristic lead that has not been demonstrated.
+    pub evidence: truent_core::Evidence,
 }
 
 /// Render a single violation panel with bordered box.
@@ -87,10 +90,20 @@ pub fn render_violation(violation: &Violation, width: usize) -> String {
     // Empty line
     output.push_str(&format!("{}\n", empty_box_line(width)));
 
-    // Title and invariant ID line
+    // Title, evidence tag and invariant ID line.
+    //
+    // The tag is the first thing a reader sees, because whether the engine
+    // reproduced this or merely pattern-matched it changes what they should do
+    // about it more than the severity does.
+    let evidence_tag = if violation.evidence.is_proven() {
+        color_success("[PROVEN]")
+    } else {
+        color_dim("[LEAD]")
+    };
     let title_line = format!(
-        "{}  {}",
+        "{} {}  {}",
         apply_color(&format!("{} {}", icon, violation.title)),
+        evidence_tag,
         color_dim(&violation.invariant_id)
     );
     output.push_str(&format!("{}\n", box_line(&title_line, width)));
@@ -218,6 +231,7 @@ mod tests {
             recommendation: "Fix this issue".to_string(),
             reference: "https://docs.example.com".to_string(),
             code_snippet: "    42 | function transfer() public { }".to_string(),
+            evidence: truent_core::Evidence::Lead,
         };
 
         let rendered = render_violation(&violation, 80);
@@ -254,6 +268,7 @@ mod tests {
                 recommendation: "fix".to_string(),
                 reference: "ref".to_string(),
                 code_snippet: String::new(),
+                evidence: truent_core::Evidence::Lead,
             };
 
             let rendered = render_violation(&violation, 80);
@@ -276,6 +291,7 @@ mod tests {
                 recommendation: "fix1".to_string(),
                 reference: "ref1".to_string(),
                 code_snippet: String::new(),
+                evidence: truent_core::Evidence::Lead,
             },
             Violation {
                 index: 2,
@@ -289,6 +305,7 @@ mod tests {
                 recommendation: "fix2".to_string(),
                 reference: "ref2".to_string(),
                 code_snippet: String::new(),
+                evidence: truent_core::Evidence::Lead,
             },
         ];
 

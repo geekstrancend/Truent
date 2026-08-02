@@ -42,7 +42,7 @@ pub use changelog::{
 pub use config::{AlertConfig, ChainConfig, Config, ConfigError, InvariantConfig};
 pub use error::{InvarError, Result};
 pub use evaluator::{EvalResult, EvaluationError, Evaluator, ExecutionContext, Value};
-pub use finding::{Finding, Severity};
+pub use finding::{Evidence, Finding, Severity};
 pub use fuzzer::{CodeFuzzer, FuzzResult};
 pub use generated::{get_invariant, invariant_count, invariants_for_chain, CompiledInvariant};
 pub use integration_testing::{ExploitTestCase, IntegrationTestResults, IntegrationTestSuite};

@@ -97,6 +97,13 @@ struct CheckArgs {
     #[arg(long, value_enum, default_value = "low")]
     fail_on: SeverityArg,
 
+    /// Also fail on unproven leads, not just results reproduced by execution.
+    ///
+    /// Off by default: a lead is a pattern match that was never executed, and
+    /// blocking a deploy on one trains teams to bypass the gate.
+    #[arg(long, default_value_t = false)]
+    fail_on_leads: bool,
+
     /// Output format.
     #[arg(long, value_enum, default_value = "text")]
     format: FormatArg,
@@ -147,6 +154,13 @@ struct ScanArgs {
     /// Fail the scan if any issues at or above this severity are found.
     #[arg(long, value_enum, default_value = "critical")]
     fail_on: SeverityArg,
+
+    /// Also fail on unproven leads, not just results reproduced by execution.
+    ///
+    /// Off by default: a lead is a pattern match that was never executed, and
+    /// blocking a deploy on one trains teams to bypass the gate.
+    #[arg(long, default_value_t = false)]
+    fail_on_leads: bool,
 
     /// Use parallel scanning with rayon (thread pool).
     #[arg(long)]
@@ -445,12 +459,17 @@ fn cmd_check(args: CheckArgs, quiet: bool, verbose: bool) -> Result<()> {
     let passed = total_checks.saturating_sub(violations.len());
 
     // Build summary
+    let proven = violations.iter().filter(|v| v.evidence.is_proven()).count();
+    let leads = violations.len() - proven;
+
     let summary = AnalysisSummary {
         target: args.path.display().to_string(),
         chain: chain_name.to_string(),
         total_checks,
         violations: violations.len(),
         passed,
+        proven,
+        leads,
         suppressed: 0,
         duration_secs,
         severity_breakdown: SeverityBreakdown {
@@ -558,12 +577,19 @@ fn cmd_check(args: CheckArgs, quiet: bool, verbose: bool) -> Result<()> {
         }
     }
 
-    // Exit non-zero only if a violation meets or exceeds --fail-on (default: low, i.e. any).
+    // Exit non-zero only for results that were actually reproduced, at or
+    // above --fail-on.
+    //
+    // A lead is a pattern match nobody executed; failing a build on one asks
+    // the team to treat a guess as a defect, and the first false positive
+    // teaches them to bypass the gate entirely. Leads are reported and
+    // surfaced in the summary, but only a proven violation blocks. Pass
+    // --fail-on-leads to gate on unproven results too.
     let fail_rank = severity_arg_rank(&args.fail_on);
-    if violations
-        .iter()
-        .any(|v| severity_rank(&v.severity) >= fail_rank)
-    {
+    let blocking = violations.iter().any(|v| {
+        severity_rank(&v.severity) >= fail_rank && (v.evidence.is_proven() || args.fail_on_leads)
+    });
+    if blocking {
         std::process::exit(1);
     }
 
@@ -850,6 +876,7 @@ fn finding_to_violation(finding: &Finding, index: usize, total: usize) -> Violat
             .source_fragment
             .clone()
             .unwrap_or_else(|| finding.snippet.clone()),
+        evidence: finding.evidence,
     }
 }
 
@@ -1979,12 +2006,17 @@ fn cmd_scan(args: ScanArgs, quiet: bool, verbose: bool) -> Result<()> {
     let duration_secs = start_time.elapsed().as_secs_f64();
     let (critical, high, medium, low) = count_violations_by_severity(&violations);
 
+    let proven = violations.iter().filter(|v| v.evidence.is_proven()).count();
+    let leads = violations.len() - proven;
+
     let summary = AnalysisSummary {
         target: args.path.display().to_string(),
         chain: chain_name.to_string(),
         total_checks: violations.len(),
         violations: violations.len(),
         passed: 0,
+        proven,
+        leads,
         suppressed: 0,
         duration_secs,
         severity_breakdown: SeverityBreakdown {
@@ -2057,12 +2089,19 @@ fn cmd_scan(args: ScanArgs, quiet: bool, verbose: bool) -> Result<()> {
         eprintln!("✓ Scan complete");
     }
 
-    // Exit non-zero only if a violation meets or exceeds --fail-on (default: critical).
+    // Exit non-zero only for results that were actually reproduced, at or
+    // above --fail-on.
+    //
+    // A lead is a pattern match nobody executed; failing a build on one asks
+    // the team to treat a guess as a defect, and the first false positive
+    // teaches them to bypass the gate entirely. Leads are reported and
+    // surfaced in the summary, but only a proven violation blocks. Pass
+    // --fail-on-leads to gate on unproven results too.
     let fail_rank = severity_arg_rank(&args.fail_on);
-    if violations
-        .iter()
-        .any(|v| severity_rank(&v.severity) >= fail_rank)
-    {
+    let blocking = violations.iter().any(|v| {
+        severity_rank(&v.severity) >= fail_rank && (v.evidence.is_proven() || args.fail_on_leads)
+    });
+    if blocking {
         std::process::exit(1);
     }
 
@@ -2404,7 +2443,9 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
 
         return match truent_dynamic_evm::fuzz_deployed_contract(rpc_url, address, config.clone()) {
             Ok(Some(violation)) => {
-                println!("\n✗ {address_str}");
+                // Reproduced by execution — the reproduction below is the
+                // proof, so this is a finding rather than a lead.
+                println!("\n✗ [PROVEN] {address_str}");
                 println!("{}", truent_dynamic_core::format_poc(&violation));
                 std::process::exit(1);
             }
@@ -2464,7 +2505,9 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
         match truent_dynamic_evm::fuzz_solidity_source(&source, config.clone()) {
             Ok(Some(violation)) => {
                 found_violation = true;
-                println!("\n✗ {}", file.display());
+                // Reproduced by execution — the call sequence below is the
+                // proof, so this is a finding rather than a lead.
+                println!("\n✗ [PROVEN] {}", file.display());
                 println!("{}", truent_dynamic_core::format_poc(&violation));
             }
             Ok(None) => {

@@ -260,10 +260,29 @@ mod detection {
             .arg("json");
 
         let output = cmd.output().expect("Failed to execute");
+        // Static detectors emit leads, not proven violations, and a lead does
+        // not fail the run — blocking a build on an unexecuted pattern match
+        // is what teaches teams to bypass the gate. The findings are still
+        // reported; `--fail-on-leads` (asserted below) is how you gate on them.
         assert_eq!(
             output.status.code(),
+            Some(0),
+            "unproven leads must not fail the run by default"
+        );
+
+        let mut gated = Command::cargo_bin("truent").expect("binary exists");
+        gated
+            .arg("check")
+            .arg(fixture_path("test_vulnerable_evm.sol"))
+            .arg("--chain")
+            .arg("evm")
+            .arg("--format")
+            .arg("json")
+            .arg("--fail-on-leads");
+        assert_eq!(
+            gated.output().expect("Failed to execute").status.code(),
             Some(1),
-            "A vulnerable EVM contract must fail the scan"
+            "--fail-on-leads must gate on unproven results"
         );
 
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -392,10 +411,13 @@ mod detection {
             violations.iter().all(|v| v["severity"] == "critical"),
             "--severity critical must filter out all non-critical violations"
         );
+        // Severity filtering is unchanged; what changed is that gating now
+        // also requires the result to have been reproduced. These are leads,
+        // so the run passes unless --fail-on-leads is given.
         assert_eq!(
             output.status.code(),
-            Some(1),
-            "--fail-on critical must fail when critical violations are present"
+            Some(0),
+            "critical *leads* are reported but do not fail the run"
         );
     }
 

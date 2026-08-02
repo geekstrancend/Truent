@@ -102,6 +102,54 @@ pub struct Finding {
     /// Additional metadata (chain, detector version, etc).
     /// Can be used by report formatters.
     pub metadata: std::collections::BTreeMap<String, String>,
+
+    /// How strongly this result is supported.
+    ///
+    /// Defaults to [`Evidence::Lead`]: a result is a *lead* until something
+    /// actually executed the code and observed the failure. Static detectors
+    /// therefore never claim proof they do not have.
+    #[serde(default)]
+    pub evidence: Evidence,
+}
+
+/// How strongly a result is supported.
+///
+/// Truent's premise is that a finding is something an engine *made happen*,
+/// not something a pattern suggested. Keeping the two apart is what lets a
+/// reader trust the report: a `Proven` result comes with a reproduction, and a
+/// `Lead` is an honest "worth a look" that has not been demonstrated.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Default)]
+#[serde(rename_all = "lowercase")]
+pub enum Evidence {
+    /// A pattern matched the source. Nothing was executed; the condition may
+    /// be unreachable, intended, or already guarded elsewhere.
+    #[default]
+    Lead,
+
+    /// The engine executed the contract and observed the property fail. Comes
+    /// with the call sequence that reproduces it.
+    Proven,
+}
+
+impl Evidence {
+    /// Short label for reports.
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::Proven => "PROVEN",
+            Self::Lead => "LEAD",
+        }
+    }
+
+    /// Whether this result was demonstrated by execution.
+    pub fn is_proven(&self) -> bool {
+        matches!(self, Self::Proven)
+    }
+}
+
+impl std::fmt::Display for Evidence {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.label())
+    }
 }
 
 impl Finding {
@@ -126,7 +174,24 @@ impl Finding {
             source_fragment: None,
             transaction_hash: None,
             metadata: Default::default(),
+            // A detector must opt in to claiming proof.
+            evidence: Evidence::Lead,
         }
+    }
+
+    /// Mark this result as demonstrated by execution.
+    ///
+    /// Only callers that actually ran the contract and observed the failure
+    /// may use this — the reproduction is what distinguishes a finding from a
+    /// lead.
+    pub fn proven(mut self) -> Self {
+        self.evidence = Evidence::Proven;
+        self
+    }
+
+    /// Whether this result was demonstrated by execution.
+    pub fn is_proven(&self) -> bool {
+        self.evidence.is_proven()
     }
 
     /// Add metadata to this finding.
