@@ -12,6 +12,7 @@
 
 #[cfg(feature = "revm-backend")]
 pub mod backend;
+pub mod dsl_invariant;
 #[cfg(feature = "revm-backend")]
 pub mod reentrancy_inspector;
 pub mod rpc;
@@ -118,6 +119,24 @@ pub fn auto_detect_invariants(
 /// failures.
 #[cfg(feature = "revm-backend")]
 pub fn fuzz_solidity_source(source: &str, config: FuzzConfig) -> anyhow::Result<Option<Violation>> {
+    fuzz_solidity_source_with(source, config, &[])
+}
+
+/// As [`fuzz_solidity_source`], plus user-written DSL properties.
+///
+/// Auto-detection can only recognise shapes it already knows. The properties
+/// that decide whether a specific protocol is correct — is it solvent, can a
+/// provider always exit — are particular to that protocol, so they have to be
+/// stated rather than inferred. Each spec is bound to the contract's getters
+/// before the run; a property that cannot be bound is an error, because
+/// quietly dropping it would report "no violations" for a check that never
+/// ran.
+#[cfg(feature = "revm-backend")]
+pub fn fuzz_solidity_source_with(
+    source: &str,
+    config: FuzzConfig,
+    dsl_specs: &[truent_core::model::Invariant],
+) -> anyhow::Result<Option<Violation>> {
     let solc = truent_utils::SolcManager::new()?;
     let output = solc.get_ast_for_source(source, "fuzz_target.sol")?;
 
@@ -135,10 +154,28 @@ pub fn fuzz_solidity_source(source: &str, config: FuzzConfig) -> anyhow::Result<
         anyhow::bail!("compiled successfully but no callable functions with supported argument types were found");
     }
 
-    let invariants = auto_detect_invariants(&contract.functions, &config.actors);
+    let mut invariants = auto_detect_invariants(&contract.functions, &config.actors);
+
+    // User-stated properties. Bind them all before running so a typo surfaces
+    // immediately rather than as a silently missing check.
+    let mut bind_errors = Vec::new();
+    for spec in dsl_specs {
+        match dsl_invariant::DslInvariant::bind(spec, &contract.functions) {
+            Ok(bound) => invariants.push(Box::new(bound)),
+            Err(e) => bind_errors.push(e.to_string()),
+        }
+    }
+    if !bind_errors.is_empty() {
+        anyhow::bail!(
+            "{} invariant(s) could not be bound to this contract:\n\n{}",
+            bind_errors.len(),
+            bind_errors.join("\n\n")
+        );
+    }
+
     if invariants.is_empty() {
         anyhow::bail!(
-            "no auto-detectable invariant on this ABI (looked for ERC20-shaped totalSupply/balanceOf, or monotonic accumulator getters) — nothing to check"
+            "no auto-detectable invariant on this ABI (looked for ERC20-shaped totalSupply/balanceOf, or monotonic accumulator getters) and no --invariants file supplied — nothing to check"
         );
     }
 

@@ -23,6 +23,7 @@ pub mod u256;
 #[cfg(test)]
 mod testing;
 
+pub use abi_encode::{decode_uint256, encode_call};
 pub use backend::{CallOutcome, EncodedCall, ExecutionBackend, FunctionSpec, ParamKind};
 pub use invariant::{
     AccessControlInvariant, CheckContext, ConservationInvariant, Invariant, MonotonicInvariant,

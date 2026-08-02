@@ -3350,6 +3350,7 @@ dependencies = [
  "serde_json",
  "sha3",
  "truent-core",
+ "truent-dsl-parser",
  "truent-dynamic-core",
  "truent-utils",
  "ureq",

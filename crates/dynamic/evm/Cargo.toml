@@ -26,6 +26,7 @@ revm-backend = ["dep:revm"]
 [dependencies]
 truent-dynamic-core.workspace = true
 truent-core.workspace = true
+truent-dsl-parser.workspace = true
 truent-utils.workspace = true
 anyhow.workspace = true
 serde.workspace = true

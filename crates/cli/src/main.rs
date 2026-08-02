@@ -292,6 +292,17 @@ struct FuzzArgs {
     /// `--dynamic --chain solana`, where `path` is the program's Anchor IDL.
     #[arg(long)]
     plan: Option<PathBuf>,
+
+    /// Truent DSL file (`.invar`) of properties to check after every call.
+    ///
+    /// Auto-detection only recognises shapes it already knows, so the
+    /// properties that decide whether a specific protocol is correct — is it
+    /// solvent, can a provider always exit — have to be stated. Each free
+    /// variable binds to a zero-argument view of the same name on the
+    /// contract; a variable that cannot be bound is an error, never a
+    /// silently skipped check.
+    #[arg(long)]
+    invariants: Option<PathBuf>,
 }
 
 /// Arguments for the `report` subcommand.
@@ -2483,6 +2494,27 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
         return Ok(());
     }
 
+    // Load user-stated properties before doing any work, so a bad file fails
+    // immediately rather than after a long fuzzing run.
+    let dsl_specs: Vec<truent_core::model::Invariant> = match &args.invariants {
+        Some(path) => {
+            let text = std::fs::read_to_string(path)
+                .map_err(|e| anyhow::anyhow!("failed to read {}: {e}", path.display()))?;
+            let specs = parse_invariant_file(&text)
+                .map_err(|e| anyhow::anyhow!("in {}: {e}", path.display()))?;
+            if !quiet {
+                eprintln!(
+                    "▶ Loaded {} propert{} from {}",
+                    specs.len(),
+                    if specs.len() == 1 { "y" } else { "ies" },
+                    path.display()
+                );
+            }
+            specs
+        }
+        None => Vec::new(),
+    };
+
     let mut found_violation = false;
     // A contract the engine could not analyse is not a contract that passed.
     // These used to be printed as "skipped" and then exit 0, so a broken
@@ -2502,7 +2534,7 @@ fn cmd_dynamic_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
             );
         }
 
-        match truent_dynamic_evm::fuzz_solidity_source(&source, config.clone()) {
+        match truent_dynamic_evm::fuzz_solidity_source_with(&source, config.clone(), &dsl_specs) {
             Ok(Some(violation)) => {
                 found_violation = true;
                 // Reproduced by execution — the call sequence below is the
@@ -2723,4 +2755,40 @@ fn cmd_fuzz(args: FuzzArgs, quiet: bool, verbose: bool) -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Parse a `.invar` file into individual invariant specs.
+///
+/// Blocks are split by brace depth rather than by blank lines so a property
+/// may span as many lines as it needs, and `//` comments are stripped.
+fn parse_invariant_file(text: &str) -> anyhow::Result<Vec<truent_core::model::Invariant>> {
+    let mut specs = Vec::new();
+    let mut current = String::new();
+    let mut depth = 0usize;
+
+    for line in text.lines() {
+        let code = line.split("//").next().unwrap_or("");
+        if current.is_empty() && !code.trim_start().starts_with("invariant") {
+            continue;
+        }
+        current.push_str(code);
+        current.push('\n');
+        depth += code.matches('{').count();
+        depth -= code.matches('}').count().min(depth);
+        if depth == 0 && !current.trim().is_empty() {
+            let block = current.trim().to_string();
+            let spec = truent_dsl_parser::parse_invariant(&block)
+                .map_err(|e| anyhow::anyhow!("could not parse:\n{block}\n  {e}"))?;
+            specs.push(spec);
+            current.clear();
+        }
+    }
+
+    if depth != 0 {
+        anyhow::bail!("unbalanced braces — an invariant block is not closed");
+    }
+    if specs.is_empty() {
+        anyhow::bail!("no `invariant NAME {{ ... }}` blocks found");
+    }
+    Ok(specs)
 }
