@@ -66,25 +66,34 @@ jobs:
       - name: Wait for crates.io availability
         run: |
           VERSION="${{ needs.extract-version.outputs.version }}"
-          MAX_RETRIES=30
-          RETRY_DELAY=10
-          
-          echo "Verifying truent-cli v$VERSION on crates.io..."
-          
+          MAX_RETRIES=40
+          RETRY_DELAY=30
+
+          # Queries the registry API for the exact version rather than
+          # `cargo search`. Search is a separate, eventually-consistent index
+          # that can lag publication by well over the old 5-minute budget — it
+          # failed the v0.5.0 release that way, after all 18 crates had in fact
+          # published. The API knows as soon as the upload lands.
+          #
+          # crates.io rejects requests without a User-Agent, so send one.
+          URL="https://crates.io/api/v1/crates/truent-cli/$VERSION"
+
+          echo "Verifying truent-cli v$VERSION on crates.io (up to $((MAX_RETRIES * RETRY_DELAY / 60)) min)..."
+
           for i in $(seq 1 $MAX_RETRIES); do
-            echo "Attempt $i/$MAX_RETRIES..."
-            
-            if cargo search truent-cli --limit 1 | grep -q "truent-cli = \"$VERSION\""; then
+            CODE=$(curl -s -o /tmp/crates_check.json -w '%{http_code}' \
+              -A "truent-release-pipeline (https://github.com/geekstrancend/Truent)" \
+              --max-time 30 "$URL" || echo 000)
+
+            if [ "$CODE" = "200" ]; then
               echo "✓ truent-cli v$VERSION found on crates.io"
               exit 0
             fi
-            
-            if [ $i -lt $MAX_RETRIES ]; then
-              echo "  Not yet available, waiting ${RETRY_DELAY}s..."
-              sleep $RETRY_DELAY
-            fi
+
+            echo "Attempt $i/$MAX_RETRIES — HTTP $CODE, waiting ${RETRY_DELAY}s..."
+            [ $i -lt $MAX_RETRIES ] && sleep $RETRY_DELAY
           done
-          
+
           echo "::error::truent-cli v$VERSION never appeared on crates.io after ${MAX_RETRIES} attempts."
           echo "The npm wrapper resolves the published crate, so publishing it now would ship"
           echo "a package pointing at a version that does not exist. Failing instead."
