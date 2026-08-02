@@ -50,14 +50,41 @@ lazy_static! {
 pub fn detect_missing_health_check(source: &str, file_path: &str) -> Vec<Finding> {
     let mut findings = Vec::new();
 
-    // Pattern 1: Identify if this is a lending-like contract or has state modifications we care about
-    let is_lending = source.to_lowercase().contains("collateral")
-        || source.to_lowercase().contains("health")
-        || source.to_lowercase().contains("borrow")
-        || source.to_lowercase().contains("lend")
-        || source.to_lowercase().contains("liquidat");
+    // Pattern 1: Is this actually a lending market?
+    //
+    // The gate used to be `contains("collateral") || contains("health") || ...`,
+    // any single keyword. "collateral" alone is not lending — a prediction
+    // market, an escrow, or an options vault all hold collateral without ever
+    // lending against it, and every public function in those contracts was
+    // flagged CRITICAL for missing a health check it has no reason to have.
+    //
+    // A post-state health check only means something where value can be
+    // *borrowed* against deposited value, so require evidence of a debt
+    // position, plus a second corroborating signal.
+    let lower = source.to_lowercase();
+    let has_debt_concept = [
+        "borrow",
+        "debt",
+        "liquidat",
+        "healthfactor",
+        "health_factor",
+    ]
+    .iter()
+    .any(|k| lower.contains(k));
+    let corroborating = [
+        "collateral",
+        "ltv",
+        "loan",
+        "interest",
+        "utilization",
+        "solvency",
+        "undercollateral",
+    ]
+    .iter()
+    .filter(|k| lower.contains(*k))
+    .count();
 
-    if !is_lending {
+    if !has_debt_concept || corroborating == 0 {
         return findings;
     }
 
@@ -330,6 +357,59 @@ mod tests {
         assert!(
             findings.is_empty(),
             "Should detect implicit isHealthy check"
+        );
+    }
+}
+
+#[cfg(test)]
+mod trust_regression_tests {
+    use super::*;
+
+    /// Holding collateral is not lending. A prediction market, escrow or
+    /// options vault all use the word without ever lending against it — and
+    /// every public function in them was flagged CRITICAL for missing a health
+    /// check that does not apply.
+    #[test]
+    fn collateral_alone_is_not_a_lending_market() {
+        let src = r#"
+            contract PredictionMarket {
+                uint256 public collateral;
+                function buy(uint256 amt) external {
+                    collateral += amt;
+                    _mintShares(msg.sender, amt);
+                }
+                function redeem(uint256 amt) external {
+                    collateral -= amt;
+                    _credit(msg.sender, amt);
+                }
+            }
+        "#;
+        assert!(
+            detect_missing_health_check(src, "m.sol").is_empty(),
+            "no borrowing, no debt, no liquidation — not a lending market"
+        );
+    }
+
+    /// A real lending market must still be checked.
+    #[test]
+    fn actual_lending_market_is_still_checked() {
+        let src = r#"
+            contract Lending {
+                mapping(address => uint256) public collateral;
+                mapping(address => uint256) public debt;
+                function borrow(uint256 amt) external {
+                    debt[msg.sender] += amt;
+                    token.transfer(msg.sender, amt);
+                }
+                function liquidate(address user) external {
+                    debt[user] = 0;
+                    collateral[user] = 0;
+                }
+            }
+        "#;
+        assert!(
+            !detect_missing_health_check(src, "l.sol").is_empty(),
+            "borrow + debt + liquidate + collateral is unambiguously lending"
         );
     }
 }
