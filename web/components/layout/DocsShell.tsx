@@ -99,7 +99,7 @@ export function DocsShell({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search docs…"
-              className="w-full bg-panel border border-hair rounded-md px-3 pl-8 py-1.5 text-xs text-text placeholder-outline-variant focus:outline-none focus:border-indigo transition-colors"
+              className="w-full bg-panel border border-hair rounded-md px-3 pl-8 py-1.5 text-xs text-text placeholder-outline-variant focus:outline-none focus:border-brand transition-colors"
             />
             {searchQuery && (
               <button
@@ -127,13 +127,13 @@ export function DocsShell({
                       className={clsx(
                         'flex items-center justify-between px-3 py-2 rounded-lg text-body-md transition-colors',
                         isActive(item.href)
-                          ? 'bg-indigo/10 text-text font-[500] border-l-2 border-indigo pl-[10px]'
+                          ? 'bg-brand/10 text-text font-[500] border-l-2 border-brand pl-[10px]'
                           : 'text-sec hover:bg-panel hover:text-text',
                       )}
                     >
                       <span>{item.label}</span>
                       {item.badge && (
-                        <span className="text-xs text-acc-text bg-indigo/15 border border-indigo/20 px-1.5 py-0.5 rounded font-[600]">
+                        <span className="text-xs text-acc-text bg-brand/15 border border-brand/20 px-1.5 py-0.5 rounded font-[600]">
                           {item.badge}
                         </span>
                       )}
@@ -191,7 +191,7 @@ export function DocsShell({
                 </Link>
               )}
               <Link href="/dashboard"
-                className="text-xs font-[600] bg-acc/15 border border-indigo text-acc-text px-3 py-1.5 rounded-lg hover:bg-indigo/90 transition-colors">
+                className="text-xs font-[600] bg-acc/15 border border-brand text-acc-text px-3 py-1.5 rounded-lg hover:bg-brand/90 transition-colors">
                 Dashboard →
               </Link>
             </div>

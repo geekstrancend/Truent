@@ -37,3 +37,6 @@ next-env.d.ts
 # local sqlite database (dev only - never commit real or seeded data)
 prisma/*.db
 prisma/*.db-journal
+
+# Dev-server logs: machine-specific paths, never useful in the repo.
+*.log

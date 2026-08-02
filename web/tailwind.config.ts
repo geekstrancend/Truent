@@ -64,8 +64,8 @@ const config: Config = {
         low: 'var(--low)',
         'low-bg': 'var(--low-bg)',
         'low-border': 'var(--low-border)',
-        indigo: 'var(--indigo)',
-        'indigo-container': 'var(--indigo-container)',
+        brand: 'var(--brand)',
+        'brand-container': 'var(--brand-container)',
       },
       spacing: {
         xs: '4px',
@@ -93,7 +93,7 @@ const config: Config = {
           css: {
             color: 'var(--on-surface)',
             a: {
-              color: 'var(--indigo)',
+              color: 'var(--brand)',
             },
             code: {
               color: 'var(--secondary)',

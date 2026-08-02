@@ -13,9 +13,9 @@ interface CalloutProps {
 const calloutConfig: Record<CalloutType, { icon: React.ReactNode; borderColor: string; bgColor: string; titleColor: string }> = {
   info: {
     icon: <Info size={18} />,
-    borderColor: 'border-indigo',
-    bgColor: 'bg-indigo/5',
-    titleColor: 'text-indigo',
+    borderColor: 'border-brand',
+    bgColor: 'bg-brand/5',
+    titleColor: 'text-brand',
   },
   success: {
     icon: <CheckCircle size={18} />,

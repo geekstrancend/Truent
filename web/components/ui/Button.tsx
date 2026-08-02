@@ -14,9 +14,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-acc/15 border border-indigo text-text hover:bg-indigo/90 active:bg-indigo',
+    'bg-acc/15 border border-brand text-text hover:bg-brand/90 active:bg-brand',
   secondary:
-    'bg-transparent border border-hair text-sec hover:border-indigo hover:text-text',
+    'bg-transparent border border-hair text-sec hover:border-brand hover:text-text',
   ghost: 'bg-transparent border-0 text-sec hover:text-text',
 }
 
@@ -40,7 +40,7 @@ export function Button({
     <button
       className={clsx(
         'font-[600] rounded transition-colors duration-150 cursor-pointer',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
         variantStyles[variant],
         sizeStyles[size],

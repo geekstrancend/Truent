@@ -29,31 +29,40 @@ use truent_dynamic_core::{
 
 const ZERO_ADDR: [u8; 20] = [0u8; 20];
 
-/// A DSL property bound to the getters that supply its variables.
+/// One chain read backing a variable or a call in the expression.
+#[derive(Debug, Clone)]
+struct Read {
+    /// How the read is written in the DSL, used to substitute the result back.
+    key: String,
+    getter: FunctionSpec,
+    /// ABI words for the getter's arguments, from literals in the DSL.
+    args: Vec<[u8; 32]>,
+}
+
+/// A DSL property bound to the getters that supply its values.
 #[derive(Debug)]
 pub struct DslInvariant {
     label: String,
     expression: Expression,
-    /// Variable name as written in the DSL -> the getter that reads it.
-    bindings: Vec<(String, FunctionSpec)>,
+    reads: Vec<Read>,
 }
 
 impl DslInvariant {
     /// Bind `spec` against `functions`, or report every variable that has no
     /// matching zero-argument view.
     pub fn bind(spec: &DslSpec, functions: &[FunctionSpec]) -> Result<Self, BindError> {
-        let mut vars = Vec::new();
-        collect_vars(&spec.expression, &mut vars);
-        vars.sort();
-        vars.dedup();
+        let mut sites = Vec::new();
+        collect_sites(&spec.expression, &mut sites);
+        sites.sort_by_key(|s| s.key());
+        sites.dedup_by(|a, b| a.key() == b.key());
 
-        let mut bindings = Vec::new();
+        let mut reads = Vec::new();
         let mut unbound = Vec::new();
 
-        for var in vars {
-            match find_getter(&var, functions) {
-                Some(f) => bindings.push((var, f.clone())),
-                None => unbound.push(var),
+        for site in sites {
+            match site.resolve(functions) {
+                Ok(read) => reads.push(read),
+                Err(why) => unbound.push(why),
             }
         }
 
@@ -72,7 +81,7 @@ impl DslInvariant {
         Ok(Self {
             label: spec.name.clone(),
             expression: spec.expression.clone(),
-            bindings,
+            reads,
         })
     }
 
@@ -81,9 +90,9 @@ impl DslInvariant {
         let mut ctx = ExecutionContext::new();
         let mut observed: BTreeMap<String, u128> = BTreeMap::new();
 
-        for (var, getter) in &self.bindings {
+        for Read { key, getter, args } in &self.reads {
             let call = EncodedCall {
-                calldata: encode_call(getter, &[]),
+                calldata: encode_call(getter, args),
                 function: getter.clone(),
                 caller: ZERO_ADDR,
                 value: 0,
@@ -102,12 +111,16 @@ impl DslInvariant {
                     getter.name
                 ));
             };
-            observed.insert(var.clone(), value);
-            ctx.set_state(var.clone(), value_of(value));
+            observed.insert(key.clone(), value);
+            ctx.set_state(key.clone(), value_of(value));
         }
 
+        // Calls are replaced by the value just read, so the evaluator only ever
+        // sees plain variables — it has no way to reach the chain itself.
+        let expression = substitute_calls(&self.expression, &observed);
+
         let evaluator = Evaluator::new(ctx);
-        match evaluator.evaluate(&self.expression) {
+        match evaluator.evaluate(&expression) {
             Ok(Value::Bool(true)) => Outcome::Holds,
             Ok(Value::Bool(false)) => Outcome::Violated(render_state(&observed)),
             Ok(other) => {
@@ -182,49 +195,198 @@ impl std::fmt::Display for BindError {
 
 impl std::error::Error for BindError {}
 
-/// Collect every free variable in an expression.
-fn collect_vars(expr: &Expression, out: &mut Vec<String>) {
+/// A place in the expression that needs a value from the chain: a bare
+/// variable, or a call with literal arguments.
+#[derive(Debug, Clone)]
+enum Site {
+    /// `collateral` — a zero-argument getter.
+    Var(String),
+    /// `shareOf(1, 2)` — a getter with constant arguments, which is how a
+    /// property reaches into a mapping. Without this, anything keyed by id or
+    /// address is unreachable and only whole-contract totals can be stated.
+    Call { name: String, args: Vec<i128> },
+}
+
+impl Site {
+    /// Canonical text, used both to deduplicate and as the variable name the
+    /// evaluator sees after substitution.
+    fn key(&self) -> String {
+        match self {
+            Self::Var(n) => n.clone(),
+            Self::Call { name, args } => format!(
+                "{}({})",
+                name,
+                args.iter()
+                    .map(|a| a.to_string())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+        }
+    }
+
+    fn resolve(&self, functions: &[FunctionSpec]) -> Result<Read, String> {
+        match self {
+            Self::Var(name) => match find_getter(name, functions, 0) {
+                Some(f) => Ok(Read {
+                    key: self.key(),
+                    getter: f.clone(),
+                    args: Vec::new(),
+                }),
+                None => Err(name.clone()),
+            },
+            Self::Call { name, args } => {
+                let Some(f) = find_getter(name, functions, args.len()) else {
+                    return Err(format!("{}/{}", name, args.len()));
+                };
+                let mut words = Vec::with_capacity(args.len());
+                for (arg, kind) in args.iter().zip(f.inputs.iter()) {
+                    words.push(encode_literal(*arg, kind)?);
+                }
+                Ok(Read {
+                    key: self.key(),
+                    getter: f.clone(),
+                    args: words,
+                })
+            }
+        }
+    }
+}
+
+/// Encode a DSL integer literal as one ABI word for `kind`.
+fn encode_literal(value: i128, kind: &truent_dynamic_core::ParamKind) -> Result<[u8; 32], String> {
+    use truent_dynamic_core::ParamKind;
+    if value < 0 {
+        return Err(format!("negative argument {value} is not encodable"));
+    }
+    let mut word = [0u8; 32];
+    match kind {
+        ParamKind::Uint256 | ParamKind::Bytes32 | ParamKind::Address | ParamKind::Bool => {
+            word[16..].copy_from_slice(&(value as u128).to_be_bytes());
+        }
+    }
+    Ok(word)
+}
+
+/// Collect every site in an expression that needs a chain read.
+fn collect_sites(expr: &Expression, out: &mut Vec<Site>) {
     match expr {
-        Expression::Var(name) => out.push(name.clone()),
+        Expression::Var(name) => out.push(Site::Var(name.clone())),
         Expression::LayerVar { var, .. } | Expression::PhaseQualifiedVar { var, .. } => {
-            out.push(var.clone())
+            out.push(Site::Var(var.clone()))
+        }
+        Expression::FunctionCall { name, args } => {
+            // Only calls whose arguments are all literals can be resolved to a
+            // fixed selector+calldata ahead of the run.
+            let literals: Option<Vec<i128>> = args
+                .iter()
+                .map(|a| match a {
+                    Expression::Int(v) => Some(*v),
+                    Expression::Boolean(b) => Some(i128::from(*b)),
+                    _ => None,
+                })
+                .collect();
+            match literals {
+                Some(args) => out.push(Site::Call {
+                    name: name.clone(),
+                    args,
+                }),
+                // A call with a computed argument still needs whatever that
+                // argument reads.
+                None => {
+                    for a in args {
+                        collect_sites(a, out);
+                    }
+                }
+            }
         }
         Expression::BinaryOp { left, right, .. }
         | Expression::Arithmetic { left, right, .. }
         | Expression::Logical { left, right, .. } => {
-            collect_vars(left, out);
-            collect_vars(right, out);
+            collect_sites(left, out);
+            collect_sites(right, out);
         }
         Expression::Not(inner)
         | Expression::PhaseConstraint {
             constraint: inner, ..
-        } => collect_vars(inner, out),
+        } => collect_sites(inner, out),
         Expression::CrossPhaseRelation { expr1, expr2, .. } => {
-            collect_vars(expr1, out);
-            collect_vars(expr2, out);
+            collect_sites(expr1, out);
+            collect_sites(expr2, out);
         }
-        Expression::FunctionCall { args, .. } | Expression::Tuple(args) => {
+        Expression::Tuple(args) => {
             for a in args {
-                collect_vars(a, out);
+                collect_sites(a, out);
             }
         }
         Expression::Boolean(_) | Expression::Int(_) => {}
     }
 }
 
+/// Replace each resolved call with the value read for it, so the evaluator
+/// only sees variables and literals.
+fn substitute_calls(expr: &Expression, observed: &BTreeMap<String, u128>) -> Expression {
+    let rebuild = |e: &Expression| Box::new(substitute_calls(e, observed));
+    match expr {
+        Expression::FunctionCall { name, args } => {
+            let literals: Option<Vec<i128>> = args
+                .iter()
+                .map(|a| match a {
+                    Expression::Int(v) => Some(*v),
+                    Expression::Boolean(b) => Some(i128::from(*b)),
+                    _ => None,
+                })
+                .collect();
+            if let Some(args) = literals {
+                let key = Site::Call {
+                    name: name.clone(),
+                    args,
+                }
+                .key();
+                if let Some(v) = observed.get(&key) {
+                    // Values above i128::MAX are rejected earlier as
+                    // unrepresentable, so this conversion cannot silently wrap.
+                    return Expression::Int(*v as i128);
+                }
+            }
+            expr.clone()
+        }
+        Expression::BinaryOp { left, op, right } => Expression::BinaryOp {
+            left: rebuild(left),
+            op: *op,
+            right: rebuild(right),
+        },
+        Expression::Arithmetic { left, op, right } => Expression::Arithmetic {
+            left: rebuild(left),
+            op: *op,
+            right: rebuild(right),
+        },
+        Expression::Logical { left, op, right } => Expression::Logical {
+            left: rebuild(left),
+            op: *op,
+            right: rebuild(right),
+        },
+        Expression::Not(inner) => Expression::Not(rebuild(inner)),
+        other => other.clone(),
+    }
+}
+
 /// Find a zero-argument view whose name matches `var`, ignoring case and the
 /// snake_case/camelCase difference between the DSL and Solidity.
-fn find_getter<'a>(var: &str, functions: &'a [FunctionSpec]) -> Option<&'a FunctionSpec> {
+fn find_getter<'a>(
+    var: &str,
+    functions: &'a [FunctionSpec],
+    arity: usize,
+) -> Option<&'a FunctionSpec> {
     let target = normalise(var);
     functions
         .iter()
-        .find(|f| f.inputs.is_empty() && !f.mutates_state && normalise(&f.name) == target)
+        .find(|f| f.inputs.len() == arity && !f.mutates_state && normalise(&f.name) == target)
         // A view wrongly marked as mutating should still be readable rather
         // than blocking the property.
         .or_else(|| {
             functions
                 .iter()
-                .find(|f| f.inputs.is_empty() && normalise(&f.name) == target)
+                .find(|f| f.inputs.len() == arity && normalise(&f.name) == target)
         })
 }
 
@@ -279,7 +441,7 @@ mod tests {
         let fns = vec![view("collateral"), view("totalSupply")];
         let inv = DslInvariant::bind(&spec("invariant S { collateral >= totalSupply }"), &fns)
             .expect("should bind");
-        assert_eq!(inv.bindings.len(), 2);
+        assert_eq!(inv.reads.len(), 2);
     }
 
     /// snake_case in the DSL against camelCase in Solidity is a naming
@@ -289,7 +451,7 @@ mod tests {
         let fns = vec![view("totalSupply")];
         let inv = DslInvariant::bind(&spec("invariant S { total_supply >= 0 }"), &fns)
             .expect("should bind across conventions");
-        assert_eq!(inv.bindings[0].1.name, "totalSupply");
+        assert_eq!(inv.reads[0].getter.name, "totalSupply");
     }
 
     /// An unbindable property must be an error. Skipping it would report "no
@@ -310,8 +472,10 @@ mod tests {
     }
 
     /// Getters taking arguments cannot supply a scalar for a free variable.
+    /// A bare variable must not bind to a getter that needs arguments — the
+    /// engine would have no value to pass.
     #[test]
-    fn getters_with_arguments_do_not_bind() {
+    fn bare_variable_does_not_bind_to_a_getter_with_arguments() {
         let fns = vec![FunctionSpec::new(
             "markets",
             [0, 0, 0, 0],
@@ -319,5 +483,35 @@ mod tests {
             false,
         )];
         assert!(DslInvariant::bind(&spec("invariant S { markets >= 0 }"), &fns).is_err());
+    }
+
+    /// Mapping-keyed state is reachable by calling the getter with literal
+    /// arguments. Without this, only whole-contract totals can be stated and
+    /// anything per-account or per-market is out of reach.
+    #[test]
+    fn getters_bind_when_called_with_literal_arguments() {
+        let fns = vec![FunctionSpec::new(
+            "lpOf",
+            [1, 2, 3, 4],
+            vec![ParamKind::Uint256, ParamKind::Address],
+            false,
+        )];
+        let inv = DslInvariant::bind(&spec("invariant S { lpOf(1, 2) >= 0 }"), &fns)
+            .expect("should bind with literal args");
+        assert_eq!(inv.reads.len(), 1);
+        assert_eq!(inv.reads[0].args.len(), 2);
+    }
+
+    /// Arity is part of the match: the same name with the wrong number of
+    /// arguments is not the same getter.
+    #[test]
+    fn arity_must_match() {
+        let fns = vec![FunctionSpec::new(
+            "lpOf",
+            [1, 2, 3, 4],
+            vec![ParamKind::Uint256, ParamKind::Address],
+            false,
+        )];
+        assert!(DslInvariant::bind(&spec("invariant S { lpOf(1) >= 0 }"), &fns).is_err());
     }
 }

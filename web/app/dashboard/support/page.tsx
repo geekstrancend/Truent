@@ -29,8 +29,8 @@ export default function SupportPage() {
             <Link key={i} href={card.href}
               target={card.href.startsWith('http') ? '_blank' : undefined}
               rel={card.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="bg-panel border border-hair rounded-card p-6 hover:border-indigo transition-colors group">
-              <div className="w-10 h-10 rounded-lg bg-indigo/10 border border-indigo/20 flex items-center justify-center mb-4">{card.icon}</div>
+              className="bg-panel border border-hair rounded-card p-6 hover:border-brand transition-colors group">
+              <div className="w-10 h-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center mb-4">{card.icon}</div>
               <h3 className="font-display text-base font-[600] text-text mb-1 group-hover:text-acc-text transition-colors">{card.title}</h3>
               <p className="text-body-md text-sec">{card.desc}</p>
             </Link>
@@ -48,7 +48,7 @@ export default function SupportPage() {
           ))}
         </div>
 
-        <div className="bg-indigo/5 border border-indigo/20 rounded-card p-6 flex items-center justify-between">
+        <div className="bg-brand/5 border border-brand/20 rounded-card p-6 flex items-center justify-between">
           <div>
             <p className="font-display text-base font-[600] text-text mb-1">Still need help?</p>
             <p className="text-body-md text-sec">Our team is available Mon–Fri, 9am–6pm UTC.</p>

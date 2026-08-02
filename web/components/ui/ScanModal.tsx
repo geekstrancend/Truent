@@ -200,8 +200,8 @@ export function ScanModal({ isOpen, onClose }: ScanModalProps) {
                   onClick={() => setScanMode('github')}
                   className={`flex-1 p-4 rounded-lg border-2 transition ${
                     scanMode === 'github'
-                      ? 'bg-indigo-container border-indigo'
-                      : 'bg-panel border-hair hover:border-indigo'
+                      ? 'bg-brand-container border-brand'
+                      : 'bg-panel border-hair hover:border-brand'
                   }`}
                 >
                   <Github className="w-5 h-5 mx-auto mb-2 text-text" />
@@ -211,8 +211,8 @@ export function ScanModal({ isOpen, onClose }: ScanModalProps) {
                   onClick={() => setScanMode('upload')}
                   className={`flex-1 p-4 rounded-lg border-2 transition ${
                     scanMode === 'upload'
-                      ? 'bg-indigo-container border-indigo'
-                      : 'bg-panel border-hair hover:border-indigo'
+                      ? 'bg-brand-container border-brand'
+                      : 'bg-panel border-hair hover:border-brand'
                   }`}
                 >
                   <FolderOpen className="w-5 h-5 mx-auto mb-2 text-text" />
@@ -238,7 +238,7 @@ export function ScanModal({ isOpen, onClose }: ScanModalProps) {
                       value={githubUrl}
                       onChange={(e) => setGithubUrl(e.target.value)}
                       placeholder="https://github.com/user/repo"
-                      className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-indigo transition"
+                      className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-brand transition"
                     />
                     <p className="text-xs text-sec mt-2">
                       Enter the GitHub repository URL to scan. We&apos;ll clone the repository and analyze all smart contracts.
@@ -272,7 +272,7 @@ export function ScanModal({ isOpen, onClose }: ScanModalProps) {
                         className="absolute inset-0 opacity-0 cursor-pointer"
                         {...({ webkitdirectory: '', directory: '' } as any)}
                       />
-                      <div className="px-4 py-6 bg-surface-2 border-2 border-dashed border-hair rounded-lg text-center hover:border-indigo transition">
+                      <div className="px-4 py-6 bg-surface-2 border-2 border-dashed border-hair rounded-lg text-center hover:border-brand transition">
                         <Upload className="w-8 h-8 mx-auto mb-2 text-sec" />
                         <p className="text-sm text-text font-[600] mb-1">
                           Click to upload or drag and drop
@@ -311,7 +311,7 @@ export function ScanModal({ isOpen, onClose }: ScanModalProps) {
                 </div>
                 <div className="w-full h-2 bg-panel rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-indigo to-secondary transition-all"
+                    className="h-full bg-gradient-to-r from-brand to-secondary transition-all"
                     style={{ width: `${progress}%` }}
                   />
                 </div>

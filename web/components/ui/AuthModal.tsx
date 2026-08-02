@@ -171,7 +171,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
             onClick={() => setTab('signin')}
             className={`flex-1 py-4 text-sm font-medium transition ${
               tab === 'signin'
-                ? 'text-acc-text border-b-2 border-indigo'
+                ? 'text-acc-text border-b-2 border-brand'
                 : 'text-sec hover:text-text'
             }`}
           >
@@ -181,7 +181,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
             onClick={() => setTab('signup')}
             className={`flex-1 py-4 text-sm font-medium transition ${
               tab === 'signup'
-                ? 'text-acc-text border-b-2 border-indigo'
+                ? 'text-acc-text border-b-2 border-brand'
                 : 'text-sec hover:text-text'
             }`}
           >
@@ -256,7 +256,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full pl-10 pr-4 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo transition"
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand transition"
                   />
                 </div>
               </div>
@@ -274,7 +274,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand transition"
                 />
               </div>
             </div>
@@ -291,7 +291,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo transition"
+                  className="w-full pl-10 pr-10 py-2.5 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand transition"
                 />
                 <button
                   type="button"

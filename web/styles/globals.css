@@ -69,11 +69,11 @@
     --low: #4ADE80;
     --low-bg: rgba(74, 222, 128, 0.12);
     --low-border: rgba(74, 222, 128, 0.4);
-    /* Brand accent. The token name is historical — it predates the move from
-       indigo to green and is still referenced as `bg-indigo` / `border-indigo`
-       in ~120 places, so the value is retuned here rather than renamed. */
-    --indigo: #10B981;
-    --indigo-container: #065f46;
+    /* Brand accent, used for borders, fills and the focus ring. Was named
+       `--indigo` after the pre-green palette; renamed so the token says what
+       it is rather than what it used to be. */
+    --brand: #10B981;
+    --brand-container: #065f46;
   }
 
   body {
@@ -94,7 +94,7 @@
 
   /* Focus ring for accessibility */
   :focus-visible {
-    @apply outline-2 outline-indigo outline-offset-2;
+    @apply outline-2 outline-brand outline-offset-2;
   }
 
   /* Remove default button styles */
@@ -220,11 +220,11 @@
   }
 
   .button-primary {
-    @apply button-base bg-acc/15 border border-indigo text-text hover:bg-indigo/90;
+    @apply button-base bg-acc/15 border border-brand text-text hover:bg-brand/90;
   }
 
   .button-secondary {
-    @apply button-base bg-transparent border border-hair text-sec hover:border-indigo hover:text-text;
+    @apply button-base bg-transparent border border-hair text-sec hover:border-brand hover:text-text;
   }
 
   .button-ghost {
@@ -293,7 +293,7 @@
     text-shadow: 0 0 0px transparent;
   }
   50% {
-    text-shadow: 0 0 16px var(--indigo);
+    text-shadow: 0 0 16px var(--brand);
   }
 }
 
@@ -321,7 +321,7 @@
 
 .lift-on-hover:hover {
   transform: translateY(-4px);
-  border-color: var(--indigo);
+  border-color: var(--brand);
   box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
 }
 
@@ -476,7 +476,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+  background: linear-gradient(90deg, transparent, var(--brand), transparent);
 }
 
 /* ─── Enhanced reveal: add delay variants ─── */

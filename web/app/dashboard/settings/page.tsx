@@ -56,7 +56,7 @@ export default function SettingsPage() {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-indigo transition"
+                className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-brand transition"
               />
             </div>
 
@@ -70,7 +70,7 @@ export default function SettingsPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-indigo transition"
+                className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text placeholder-on-surface-variant focus:outline-none focus:border-brand transition"
               />
               <p className="text-xs text-sec mt-2">
                 Your email is used for account recovery and important notifications.
@@ -108,7 +108,7 @@ export default function SettingsPage() {
                     type={showApiKey ? 'text' : 'password'}
                     value={apiKey}
                     readOnly
-                    className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text font-mono text-sm focus:outline-none focus:border-indigo transition"
+                    className="w-full px-4 py-2.5 bg-surface-2 border border-hair rounded-lg text-text font-mono text-sm focus:outline-none focus:border-brand transition"
                   />
                   <button
                     onClick={() => setShowApiKey(!showApiKey)}
@@ -160,7 +160,7 @@ export default function SettingsPage() {
 
           <div className="space-y-6">
             {/* Current Plan */}
-            <div className="bg-indigo-container border border-indigo rounded-lg p-4">
+            <div className="bg-brand-container border border-brand rounded-lg p-4">
               <p className="text-sm text-sec mb-1">Current Plan</p>
               <h3 className="font-display text-2xl font-[700] text-text mb-2">
                 Professional

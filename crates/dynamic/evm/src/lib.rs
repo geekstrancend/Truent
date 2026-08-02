@@ -28,9 +28,11 @@ use truent_dynamic_core::{FunctionSpec, Invariant};
 
 /// Auto-detects standard invariants from a contract's function surface:
 /// currently, ERC20-shaped conservation (`totalSupply()` + `balanceOf(address)`
-/// both present) and monotonicity for any no-argument view function whose
-/// name suggests an accumulator (`totalSupply`, `totalAssets`,
-/// `exchangeRate`, `sharePrice`, cumulative/checkpoint-style getters).
+/// both present) and monotonicity for no-argument view functions that are
+/// genuinely one-way (cumulative totals, checkpoints, nonces, counters).
+/// Deliberately excludes `totalSupply`/`totalAssets`/`sharePrice`, which
+/// decrease in normal operation whenever anyone burns, withdraws or the pool
+/// takes a loss.
 /// Returns an empty list if nothing recognizable is present — dynamic
 /// fuzzing without an oracle can't find anything, so callers should treat
 /// an empty result as "nothing to check yet", not "contract is safe".
@@ -84,28 +86,50 @@ pub fn auto_detect_invariants(
         )));
     }
 
+    // Accumulators that only ever go up.
+    //
+    // `totalSupply`, `totalAssets`, `exchangeRate`, `sharePrice` and
+    // `totalDeposits` used to be on this list, and none of them are monotonic:
+    // burning reduces supply, withdrawing reduces assets, and a share price
+    // falls whenever the pool takes a loss. Asserting monotonicity there
+    // reports the contract working correctly as a violation — observed on an
+    // ordinary vault, where a plain `withdraw` "failed" the check.
+    //
+    // What is left is genuinely one-way: counters, nonces and cumulative
+    // totals that record history rather than current holdings.
     const MONOTONIC_NAME_HINTS: &[&str] = &[
-        "totalSupply",
-        "totalAssets",
-        "exchangeRate",
-        "sharePrice",
-        "totalDeposits",
-        "checkpoint",
         "cumulative",
+        "checkpoint",
+        "nonce",
+        "counter",
+        "totalminted",
+        "totalclaimed",
+        "totaldistributed",
+        "lastupdated",
     ];
-    for f in functions {
-        if f.mutates_state || !f.inputs.is_empty() {
-            continue;
-        }
+
+    // Even a well-named accumulator is not monotonic if the contract exposes a
+    // way to wind it back. A `reset`, `slash` or `sweep` makes the assumption
+    // unsafe, so the property is not asserted at all rather than asserted
+    // wrongly.
+    const DECREASING_PATHS: &[&str] = &["reset", "slash", "sweep", "clear", "rollback", "decrease"];
+    let has_decreasing_path = functions.iter().any(|f| {
         let lower = f.name.to_lowercase();
-        if MONOTONIC_NAME_HINTS
-            .iter()
-            .any(|hint| lower.contains(hint.to_lowercase().as_str()))
-        {
-            invariants.push(Box::new(MonotonicInvariant::new(
-                format!("{} monotonicity", f.name),
-                f.clone(),
-            )));
+        f.mutates_state && DECREASING_PATHS.iter().any(|p| lower.contains(p))
+    });
+
+    if !has_decreasing_path {
+        for f in functions {
+            if f.mutates_state || !f.inputs.is_empty() {
+                continue;
+            }
+            let lower = f.name.to_lowercase();
+            if MONOTONIC_NAME_HINTS.iter().any(|hint| lower.contains(hint)) {
+                invariants.push(Box::new(MonotonicInvariant::new(
+                    format!("{} monotonicity", f.name),
+                    f.clone(),
+                )));
+            }
         }
     }
 
@@ -321,15 +345,51 @@ mod tests {
 
     #[test]
     fn detects_monotonic_hints_case_insensitively() {
-        let functions = vec![view_fn("TotalAssets", vec![])];
+        let functions = vec![view_fn("CumulativeRewards", vec![])];
         let invariants = auto_detect_invariants(&functions, &[]);
         assert!(invariants.iter().any(|i| i.name().contains("monotonicity")));
+    }
+
+    /// A balance-like total is not monotonic: burning, withdrawing or a loss
+    /// all reduce it in correct operation. Asserting otherwise reported an
+    /// ordinary vault `withdraw` as a violation.
+    #[test]
+    fn balance_like_totals_are_not_treated_as_monotonic() {
+        for name in [
+            "totalSupply",
+            "totalAssets",
+            "sharePrice",
+            "exchangeRate",
+            "totalDeposits",
+        ] {
+            let functions = vec![view_fn(name, vec![])];
+            let invariants = auto_detect_invariants(&functions, &[]);
+            assert!(
+                !invariants.iter().any(|i| i.name().contains("monotonicity")),
+                "{name} decreases in normal operation and must not be asserted monotonic"
+            );
+        }
+    }
+
+    /// Even a real accumulator is not monotonic if the contract can wind it
+    /// back.
+    #[test]
+    fn an_accumulator_with_a_reset_path_is_not_asserted_monotonic() {
+        let functions = vec![
+            view_fn("cumulativeFees", vec![]),
+            FunctionSpec::new("resetFees", [0u8; 4], vec![], true),
+        ];
+        let invariants = auto_detect_invariants(&functions, &[]);
+        assert!(
+            !invariants.iter().any(|i| i.name().contains("monotonicity")),
+            "a reset path makes monotonicity unsafe to assume"
+        );
     }
 
     #[test]
     fn ignores_mutating_functions_and_functions_with_arguments_for_monotonic_hints() {
         let functions = vec![
-            FunctionSpec::new("totalAssets", [0u8; 4], vec![], true), // mutates -> not a getter
+            FunctionSpec::new("cumulativeFees", [0u8; 4], vec![], true), // mutates -> not a getter
             view_fn("checkpointFor", vec![ParamKind::Address]), // takes args -> not a plain accumulator getter
         ];
         let invariants = auto_detect_invariants(&functions, &[]);

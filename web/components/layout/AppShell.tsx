@@ -64,7 +64,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
           {onNewScan ? (
             <button
               onClick={onNewScan}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-acc/15 border border-indigo text-acc-text rounded-lg text-body-md font-[600] hover:bg-indigo/90 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-acc/15 border border-brand text-acc-text rounded-lg text-body-md font-[600] hover:bg-brand/90 transition-colors"
             >
               <Plus size={15} />
               New Scan
@@ -72,7 +72,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
           ) : (
             <Link
               href="/dashboard/scan"
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-acc/15 border border-indigo text-acc-text rounded-lg text-body-md font-[600] hover:bg-indigo/90 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-acc/15 border border-brand text-acc-text rounded-lg text-body-md font-[600] hover:bg-brand/90 transition-colors"
             >
               <Plus size={15} />
               New Scan
@@ -93,7 +93,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
                 className={clsx(
                   'flex items-center gap-3 px-3 py-2.5 rounded-lg text-body-md transition-colors',
                   isActive
-                    ? 'bg-indigo/10 text-text font-[500] border-l-2 border-indigo pl-[10px]'
+                    ? 'bg-brand/10 text-text font-[500] border-l-2 border-brand pl-[10px]'
                     : 'text-sec hover:bg-panel hover:text-text',
                 )}
               >
@@ -123,7 +123,7 @@ export function AppShell({ children, rightPanel, currentPage = 'dashboard', onNe
         {/* User profile strip */}
         <div className="border-t border-hair p-3">
           <div className="flex items-center gap-3 px-2 py-2">
-            <div className="w-7 h-7 rounded-full bg-indigo/20 border border-indigo/30 flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-[700] text-acc-text">A</span>
             </div>
             <div className="flex-1 min-w-0">

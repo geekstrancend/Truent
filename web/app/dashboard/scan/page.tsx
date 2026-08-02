@@ -122,8 +122,8 @@ export default function ScanPage() {
               onClick={() => setMethod('code')}
               className={`p-4 rounded-lg border-2 transition ${
                 method === 'code'
-                  ? 'border-indigo bg-indigo/10'
-                  : 'border-hair hover:border-indigo'
+                  ? 'border-brand bg-brand/10'
+                  : 'border-hair hover:border-brand'
               }`}
             >
               <Code className="w-8 h-8 text-acc-text mb-2" />
@@ -136,8 +136,8 @@ export default function ScanPage() {
               onClick={() => setMethod('file')}
               className={`p-4 rounded-lg border-2 transition ${
                 method === 'file'
-                  ? 'border-indigo bg-indigo/10'
-                  : 'border-hair hover:border-indigo'
+                  ? 'border-brand bg-brand/10'
+                  : 'border-hair hover:border-brand'
               }`}
             >
               <Upload className="w-8 h-8 text-acc-text mb-2" />
@@ -150,8 +150,8 @@ export default function ScanPage() {
               onClick={() => setMethod('github')}
               className={`p-4 rounded-lg border-2 transition ${
                 method === 'github'
-                  ? 'border-indigo bg-indigo/10'
-                  : 'border-hair hover:border-indigo'
+                  ? 'border-brand bg-brand/10'
+                  : 'border-hair hover:border-brand'
               }`}
             >
               <Github className="w-8 h-8 text-acc-text mb-2" />
@@ -179,7 +179,7 @@ export default function ScanPage() {
                   id="scan-language-code"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full px-4 py-2 bg-surface-2 text-text rounded-lg border border-hair focus:outline-none focus:border-indigo"
+                  className="w-full px-4 py-2 bg-surface-2 text-text rounded-lg border border-hair focus:outline-none focus:border-brand"
                 >
                   <option value="solidity">Solidity</option>
                   <option value="rust">Rust (Move, Anchor)</option>
@@ -195,7 +195,7 @@ export default function ScanPage() {
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="Paste your smart contract code here..."
-                  className="w-full h-96 px-4 py-3 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo font-mono text-sm resize-none"
+                  className="w-full h-96 px-4 py-3 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand font-mono text-sm resize-none"
                   maxLength={100000}
                 />
                 <p className="text-xs text-sec mt-1">
@@ -215,7 +215,7 @@ export default function ScanPage() {
                   id="scan-language-file"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full px-4 py-2 bg-surface-2 text-text rounded-lg border border-hair focus:outline-none focus:border-indigo"
+                  className="w-full px-4 py-2 bg-surface-2 text-text rounded-lg border border-hair focus:outline-none focus:border-brand"
                 >
                   <option value="solidity">Solidity</option>
                   <option value="rust">Rust</option>
@@ -226,7 +226,7 @@ export default function ScanPage() {
                 <label className="block text-sm font-medium text-text mb-2">
                   Upload File
                 </label>
-                <div className="border-2 border-dashed border-hair rounded-lg p-8 text-center hover:border-indigo transition">
+                <div className="border-2 border-dashed border-hair rounded-lg p-8 text-center hover:border-brand transition">
                   <input
                     type="file"
                     onChange={handleFileUpload}
@@ -260,7 +260,7 @@ export default function ScanPage() {
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
                   placeholder="https://github.com/username/repository"
-                  className="w-full px-4 py-2 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo"
+                  className="w-full px-4 py-2 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand"
                 />
               </div>
               <div>
@@ -271,7 +271,7 @@ export default function ScanPage() {
                   id="scan-github-branch"
                   type="text"
                   placeholder="main (default: main)"
-                  className="w-full px-4 py-2 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-indigo"
+                  className="w-full px-4 py-2 bg-surface-2 text-text placeholder-on-surface-variant rounded-lg border border-hair focus:outline-none focus:border-brand"
                 />
               </div>
             </>

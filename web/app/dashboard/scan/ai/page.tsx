@@ -88,7 +88,7 @@ export default function AIScanPage() {
       <div className="p-8 max-w-site mx-auto">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Brain className="w-8 h-8 text-indigo" />
+            <Brain className="w-8 h-8 text-brand" />
             <h1 className="font-display text-4xl font-[600] text-text">
               AI-Powered Code Analysis
             </h1>
@@ -125,7 +125,7 @@ export default function AIScanPage() {
                 value={contractCode}
                 onChange={(e) => setContractCode(e.target.value)}
                 placeholder="Paste your Solidity, Rust, or Move smart contract code here..."
-                className="w-full h-[500px] px-4 py-3 bg-surface-2 border border-hair rounded-lg text-text font-mono text-sm placeholder-on-surface-variant focus:outline-none focus:border-indigo transition resize-none"
+                className="w-full h-[500px] px-4 py-3 bg-surface-2 border border-hair rounded-lg text-text font-mono text-sm placeholder-on-surface-variant focus:outline-none focus:border-brand transition resize-none"
               />
             </div>
 
@@ -156,7 +156,7 @@ export default function AIScanPage() {
               )}
             </Button>
 
-            <div className="p-3 bg-indigo/10 border border-indigo rounded-lg text-xs text-sec">
+            <div className="p-3 bg-brand/10 border border-brand rounded-lg text-xs text-sec">
               <p className="font-[600] text-text mb-1">Model: Claude Haiku 4.5</p>
               <p>Fast and efficient AI analysis powered by Anthropic&apos;s Claude Haiku model.</p>
             </div>
