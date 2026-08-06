@@ -54,6 +54,99 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  scans Scan[]
+  subscription Subscription?
+  payments Payment[]
+}
+
+model AuthNonce {
+  address   String   @id
+  nonceHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+model Scan {
+  id          String   @id @default(cuid())
+  userId      String
+  projectName String?
+  sourceType  String   @default("code")
+  sourceRef   String?
+  language    String
+  status      String   @default("processing")
+  error       String?
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  findings Finding[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model Finding {
+  id             String   @id @default(cuid())
+  scanId         String
+  severity       String
+  title          String
+  description    String
+  location       String?
+  line           Int?
+  impact         String?
+  recommendation String
+  status         String   @default("open")
+  fingerprint    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  scan Scan @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@unique([scanId, fingerprint])
+  @@index([scanId, severity])
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  provider             String
+  providerCustomerId   String?
+  providerSubscriptionId String? @unique
+  plan                 String
+  status               String
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+model Payment {
+  id                    String   @id @default(cuid())
+  userId                String
+  provider              String
+  providerPaymentId     String   @unique
+  plan                   String
+  amount                 Int
+  currency               String
+  status                 String
+  walletAddress          String?
+  transactionHash        String? @unique
+  expiresAt              DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status])
 }
 
 model VerificationToken {

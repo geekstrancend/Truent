@@ -1,14 +1,11 @@
 import Stripe from 'stripe'
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth-options'
+import { getCurrentUser } from '@/lib/current-user'
+import { isPlanId, PLANS } from '@/lib/plans'
 import { z } from 'zod'
 
 const checkoutSchema = z.object({
   planId: z.string().min(1, 'planId is required'),
-  planName: z.string().min(1, 'planName is required'),
-  price: z.number().positive('price must be greater than 0'),
-  currency: z.string().length(3, 'currency must be a 3-letter ISO code').optional(),
 })
 
 function getStripeClient() {
@@ -22,31 +19,33 @@ function getStripeClient() {
 export async function POST(request: NextRequest) {
   try {
     const stripe = getStripeClient()
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
+    const user = await getCurrentUser()
+    if (!user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const { planId, planName, price, currency } = checkoutSchema.parse(
-      await request.json()
-    )
+    const { planId } = checkoutSchema.parse(await request.json())
+    if (!isPlanId(planId)) {
+      return NextResponse.json({ error: 'Unknown plan' }, { status: 400 })
+    }
+    const plan = PLANS[planId]
 
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      customer_email: session.user.email,
+      customer_email: user.email,
       line_items: [
         {
           price_data: {
-            currency: currency || 'usd',
+            currency: 'usd',
             product_data: {
-              name: planName,
-              description: `Truent ${planName} Plan`,
+              name: plan.name,
+              description: `Truent ${plan.name} Plan`,
             },
-            unit_amount: Math.round(price * 100),
+            unit_amount: plan.monthlyAmount,
             recurring: {
               interval: 'month',
               interval_count: 1,
@@ -60,7 +59,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXTAUTH_URL}/pricing?payment=cancelled`,
       metadata: {
         planId,
-        userId: session.user.email,
+        userId: user.id,
       },
     })
 

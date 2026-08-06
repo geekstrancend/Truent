@@ -113,7 +113,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin' }: AuthModalP
       }
 
       const address = accounts[0]
-      const message = `Sign this message to authenticate with Truent. Timestamp: ${Date.now()}`
+      const nonceResponse = await fetch('/api/auth/wallet-nonce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      })
+      if (!nonceResponse.ok) throw new Error('Unable to create wallet challenge')
+      const { message } = await nonceResponse.json()
 
       // Request signature
       const signature = await window.ethereum.request({

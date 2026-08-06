@@ -6,6 +6,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcrypt'
 import { ethers } from 'ethers'
+import { createHash } from 'crypto'
 
 // A precomputed hash with no matching password, compared against when a user
 // isn't found so that bcrypt.compare() always runs and takes roughly the same
@@ -23,8 +24,19 @@ async function verifyWalletSignature(
   signature: string
 ): Promise<boolean> {
   try {
+    const normalizedAddress = address.toLowerCase()
+    const match = message.match(/^Truent sign-in\nAddress: (0x[a-f0-9]{40})\nNonce: ([a-f0-9]{48})$/)
+    if (!match || match[1] !== normalizedAddress) return false
+    const challenge = await prisma.authNonce.findUnique({ where: { address: normalizedAddress } })
+    if (
+      !challenge ||
+      challenge.expiresAt <= new Date() ||
+      challenge.nonceHash !== createHash('sha256').update(match[2]).digest('hex')
+    ) return false
     const recoveredAddress = ethers.verifyMessage(message, signature)
-    return recoveredAddress.toLowerCase() === address.toLowerCase()
+    if (recoveredAddress.toLowerCase() !== normalizedAddress) return false
+    await prisma.authNonce.delete({ where: { address: normalizedAddress } })
+    return true
   } catch (error) {
     console.error('Wallet signature verification error:', error)
     return false
@@ -134,9 +146,9 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
-    async session({ session, token }) {
+    async session({ session, token, user }) {
       if (session.user) {
-        session.user.id = token.id as string
+        session.user.id = user?.id || (token.id as string)
         ;(session.user as any).walletAddress = token.walletAddress
       }
       return session

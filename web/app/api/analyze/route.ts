@@ -1,39 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth-options'
 import { z } from 'zod'
+import { createHash } from 'crypto'
+import prisma from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/current-user'
+import { monthlyScanLimit } from '@/lib/plans'
 
 const analyzeSchema = z
   .object({
     code: z.string().max(100000, 'Code exceeds maximum size (100KB)').optional(),
     language: z.enum(['solidity', 'rust', 'move']).optional().default('solidity'),
     githubUrl: z.string().url('Invalid GitHub URL').optional(),
+    projectName: z.string().trim().max(120).optional(),
   })
   .refine((data) => !!data.code || !!data.githubUrl, {
     message: 'Code or GitHub URL required',
   })
-
-/**
- * Minimal in-memory sliding-window rate limiter.
- *
- * This calls a paid third-party API (Claude) on every request, so it must not
- * be reachable without a cap. This is process-local only - it resets on
- * redeploy/restart and does not share state across serverless instances - but
- * it is a meaningful floor where there was previously no limit at all.
- */
-const RATE_LIMIT_WINDOW_MS = 60_000
-const RATE_LIMIT_MAX_REQUESTS = 5
-const requestLog = new Map<string, number[]>()
-
-function isRateLimited(key: string): boolean {
-  const now = Date.now()
-  const timestamps = (requestLog.get(key) || []).filter(
-    (t) => now - t < RATE_LIMIT_WINDOW_MS
-  )
-  timestamps.push(now)
-  requestLog.set(key, timestamps)
-  return timestamps.length > RATE_LIMIT_MAX_REQUESTS
-}
 
 interface Finding {
   severity: 'critical' | 'high' | 'medium' | 'low'
@@ -43,6 +24,15 @@ interface Finding {
   line?: number
   recommendation: string
 }
+
+const findingSchema = z.object({
+  severity: z.enum(['critical', 'high', 'medium', 'low']),
+  title: z.string().min(1).max(240),
+  description: z.string().min(1).max(10000),
+  location: z.string().max(500).optional(),
+  line: z.number().int().positive().optional(),
+  recommendation: z.string().min(1).max(10000),
+})
 
 /**
  * Pattern-based detection using invariant library
@@ -154,6 +144,7 @@ Focus on:
           },
         ],
       }),
+      signal: AbortSignal.timeout(30_000),
     })
 
     if (!response.ok) {
@@ -169,7 +160,10 @@ Focus on:
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0])
       if (Array.isArray(parsed)) {
-        findings.push(...parsed)
+        for (const candidate of parsed) {
+          const validated = findingSchema.safeParse(candidate)
+          if (validated.success) findings.push(validated.data)
+        }
       }
     }
   } catch (error) {
@@ -180,22 +174,56 @@ Focus on:
 }
 
 export async function POST(request: NextRequest) {
+  let scanId: string | undefined
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
+    const user = await getCurrentUser()
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (isRateLimited(session.user.email)) {
+    const minuteAgo = new Date(Date.now() - 60_000)
+    const recentRequests = await prisma.scan.count({
+      where: { userId: user.id, createdAt: { gte: minuteAgo } },
+    })
+    if (recentRequests >= 5) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please wait before submitting another scan.' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': '60' } }
       )
     }
 
-    const { code, language } = analyzeSchema.parse(await request.json())
+    const monthStart = new Date()
+    monthStart.setUTCDate(1)
+    monthStart.setUTCHours(0, 0, 0, 0)
+    const scansThisMonth = await prisma.scan.count({
+      where: { userId: user.id, createdAt: { gte: monthStart } },
+    })
+    const activePlan = user.subscription?.status === 'active' ? user.subscription.plan : null
+    if (scansThisMonth >= monthlyScanLimit(activePlan)) {
+      return NextResponse.json({ error: 'Monthly scan quota exceeded' }, { status: 403 })
+    }
+
+    const { code, language, githubUrl, projectName } = analyzeSchema.parse(await request.json())
+
+    if (githubUrl) {
+      return NextResponse.json(
+        { error: 'GitHub repository scanning requires the GitHub App integration' },
+        { status: 422 }
+      )
+    }
 
     const codeToAnalyze = code || ''
+
+    const scan = await prisma.scan.create({
+      data: {
+        userId: user.id,
+        projectName: projectName || 'Untitled scan',
+        sourceType: 'code',
+        language,
+        status: 'processing',
+      },
+    })
+    scanId = scan.id
 
     // Combine pattern-based and AI analysis
     const [patternFindings, aiFindings] = await Promise.all([
@@ -223,9 +251,33 @@ export async function POST(request: NextRequest) {
         severityOrder[b.severity as keyof typeof severityOrder]
     )
 
+    await prisma.$transaction([
+      ...uniqueFindings.map((finding) =>
+        prisma.finding.create({
+          data: {
+            scanId: scan.id,
+            severity: finding.severity,
+            title: finding.title.slice(0, 240),
+            description: finding.description,
+            location: finding.location,
+            line: finding.line,
+            recommendation: finding.recommendation,
+            fingerprint: createHash('sha256')
+              .update(`${finding.severity}\0${finding.title}\0${finding.location || ''}\0${finding.line || ''}`)
+              .digest('hex'),
+          },
+        })
+      ),
+      prisma.scan.update({
+        where: { id: scan.id },
+        data: { status: 'complete', completedAt: new Date() },
+      }),
+    ])
+
     return NextResponse.json(
       {
         success: true,
+        scanId: scan.id,
         vulnerabilities: uniqueFindings,
         summary: {
           total: uniqueFindings.length,
@@ -238,6 +290,12 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
+    if (scanId) {
+      await prisma.scan.update({
+        where: { id: scanId },
+        data: { status: 'failed', error: 'Analysis failed', completedAt: new Date() },
+      }).catch(() => undefined)
+    }
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0].message },

@@ -5,8 +5,8 @@ import { z } from 'zod'
 
 const signupSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(1, 'Name is required'),
+  password: z.string().min(12, 'Password must be at least 12 characters').max(128),
+  name: z.string().trim().min(1, 'Name is required').max(100),
 })
 
 export async function POST(request: NextRequest) {
@@ -14,7 +14,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     // Validate input
-    const { email, password, name } = signupSchema.parse(body)
+    const parsed = signupSchema.parse(body)
+    const email = parsed.email.trim().toLowerCase()
+    const name = parsed.name.trim()
+    const password = parsed.password
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
